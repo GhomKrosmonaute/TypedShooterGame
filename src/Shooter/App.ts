@@ -1,7 +1,9 @@
 import p5 from 'p5';
 import {Keys, MoveKeys, ShotKeys} from '../interfaces';
 import Particles from './Particles';
-import Positionable from './Positionable';
+import Enemy from './Enemy';
+import Player from './Player';
+import Bonus from './Bonus';
 
 export default class App {
 
@@ -15,10 +17,10 @@ export default class App {
     public keys:Keys = {}
     public enemyCount:number
     public player:Player
-    public rate:Gamerate
+    public rate:Rate
     public background:Particles
     public foreground:Particles
-    public enemies:Ennemy[]
+    public enemies:Enemy[]
     public bonus:Bonus[]
 
     constructor( public p:p5 ){
@@ -35,7 +37,7 @@ export default class App {
         this.showKeysSteps = this.showKeysStepsInit
         this.enemyCount = 5
         this.player = new Player(this)
-        this.rate = new Gamerate(30)
+        this.rate = new Rate(30)
         this.background = new Particles(this,30,0,1)
         this.foreground = new Particles(this,10,1,2)
         this.enemies = []
@@ -63,7 +65,7 @@ export default class App {
             this.bonus.forEach( bonus => bonus.step() )
             this.bonus = this.bonus.filter( bonus => !bonus.isOutOfLimits() )
             this.enemies = this.enemies.filter( enemy => !enemy.isOutOfLimits() )
-            this.enemyCount = Math.floor(Math.min(map(this.player.score, 0, 100, 4, 20), this.maxEnemyCount))
+            this.enemyCount = Math.floor(Math.min(this.p.map(this.player.score, 0, 100, 4, 20), this.maxEnemyCount))
             while(this.enemies.length < this.enemyCount)
                 this.enemies.push(
                     new existingEnnemies[Math.floor(Math.random()*existingEnnemies.length)](this)
@@ -71,11 +73,11 @@ export default class App {
             if(this.rate.canTrigger(true)) {
                 this.enemies.forEach( enemy => enemy.step() )
                 this.player.step()
+                if(Math.random() < .05)
+                    this.bonus.push(
+                        new existingBonus[Math.floor(Math.random()*existingBonus.length)](this)
+                    )
             }
-            if(Math.random() < .05)
-                this.bonus.push(
-                    new existingBonus[Math.floor(Math.random()*existingBonus.length)](this)
-                )
         }
     }
 
@@ -152,7 +154,7 @@ export default class App {
         return true
     }
 
-    public areOnContact( positionable1:Positionable, positionable2:Positionable ){
+    public areOnContact( positionable1:any, positionable2:any ){
         return (
             this.p.dist(
                 positionable1.x, positionable1.y,

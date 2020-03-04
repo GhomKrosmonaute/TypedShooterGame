@@ -4,6 +4,9 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
+    "lib": [
+      "ES2017","es6", "dom"
+    ],
     "target": "es5",
     "declaration": true,
     "allowSyntheticDefaultImports": true,

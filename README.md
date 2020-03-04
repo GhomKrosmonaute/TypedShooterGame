@@ -1,57 +1,21 @@
-Webpack 4 + TypeScript starter
-------------------------------
 
-[![Build Status](https://travis-ci.org/juristr/webpack-typescript-starter.svg?branch=master)](https://travis-ci.org/juristr/webpack-typescript-starter)
+# Shooter Game 👾
 
-This is by far no sophisticated starter or whatever. The goal is to get the simplest possible setup to get you started with Webpack 4 and TypeScript. You can then start from here and add further stuff you need, such as SASS compilation, add framework specific stuff etc.
+Les specs c'est par ici !
 
-Also check out the official Webpack 4 docs for a proper TypeScript setup: https://webpack.js.org/guides/typescript/
+## Bonus list
 
-_Note, this is still a WIP. Contributions/suggestions are welcome :smiley:_
-
-## Features
-
-- [x] Webpack 4
-- [x] TypeScript 2 compilation
-- [x] ts-lint
-- [x] Webpack Development Server
-- [x] Karma and Jasmine test execution
-
-## How to use
-
-Just clone it and get going.
-
-```
-# --depth 1 removes all but one .git commit history
-$ git clone --depth=1 https://github.com/juristr/webpack-typescript-starter.git <your-project-name>
-
-# change directory to your project
-cd  <your-project-name>
-
-# Maybe remove the `.git` directory and start with a fresh one.
-
-# install all dependencies.
-$ npm i
-
-# Start developing and serve your app:
-npm start
-
-# Build your app without minification: 
-npm run build
-
-# Build your app with minification: 
-npm run build.all
-
-# run unit tests:
-npm run test
-```
-## Contributions
-
-Of course! Open an issue and let's discuss :smiley:.
-
-## Links and other useful stuff
-
-Similar projects that could be a point of inspiration:
-
-- [krasimir/webpack-library-starter](https://github.com/krasimir/webpack-library-starter)
-
+| Bonus name | Description | Type |
+|---|---|---|
+| Heal | soigne completement le joueur | consomable |
+| Star | le joueur tire de tous les cotés pendant 15 secondes | consomable |
+| Carnage | tue tous les ennemis à l'écran | consomable |
+| Drill | les tirs traversent `LEVEL` ennemis | passif |
+| Falcon | les tirs suivent leur cible (level 2 : visée auto) | passif |
+| Haki | les ennemis ayant `LEVEL` pv meurent avant de toucher le joueur | passif |
+| Shotgun | les tirs infligent `LEVEL * 25%` degats en plus | passif |
+| Bazooka | les tirs sont `LEVEL * 25%` plus volumineux | passif |
+| Minigun | les tirs ont `LEVEL * 25%` cadence de plus | passif |
+| Sniper | le joueur peut tirer `LEVEL * 25%` plus loin | passif |
+| Deadchain | en mourant, les ennemis infligent `LEVEL` dégats autour d'eux | passif |
+| Ping | apres avoir touché un ennemi, un tir rebondi sur `LEVEL` ennemis proches | passif |
