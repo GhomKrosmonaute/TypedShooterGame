@@ -11,13 +11,9 @@
         ],
         "no-duplicate-variable": true,
         "no-eval": true,
-        "no-trailing-whitespace": true,
+        "no-trailing-whitespace": false,
         "no-unsafe-finally": true,
-        "one-line": [
-            true,
-            "check-open-brace",
-            "check-whitespace"
-        ],
+        "one-line": false,
         "quotemark": [
             true,
             "single"
@@ -31,14 +27,7 @@
             true,
             "ban-keywords"
         ],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ]
+        "whitespace": false
     },
     "rules": {
         "class-name": true,
@@ -69,27 +58,11 @@
             true,
             "allow-null-check"
         ],
-        "typedef-whitespace": [
-            true,
-            {
-                "call-signature": "nospace",
-                "index-signature": "nospace",
-                "parameter": "nospace",
-                "property-declaration": "nospace",
-                "variable-declaration": "nospace"
-            }
-        ],
+        "typedef-whitespace": false,
         "variable-name": [
             true,
             "ban-keywords"
         ],
-        "whitespace": [
-            true,
-            "check-branch",
-            "check-decl",
-            "check-operator",
-            "check-separator",
-            "check-type"
-        ]
+        "whitespace": false
     }
 }

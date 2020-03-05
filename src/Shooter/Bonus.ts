@@ -2,10 +2,10 @@ import Positionable from './Positionable';
 import App from './App';
 import Variator from './Variator';
 
-export default class Bonus extends Positionable {
+export default abstract class Bonus extends Positionable {
 
-    private radiusVariator:Variator = new Variator(-1,1,.2)
-    protected applyEffect:()=>void = ()=>{}
+    private radiusVariator = new Variator(-1,1,.2)
+    public abstract applyEffect(): void
 
     constructor(
         public app:App

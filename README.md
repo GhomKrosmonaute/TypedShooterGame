@@ -11,8 +11,8 @@ Les specs c'est par ici !
 | Star | le joueur tire de tous les cotés pendant 15 secondes | consomable |
 | Carnage | tue tous les ennemis à l'écran | consomable |
 | Drill | les tirs traversent `LEVEL` ennemis | passif |
-| Falcon | les tirs suivent leur cible (level 2 : visée auto) | passif |
-| Haki | les ennemis ayant `LEVEL` pv meurent avant de toucher le joueur | passif |
+| Falcon | les tirs suivent leur cible (`LEVEL 2` : visée auto) | passif |
+| Shield | les ennemis ayant `LEVEL` pv meurent avant de toucher le joueur | passif |
 | Shotgun | les tirs infligent `LEVEL * 25%` degats en plus | passif |
 | Bazooka | les tirs sont `LEVEL * 25%` plus volumineux | passif |
 | Minigun | les tirs ont `LEVEL * 25%` cadence de plus | passif |

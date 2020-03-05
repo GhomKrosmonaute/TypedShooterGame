@@ -1,21 +1,24 @@
-import p5 from 'p5';
-import {Keys, MoveKeys, ShotKeys} from '../interfaces';
-import Particles from './Particles';
-import Enemy from './Enemy';
-import Player from './Player';
-import Bonus from './Bonus';
+import p5 from 'p5'
+//import keysImage from './images/keys.png'
+import { Keys, MoveKeys, ShotKeys } from '../interfaces';
+import Particles from './Particles'
+import Enemy from './Enemy'
+import Player from './Player'
+import Bonus from './Bonus'
+import Rate from './Rate'
+import { pickBonus, pickEnemy } from '../utils';
 
 export default class App {
 
     private readonly keysImage:p5.Image
     private readonly showKeysStepsInit = 10
     private readonly maxEnemyCount = 30
+    private readonly minEnemyCount = 5
 
     private showKeys:boolean
     private showKeysSteps:number
 
     public keys:Keys = {}
-    public enemyCount:number
     public player:Player
     public rate:Rate
     public background:Particles
@@ -28,14 +31,13 @@ export default class App {
         if(!localStorage.getItem('shooter'))
             localStorage.setItem('shooter','{"highscore":0}')
 
-        this.keysImage = p.loadImage('img/keys.png')
+        //this.keysImage = p.loadImage(keysImage)
         this.reset()
     }
 
     public reset(): void {
         this.showKeys = true
         this.showKeysSteps = this.showKeysStepsInit
-        this.enemyCount = 5
         this.player = new Player(this)
         this.rate = new Rate(30)
         this.background = new Particles(this,30,0,1)
@@ -43,9 +45,7 @@ export default class App {
         this.enemies = []
         this.bonus = []
         for(let i=0; i<this.enemyCount; i++){
-            this.enemies.push(
-                new existingEnnemies[Math.floor(Math.random()*existingEnnemies.length)](this)
-            )
+            this.enemies.push(pickEnemy(this))
         }
     }
 
@@ -65,18 +65,13 @@ export default class App {
             this.bonus.forEach( bonus => bonus.step() )
             this.bonus = this.bonus.filter( bonus => !bonus.isOutOfLimits() )
             this.enemies = this.enemies.filter( enemy => !enemy.isOutOfLimits() )
-            this.enemyCount = Math.floor(Math.min(this.p.map(this.player.score, 0, 100, 4, 20), this.maxEnemyCount))
             while(this.enemies.length < this.enemyCount)
-                this.enemies.push(
-                    new existingEnnemies[Math.floor(Math.random()*existingEnnemies.length)](this)
-                )
-            if(this.rate.canTrigger(true)) {
+                this.enemies.push(pickEnemy(this))
+            if(this.rate.canTrigger(true)){
                 this.enemies.forEach( enemy => enemy.step() )
                 this.player.step()
                 if(Math.random() < .05)
-                    this.bonus.push(
-                        new existingBonus[Math.floor(Math.random()*existingBonus.length)](this)
-                    )
+                    this.bonus.push(pickBonus(this))
             }
         }
     }
@@ -111,7 +106,7 @@ export default class App {
         }
         if(this.showKeysSteps > 0){
             tint(255, map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
-            image(this.keysImage,-400,-300)
+            //image(this.keysImage,-400,-300)
         }else{
             const isHigh = this.player.score > this.player.highscore
             fill(0,90)
@@ -163,6 +158,20 @@ export default class App {
                 (positionable1.currentRadius || positionable1.radius) +
                 (positionable2.currentRadius || positionable2.radius)
             ) / 2
+        )
+    }
+
+    get enemyCount(): number {
+        return Math.max(
+            Math.floor(
+                Math.min(
+                    this.p.map(
+                        this.player.score, 0, 100, 5, 10
+                    ),
+                    this.maxEnemyCount
+                )
+            ),
+            this.minEnemyCount
         )
     }
 

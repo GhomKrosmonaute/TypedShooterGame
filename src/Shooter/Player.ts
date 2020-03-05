@@ -1,7 +1,8 @@
 import App from './App';
 import Positionable from './Positionable';
 import Shoot from './Shoot';
-import {Consomable, Passive, PowaKeys, ShapeFunction, TemporaryEffects} from '../interfaces';
+import {Consumable, Passive, PowaKeys, ShapeFunction, TemporaryEffects} from '../interfaces';
+import Rate from './Rate';
 
 export default class Player extends Positionable {
 
@@ -9,6 +10,7 @@ export default class Player extends Positionable {
     public score = 0
     public shootspeed = 15
     public shootrange = 400
+    public shootdamage = 1
     public speedX = 0
     public speedY = 0
     public speedMax = 10
@@ -16,7 +18,7 @@ export default class Player extends Positionable {
     public desc = .7
     public highscore:number = JSON.parse(localStorage.getItem('shooter')).highscore
     public life:number
-    public consomables:Consomable[] = []
+    public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shoots:Shoot[] = []
     public temporary:TemporaryEffects = {}
@@ -54,22 +56,18 @@ export default class Player extends Positionable {
         if(exists){
             exists.level ++
         }else{
-            if(!passive.level)
-                passive.level = 1
             this.passives.push(passive)
         }
     }
 
-    public addConsomable( consomable:Consomable ): void {
-        const exists = this.consomables.find( c => {
-            return c.constructor.name === consomable.constructor.name
+    public addConsumable( consumable:Consumable ): void {
+        const exists = this.consumables.find( c => {
+            return c.constructor.name === consumable.constructor.name
         })
         if(exists){
             exists.quantity ++
         }else{
-            if(!consomable.quantity)
-                consomable.quantity = 1
-            this.consomables.push(consomable)
+            this.consumables.push(consumable)
         }
     }
 
@@ -175,12 +173,12 @@ export default class Player extends Positionable {
 
     public keyPressed(key:string): void {
         PowaKeys.forEach( (pk,i) => {
-            if(key === pk && this.consomables[i]){
-                this.consomables[i].exec()
-                this.consomables[i].quantity --
-                if(this.consomables[i].quantity <= 0)
-                    this.consomables = this.consomables.filter( c => {
-                        return c.constructor.name !== this.consomables[i].constructor.name
+            if(key === pk && this.consumables[i]){
+                this.consumables[i].exec()
+                this.consumables[i].quantity --
+                if(this.consumables[i].quantity <= 0)
+                    this.consumables = this.consumables.filter( c => {
+                        return c.constructor.name !== this.consumables[i].constructor.name
                     })
             }
         })
@@ -242,7 +240,7 @@ export default class Player extends Positionable {
                 flagIndex ++
             }
         }
-        const bonusLength = this.consomables.length + this.passives.length
+        const bonusLength = this.consumables.length + this.passives.length
         if(bonusLength > 0){
             fill(0,100)
             stroke(255)
@@ -254,7 +252,7 @@ export default class Player extends Positionable {
                 width, 14, 5
             )
             noStroke()
-            const bonus:any[] = [ ...this.consomables, ...this.passives ]
+            const bonus:any[] = [ ...this.consumables, ...this.passives ]
             bonus.forEach( (bonus, index) => {
                 fill(200,100)
                 rect(

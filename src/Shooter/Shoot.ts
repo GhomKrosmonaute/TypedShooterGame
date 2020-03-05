@@ -6,6 +6,7 @@ import Drill from './Bonus/Drill';
 export default class Shoot extends Positionable {
 
     private readonly speed:number
+    public readonly damage:number
     private drill:number = 1
     private toIgnore:Enemy[] = new Array()
 
@@ -16,6 +17,7 @@ export default class Shoot extends Positionable {
     ){
         super( player.p, player.x, player.y, 20 )
         this.speed = this.player.shootspeed
+        this.damage = this.player.shootdamage
         const drillPassive = this.player.passives.find( p => p instanceof Drill )
         if(drillPassive) this.drill += drillPassive.level
     }
@@ -38,7 +40,7 @@ export default class Shoot extends Positionable {
         if(this.directionY !== 0){
             this.y += this.speed * this.directionY
         }
-        if(this.playerDistance > this.player.shootrange){
+        if(this.dist(this.player) > this.player.shootrange){
             this.placeOutOfLimits()
         }
     }
@@ -51,20 +53,13 @@ export default class Shoot extends Positionable {
             Math.min(
                 this.radius,
                 this.p.map(
-                    this.playerDistance,
+                    this.dist(this.player),
                     0,
                     this.player.shootrange,
                     0,
                     this.radius * 5
                 )
             )
-        )
-    }
-
-    public get playerDistance(): number {
-        return this.p.dist(
-            this.x, this.y,
-            this.player.x, this.player.y
         )
     }
 

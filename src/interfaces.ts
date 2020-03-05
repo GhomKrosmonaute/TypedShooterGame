@@ -1,12 +1,19 @@
-import createSpyObj = jasmine.createSpyObj;
+
 import Bonus from './Shooter/Bonus';
 
-export interface Consomable extends Bonus {
+interface BonusExtender extends Bonus {
+    shape: (
+        x:number, y:number,
+        w:number, h:number
+    ) => void
+}
+
+export interface Consumable extends BonusExtender {
     quantity: number
     exec: () => void
 }
 
-export interface Passive extends Bonus {
+export interface Passive extends BonusExtender {
     level: number
 }
 

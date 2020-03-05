@@ -46,4 +46,11 @@ export default class Positionable {
         )
     }
 
+    public dist( positionable:Positionable ): number {
+        return this.p.dist(
+            positionable.x, positionable.y,
+            this.x, this.y
+        )
+    }
+
 }
