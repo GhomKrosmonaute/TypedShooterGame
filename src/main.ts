@@ -3,46 +3,36 @@ import './style.css'
 import p5 from 'p5';
 import App from './Shooter/App';
 
-document.addEventListener('DOMContentLoaded', ()=>{
-    new p5((p: p5) => {
+let app:App
 
-        class Sketch {
+function sketch( p:p5 ){
 
-            private app:App
-            private p:p5 = p
+    p.setup = () => {
+        p.createCanvas(p.windowWidth,p.windowHeight)
+        app = new App(p)
+    }
 
-            constructor() {
-                this.p.createCanvas(this.p.windowWidth, this.p.windowHeight)
-                this.app = new App(p)
-            }
+    p.draw = () => {
+        app.step()
+        app.draw()
+    }
 
-            public draw() {
-                this.app.step()
-                this.app.draw()
-            }
+    p.keyPressed = () => {
+        app.keyPressed(p.key)
+    }
 
-            public keyPressed(){
-                this.app.keyPressed(this.p.key)
-            }
+    p.keyReleased = () => {
+        app.keyReleased(p.key)
+    }
 
-            public keyReleased(){
-                this.app.keyReleased(this.p.key)
-            }
+    p.windowResized = () => {
+        p.resizeCanvas(p.windowWidth,p.windowHeight)
+    }
 
-            public windowResized(){
-                this.p.resizeCanvas(this.p.windowWidth,this.p.windowHeight)
-            }
+}
 
-        }
-
-        let sketch
-
-        p.setup = ()=>{
-            sketch = new Sketch()
-        }
-         p.setup()
-
-    })
+document.addEventListener('DOMContentLoaded', () => {
+    new p5( sketch, document.getElementById('p5') )
 })
 
 
