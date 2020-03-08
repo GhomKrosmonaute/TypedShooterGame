@@ -15,16 +15,15 @@ export default abstract class Bonus extends Positionable {
     }
 
     public draw(): void {
-        const { noFill, stroke, strokeWeight, ellipse, noStroke } = this.p
-        noFill()
-        stroke(255,0,50)
-        strokeWeight(3)
-        ellipse(
+        this.p.noFill()
+        this.p.stroke(255,0,50)
+        this.p.strokeWeight(3)
+        this.p.ellipse(
             this.x,
             this.y,
             this.radius
         )
-        noStroke()
+        this.p.noStroke()
     }
 
     public step(): void {
@@ -36,10 +35,9 @@ export default abstract class Bonus extends Positionable {
     }
 
     private setPosition(): void {
-        const { random, width, height } = this.p
         while(this.isOnScreen()){
-            this.x = random( width * -2, width * 2 )
-            this.y = random( height * -2, height * 2 )
+            this.x = this.p.random( this.p.width * -2, this.p.width * 2 )
+            this.y = this.p.random( this.p.height * -2, this.p.height * 2 )
         }
     }
 

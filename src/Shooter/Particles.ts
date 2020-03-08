@@ -4,7 +4,7 @@ import Positionable from './Positionable';
 
 export default class Particles extends Positionable {
 
-    private children:Particle[]
+    private children:Particle[] = []
 
     constructor(
         public app:App,
@@ -13,7 +13,6 @@ export default class Particles extends Positionable {
         public max:number
     ){
         super( app.p )
-        this.children = []
         while(this.children.length < this.particleCount){
             this.children.push(new Particle(this))
         }
@@ -48,12 +47,11 @@ class Particle extends Positionable {
     }
 
     private reset(){
-        const { random, color, width, height } = this.parent.app.p
-        this.color = color(random(100,255),0,random(100,255))
+        this.color = this.p.color(this.p.random(100,255),0,this.p.random(100,255))
         this.intensity = 0
-        this.z = random( this.parent.min, this.parent.max )
-        this.x = random( -width, width )
-        this.y = random( -height, height )
+        this.z = this.p.random( this.parent.min, this.parent.max )
+        this.x = this.p.random( this.p.width * -.5, this.p.width * .5 )
+        this.y = this.p.random( this.p.height * -.5, this.p.height * .5 )
     }
 
     public move( x:number, y:number ){
@@ -71,10 +69,9 @@ class Particle extends Positionable {
     }
 
     public draw(){
-        const { fill, ellipse } = this.p
         this.color.setAlpha(this.opacity)
-        fill(this.color)
-        ellipse(
+        this.p.fill(this.color)
+        this.p.ellipse(
             this.x,
             this.y,
             5 + this.z * 5

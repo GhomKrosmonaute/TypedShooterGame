@@ -1,6 +1,7 @@
 import Bonus from '../Bonus';
 import {Consumable} from '../../interfaces';
 import {seconds, star} from '../../utils';
+import p5 from 'p5';
 
 export default class Star extends Bonus implements Consumable {
 
@@ -14,9 +15,9 @@ export default class Star extends Bonus implements Consumable {
         this.app.player.setTemporary('star', seconds(15), this.shape )
     }
 
-    public shape(x:number,y:number,w:number,h:number): void {
+    public shape(p:p5,x:number,y:number,w:number,h:number): void {
         star(
-            this.p,
+            p,
             x+w*.5,
             y+h*.5,
             w*.1,

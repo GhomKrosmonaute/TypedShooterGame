@@ -1,5 +1,6 @@
 import p5 from 'p5'
-//import keysImage from './images/keys.png'
+// @ts-ignore
+import keysImage from './images/keys.png'
 import { Keys, MoveKeys, ShotKeys } from '../interfaces';
 import Particles from './Particles'
 import Enemy from './Enemy'
@@ -12,6 +13,7 @@ export default class App {
 
     private readonly keysImage:p5.Image
     private readonly showKeysStepsInit = 10
+    private readonly bonusFrequence = .01
     private readonly maxEnemyCount = 30
     private readonly minEnemyCount = 5
 
@@ -31,17 +33,17 @@ export default class App {
         if(!localStorage.getItem('shooter'))
             localStorage.setItem('shooter','{"highscore":0}')
 
-        //this.keysImage = p.loadImage(keysImage)
+        this.keysImage = p.loadImage(keysImage)
         this.reset()
     }
 
     public reset(): void {
-        this.showKeys = true
-        this.showKeysSteps = this.showKeysStepsInit
-        this.player = new Player(this)
-        this.rate = new Rate(30)
         this.background = new Particles(this,30,0,1)
         this.foreground = new Particles(this,10,1,2)
+        this.player = new Player(this)
+        this.rate = new Rate(25)
+        this.showKeys = true
+        this.showKeysSteps = this.showKeysStepsInit
         this.enemies = []
         this.bonus = []
         for(let i=0; i<this.enemyCount; i++){
@@ -70,7 +72,7 @@ export default class App {
             if(this.rate.canTrigger(true)){
                 this.enemies.forEach( enemy => enemy.step() )
                 this.player.step()
-                if(Math.random() < .05)
+                if(Math.random() < this.bonusFrequence)
                     this.bonus.push(pickBonus(this))
             }
         }
@@ -85,17 +87,10 @@ export default class App {
     }
 
     public draw(){
-        const {
-            background, tint, image, rect,
-            map, width, height, noFill, fill,
-            stroke, strokeWeight, translate,
-            noStroke, CENTER, textAlign,
-            textSize, text
-        } = this.p
-        background(0)
-        translate(
-            width * .5,
-            height * .5
+        this.p.background(0)
+        this.p.translate(
+            this.p.width * .5,
+            this.p.height * .5
         )
         if(!this.showKeys){
             this.background.draw()
@@ -105,30 +100,32 @@ export default class App {
             this.foreground.draw()
         }
         if(this.showKeysSteps > 0){
-            tint(255, map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
-            //image(this.keysImage,-400,-300)
+            this.p.tint(255, this.p.map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
+            this.p.image(this.keysImage,-400,-300)
         }else{
             const isHigh = this.player.score > this.player.highscore
-            fill(0,90)
-            rect(width*-.3,height * -.5 + 50,width*.6,30,2)
-            isHigh ? noFill() : fill(170,0,250)
-            rect(
-                width*-.3,
-                height * -.5 + 50,
-                Math.min(map(this.player.score,0,this.player.highscore,0,width*.6),width*.6),
-                30,
-                2
-            )
-            noFill()
-            isHigh ? stroke(255,215,0) : stroke(100)
-            strokeWeight(3)
-            rect(width*-.3,height * -.5 + 50,width*.6,30,2)
-            noStroke()
-            fill(255,200)
-            textAlign(CENTER,CENTER)
-            textSize(25)
-            if(!isHigh) text(`${this.player.score} / ${this.player.highscore} pts`,0,height * -.5 + 65)
-            else text(`${this.player.highscore} + ${this.player.score - this.player.highscore} pts`,0,height * -.5 + 65)
+            this.p.fill(0,90)
+            this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
+            if(this.player.score > 0){
+                isHigh ? this.p.noFill() : this.p.fill(170,0,250)
+                this.p.rect(
+                    this.p.width*-.3,
+                    this.p.height * -.5 + 50,
+                    Math.max(0,Math.min(this.p.map(this.player.score,0,this.player.highscore,0,this.p.width*.6),this.p.width*.6)),
+                    30,
+                    2
+                )
+                this.p.noFill()
+            }
+            isHigh ? this.p.stroke(255,215,0) : this.p.stroke(100)
+            this.p.strokeWeight(3)
+            this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
+            this.p.noStroke()
+            this.p.fill(255,200)
+            this.p.textAlign(this.p.CENTER,this.p.CENTER)
+            this.p.textSize(25)
+            if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highscore} pts`,0,this.p.height * -.5 + 65)
+            else this.p.text(`${this.player.highscore} + ${this.player.score - this.player.highscore} pts`,0,this.p.height * -.5 + 65)
         }
     }
 

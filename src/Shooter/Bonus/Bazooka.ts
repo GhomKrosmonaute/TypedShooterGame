@@ -1,5 +1,6 @@
 import Bonus from '../Bonus';
 import {Passive} from '../../interfaces';
+import p5 from 'p5';
 
 export default class Bazooka extends Bonus implements Passive {
 
@@ -9,7 +10,7 @@ export default class Bazooka extends Bonus implements Passive {
         this.app.player.addPassive(this)
     }
 
-    shape(x: number, y: number, w: number, h: number): void {
+    shape(p:p5, x: number, y: number, w: number, h: number): void {
         // TODO: look to good shape
     }
 

@@ -3,9 +3,9 @@ import './style.css'
 import p5 from 'p5';
 import App from './Shooter/App';
 
-let app:App
-
 function sketch( p:p5 ){
+
+    let app:App = null
 
     p.setup = () => {
         p.createCanvas(p.windowWidth,p.windowHeight)
@@ -13,15 +13,18 @@ function sketch( p:p5 ){
     }
 
     p.draw = () => {
+        if(!app) return
         app.step()
         app.draw()
     }
 
     p.keyPressed = () => {
+        if(!app) return
         app.keyPressed(p.key)
     }
 
     p.keyReleased = () => {
+        if(!app) return
         app.keyReleased(p.key)
     }
 

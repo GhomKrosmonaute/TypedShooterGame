@@ -1,15 +1,16 @@
 import Bonus from '../Bonus';
 import {Consumable} from '../../interfaces';
+import p5 from 'p5';
 
 export default class Heal extends Bonus implements Consumable {
 
     public quantity = 1
 
     public exec(): void {
-        this.app.player.life = this.app.player.lifeMax
+        this.app.player.life = this.app.player.baseLife
     }
 
-    public shape(x:number,y:number,w:number,h:number): void {
+    public shape(p:p5, x:number,y:number,w:number,h:number): void {
         this.p.rect(
             x + w * .4,
             y + h * .2,

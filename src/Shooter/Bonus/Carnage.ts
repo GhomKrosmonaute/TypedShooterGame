@@ -1,5 +1,6 @@
 import Bonus from '../Bonus';
 import {Consumable} from '../../interfaces';
+import p5 from 'p5';
 
 export default class Carnage extends Bonus implements Consumable {
 
@@ -16,7 +17,7 @@ export default class Carnage extends Bonus implements Consumable {
         })
     }
 
-    public shape(x:number,y:number,w:number,h:number): void {
+    public shape(p:p5, x:number,y:number,w:number,h:number): void {
         // TODO: skull
     }
 

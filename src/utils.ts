@@ -18,19 +18,18 @@ import AyaEnemy from './Shooter/Enemies/AyaEnemy';
 import BlobEnemy from './Shooter/Enemies/BlobEnemy';
 
 export function star( p:p5, x:number, y:number, radiusIn:number, radiusOut:number, points:number): void {
-    const { TWO_PI, beginShape, vertex, cos, sin, endShape, CLOSE } = p
-    let angle = TWO_PI / points;
+    let angle = p.TWO_PI / points;
     let halfAngle = angle / 2.0;
-    beginShape();
-    for (let a = 0; a < TWO_PI; a += angle) {
-        let sx = x + cos(a) * radiusOut;
-        let sy = y + sin(a) * radiusOut;
-        vertex(sx, sy);
-        sx = x + cos(a + halfAngle) * radiusIn;
-        sy = y + sin(a + halfAngle) * radiusIn;
-        vertex(sx, sy);
+    p.beginShape();
+    for (let a = 0; a < p.TWO_PI; a += angle) {
+        let sx = x + p.cos(a) * radiusOut;
+        let sy = y + p.sin(a) * radiusOut;
+        p.vertex(sx, sy);
+        sx = x + p.cos(a + halfAngle) * radiusIn;
+        sy = y + p.sin(a + halfAngle) * radiusIn;
+        p.vertex(sx, sy);
     }
-    endShape(CLOSE);
+    p.endShape(p.CLOSE);
 }
 
 export function seconds( nbr:number ): number {

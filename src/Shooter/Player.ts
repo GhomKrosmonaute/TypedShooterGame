@@ -6,10 +6,11 @@ import Rate from './Rate';
 
 export default class Player extends Positionable {
 
-    public lifeMax = 5
+    public baseLife = 5
+    public life = 5
     public score = 0
     public shootspeed = 15
-    public shootrange = 400
+    public shootrange = 300
     public shootdamage = 1
     public speedX = 0
     public speedY = 0
@@ -17,7 +18,6 @@ export default class Player extends Positionable {
     public acc = 3
     public desc = .7
     public highscore:number = JSON.parse(localStorage.getItem('shooter')).highscore
-    public life:number
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shoots:Shoot[] = []
@@ -29,7 +29,6 @@ export default class Player extends Positionable {
         public app:App
     ){
         super( app.p, 0, 0, 50 )
-        this.life = this.lifeMax
     }
 
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
@@ -131,10 +130,9 @@ export default class Player extends Positionable {
         // SHOOTS
 
         if(this.shootrate.canTrigger()){
-            const { map } = this.p
             const direction = {
-                x: map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5),
-                y: map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5)
+                x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5),
+                y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5)
             }
             if(this.getTemporary('star')){
                 if(!this.app.shootKeysIsNotPressed()){
@@ -185,54 +183,54 @@ export default class Player extends Positionable {
     }
 
     public draw(): void {
-        const { fill, ellipse, stroke, strokeWeight, rect, noStroke, map } = this.p
         this.shoots.forEach( shoot => shoot.draw() )
-        fill(255)
-        ellipse(this.x,this.y,this.radius)
-        fill(0,100)
-        stroke(255)
-        strokeWeight(1)
-        rect(this.x - 40,this.y - 50,80,14,5)
-        noStroke()
-        fill(
-            map( this.life, 0, this.lifeMax, 255, 50 ),
-            map( this.life, 0, this.lifeMax, 50, 255 ),
+        this.p.fill(255)
+        this.p.ellipse(this.x,this.y,this.radius)
+        this.p.fill(0,100)
+        this.p.stroke(255)
+        this.p.strokeWeight(1)
+        this.p.rect(this.x - 40,this.y - 50,80,14,5)
+        this.p.noStroke()
+        this.p.fill(
+            this.p.map( this.life || this.baseLife, 0, this.baseLife, 255, 50 ),
+            this.p.map( this.life || this.baseLife, 0, this.baseLife, 50, 255 ),
             50, 200
         )
-        rect(
+        this.p.rect(
             this.x - 40,
             this.y - 50,
-            map( this.life, 0, this.lifeMax, 0, 80 ),
+            this.p.map( this.life || this.baseLife, 0, this.baseLife, 0, 80 ),
             14, 5
         )
         let flagIndex = 0
         for(const flag in this.temporary){
             if(this.getTemporary(flag)){
                 const temp = this.temporary[flag]
-                fill(0,100)
-                stroke(255)
-                strokeWeight(1)
-                rect(
+                this.p.fill(0,100)
+                this.p.stroke(255)
+                this.p.strokeWeight(1)
+                this.p.rect(
                     this.x - 40,
                     this.y - (64 + 14 * flagIndex),
                     80, 14, 5
                 )
-                noStroke()
-                fill(255,0,190)
-                rect(
-                    (this.x - 40) + map( Date.now(), temp.triggerTime, temp.timeout, 0, 66 ),
+                this.p.noStroke()
+                this.p.fill(255,0,190)
+                this.p.rect(
+                    (this.x - 40) + this.p.map( Date.now(), temp.triggerTime, temp.timeout, 0, 66 ),
                     this.y - (64 + 14 * flagIndex),
-                    map( Date.now(), temp.triggerTime, temp.timeout, 66, 0 ),
+                    this.p.map( Date.now(), temp.triggerTime, temp.timeout, 66, 0 ),
                     14, 5
                 )
-                fill(200,100)
-                rect(
+                this.p.fill(200,100)
+                this.p.rect(
                     this.x + 26,
                     this.y - (64 + 14 * flagIndex),
                     14, 14, 5
                 )
-                fill(255,0,190)
+                this.p.fill(255,0,190)
                 temp.shape(
+                    this.p,
                     this.x + 26,
                     this.y - (64 + 14 * flagIndex),
                     14, 14
@@ -242,30 +240,31 @@ export default class Player extends Positionable {
         }
         const bonusLength = this.consumables.length + this.passives.length
         if(bonusLength > 0){
-            fill(0,100)
-            stroke(255)
-            strokeWeight(1)
+            this.p.fill(0,100)
+            this.p.stroke(255)
+            this.p.strokeWeight(1)
             const width = bonusLength * 14
-            rect(
+            this.p.rect(
                 this.x - width * .5,
                 this.y + 36,
                 width, 14, 5
             )
-            noStroke()
+            this.p.noStroke()
             const bonus:any[] = [ ...this.consumables, ...this.passives ]
             bonus.forEach( (bonus, index) => {
-                fill(200,100)
-                rect(
+                this.p.fill(200,100)
+                this.p.rect(
                     this.x - width * .5 + index * 14,
                     this.y + 36, 14, 14, 5
                 )
-                bonus.quantity ? fill(255,0,190) : fill(190,0,255)
+                bonus.quantity ? this.p.fill(255,0,190) : this.p.fill(190,0,255)
                 bonus.shape(
+                    this.p,
                     this.x - width * .5 + index * 14,
                     this.y + 36, 14, 14
                 )
                 for(let i=0; i<(bonus.quantity||bonus.level); i++){
-                    ellipse(
+                    this.p.ellipse(
                         this.x - width * .5 + 7 + index * 14,
                         this.y + 57 + i * 14,5
                     )

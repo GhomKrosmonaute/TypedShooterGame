@@ -12,14 +12,31 @@ export default class Positionable {
     public get radius(){ return this.z }
     public set radius( z ){ this.z = z }
 
-    public move( x:number, y:number ){
+    public move( x:number, y:number, z:number = 0 ){
         this.x += x
         this.y += y
+        this.z += z
     }
 
-    public place( x:number, y:number ){
+    public place( x:number, y:number, z:number = this.z ){
         this.x = x
         this.y = y
+        this.z = z
+    }
+
+    public follow( positionable:Positionable, speed:number ){
+        const angle = this.p.degrees(
+            this.p.atan2(
+                positionable.y - this.y,
+                positionable.x - this.x
+            ) + this.p.PI
+        )
+        const speedX = speed * this.p.cos(this.p.radians(angle))
+        const speedY = speed * this.p.sin(this.p.radians(angle))
+        this.move(
+            speedX * -2,
+            speedY * -2
+        )
     }
 
     public placeOutOfLimits(){

@@ -4,14 +4,15 @@ import Shoot from './Shoot';
 
 export default abstract class Enemy extends Positionable {
 
+    protected baseGain:number
+    protected baseLife:number
+    protected baseSpeed:number
     public abstract gain:number
-    public abstract lifeMax:number
+    public abstract life:number
     public abstract speed:number
     public abstract pattern():void
 
-    public life:number
-
-    constructor(
+    protected constructor(
         public app:App
     ){
         super( app.p, 0, 0, 40 )
@@ -28,24 +29,24 @@ export default abstract class Enemy extends Positionable {
             this.app.player.life -= this.life
             this.kill()
         }
-        this.pattern()
+        if(!this.isOutOfLimits())
+            this.pattern()
     }
 
     public draw(){
-        const { fill, map, ellipse, width, height } = this.p
-        fill(
-            Math.min(map(this.gain, 1, 10, 100, 255),255),
+        this.p.fill(
+            Math.min(this.p.map(this.gain, 1, 10, 100, 255),255),
             80,
-            Math.max(map(this.gain, 1, 10, 255, 100),100)
+            Math.max(this.p.map(this.gain, 1, 10, 255, 100),100)
         )
         if(!this.isOnScreen()){
-            ellipse(
-                this.x > width * .5 ? width * .5 : this.x < width * -.5 ? width * -.5 : this.x,
-                this.y > height * .5 ? height * .5 : this.y < height * -.5 ? height * -.5 : this.y,
+            this.p.ellipse(
+                this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
+                this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
                 (this.currentRadius + 1) / 3
             )
         }
-        ellipse(
+        this.p.ellipse(
             this.x,
             this.y,
             this.currentRadius
@@ -66,32 +67,22 @@ export default abstract class Enemy extends Positionable {
     }
 
     public get currentRadius(){
-        return Math.min(this.p.map(this.life, 0, this.lifeMax, 0, this.radius),150)
-    }
-
-    public follow( positionable:Positionable, speed:number = this.speed ){
-        const { degrees, atan2, PI, cos, sin, radians } = this.p
-        const angle = degrees(
-            atan2(
-                positionable.y - this.y,
-                positionable.x - this.x
-            ) + PI
-        )
-        const speedX = speed * cos(radians(angle))
-        const speedY = speed * sin(radians(angle))
-        this.move(
-            speedX * -2,
-            speedY * -2
-        )
+        return Math.min(this.p.map(this.life, 0, this.baseLife, 0, this.radius),150)
     }
 
     public reset(): void {
-        const { random, width, height } = this.p
-        this.gain = 1
-        this.life = this.lifeMax
+        if(
+            this.baseGain &&
+            this.baseLife &&
+            this.baseSpeed
+        ){
+            this.gain = this.baseGain
+            this.life = this.baseLife
+            this.speed = this.baseSpeed
+        }
         while(this.isOnScreen()){
-            this.x = random( width * -1.5, width * 1.5 )
-            this.y = random( height * -1.5, height * 1.5 )
+            this.x = this.p.random( this.p.width * -1.5, this.p.width * 1.5 )
+            this.y = this.p.random( this.p.height * -1.5, this.p.height * 1.5 )
         }
     }
 

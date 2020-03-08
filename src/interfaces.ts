@@ -1,11 +1,9 @@
 
 import Bonus from './Shooter/Bonus';
+import p5 from 'p5';
 
 interface BonusExtender extends Bonus {
-    shape: (
-        x:number, y:number,
-        w:number, h:number
-    ) => void
+    shape: ShapeFunction
 }
 
 export interface Consumable extends BonusExtender {
@@ -26,7 +24,9 @@ export interface TemporaryEffects {
 }
 
 export type ShapeFunction = (
-    x:number, y:number, w:number, h:number
+    p:p5,
+    x:number, y:number,
+    w:number, h:number
 ) => void
 
 export interface Keys {
