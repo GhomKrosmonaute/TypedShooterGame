@@ -1,0 +1,32 @@
+import App from './App';
+import Positionable from './Positionable';
+import Shoot from './Shoot';
+import { Consumable, Passive, ShapeFunction, TemporaryEffects } from '../interfaces';
+export default class Player extends Positionable {
+    app: App;
+    baseLife: number;
+    life: number;
+    score: number;
+    shootspeed: number;
+    shootrange: number;
+    shootdamage: number;
+    speedX: number;
+    speedY: number;
+    speedMax: number;
+    acc: number;
+    desc: number;
+    highscore: number;
+    consumables: Consumable[];
+    passives: Passive[];
+    shoots: Shoot[];
+    temporary: TemporaryEffects;
+    private shootrate;
+    constructor(app: App);
+    setTemporary(flag: string, duration: number, shape: ShapeFunction): void;
+    getTemporary(flag: string): boolean;
+    addPassive(passive: Passive): void;
+    addConsumable(consumable: Consumable): void;
+    step(): void;
+    keyPressed(key: string): void;
+    draw(): void;
+}

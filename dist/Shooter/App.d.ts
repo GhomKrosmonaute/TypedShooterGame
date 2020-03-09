@@ -1,0 +1,35 @@
+import p5 from 'p5';
+import { Keys } from '../interfaces';
+import Particles from './Particles';
+import Enemy from './Enemy';
+import Player from './Player';
+import Bonus from './Bonus';
+import Rate from './Rate';
+export default class App {
+    p: p5;
+    private readonly keysImage;
+    private readonly showKeysStepsInit;
+    private readonly bonusFrequence;
+    private readonly maxEnemyCount;
+    private readonly minEnemyCount;
+    private showKeys;
+    private showKeysSteps;
+    keys: Keys;
+    player: Player;
+    rate: Rate;
+    background: Particles;
+    foreground: Particles;
+    enemies: Enemy[];
+    bonus: Bonus[];
+    constructor(p: p5);
+    reset(): void;
+    step(): void;
+    move(x: number, y: number): void;
+    draw(): void;
+    keyReleased(key: string): void;
+    keyPressed(key: string): void;
+    moveKeysIsNotPressed(): boolean;
+    shootKeysIsNotPressed(): boolean;
+    areOnContact(positionable1: any, positionable2: any): boolean;
+    readonly enemyCount: number;
+}
