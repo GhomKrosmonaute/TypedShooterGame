@@ -1,7 +1,7 @@
 
 # Shooter Game 👾
 
-Le test en ligne c'est par [ici](./dist/index.html) !<br>
+**Le test en ligne c'est par [ici](https://camilleabella.github.io/TypedShooterGame/) !**<br>
 Les specs c'est en dessous.
 
 ## Bonus list
