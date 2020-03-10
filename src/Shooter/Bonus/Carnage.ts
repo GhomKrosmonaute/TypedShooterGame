@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class Carnage extends Bonus implements Consumable {
 
     public quantity = 1
+    public id = 'carnage'
 
     public applyEffect(){
         this.app.player.addConsumable(this)

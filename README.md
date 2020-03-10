@@ -1,7 +1,8 @@
 
 # Shooter Game 👾
 
-Les specs c'est par ici !
+Le test en ligne c'est par [ici](./dist/index.html) !<br>
+Les specs c'est en dessous.
 
 ## Bonus list
 

@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class DeadChain extends Bonus implements Passive {
 
     public level = 1
+    public id = 'deadchain'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

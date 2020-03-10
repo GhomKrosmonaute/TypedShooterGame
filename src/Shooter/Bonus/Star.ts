@@ -6,6 +6,7 @@ import p5 from 'p5'
 export default class Star extends Bonus implements Consumable {
 
     public quantity = 1
+    public id = 'star'
     
     applyEffect(): void {
         this.app.player.addConsumable(this)

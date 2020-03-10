@@ -32,7 +32,7 @@ export default class Player extends Positionable {
     getTemporary(flag: string): boolean;
     addPassive(passive: Passive): void;
     addConsumable(consumable: Consumable): void;
-    getPassive(name: string): Passive | null;
+    getPassive(id: string): Passive | null;
     step(): void;
     keyPressed(key: string): void;
     draw(): void;

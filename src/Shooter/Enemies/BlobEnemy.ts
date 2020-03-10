@@ -4,11 +4,10 @@ import App from '../App';
 export default class BlobEnemy extends Enemy {
 
     speed: number = 2
-    baseGain: number = 1
-    baseLife: number = 2
     gain: number = 1
     life: number = 2
     maxLife: number = 30
+    id = 'blob'
 
     constructor( app:App ) {
         super( app )

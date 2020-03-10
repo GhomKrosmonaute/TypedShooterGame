@@ -70,9 +70,7 @@ export default class Player extends Positionable {
     }
 
     public addPassive( passive:Passive ): void {
-        const exists = this.passives.find( p => {
-            return p.constructor.name === passive.constructor.name
-        })
+        const exists = this.passives.find( p => p.id === passive.id )
         if(exists){
             exists.level ++
         }else{
@@ -81,9 +79,7 @@ export default class Player extends Positionable {
     }
 
     public addConsumable( consumable:Consumable ): void {
-        const exists = this.consumables.find( c => {
-            return c.constructor.name === consumable.constructor.name
-        })
+        const exists = this.consumables.find( c => c.id === consumable.id )
         if(exists){
             exists.quantity ++
         }else{
@@ -91,8 +87,8 @@ export default class Player extends Positionable {
         }
     }
 
-    public getPassive( name:string ): Passive | null {
-        return this.passives.find( p => p.constructor.name.toLowerCase() === name.toLowerCase() )
+    public getPassive( id:string ): Passive | null {
+        return this.passives.find( p => p.id === id )
     }
 
     public step(): void {
@@ -203,7 +199,7 @@ export default class Player extends Positionable {
                 this.consumables[i].quantity --
                 if(this.consumables[i].quantity <= 0)
                     this.consumables = this.consumables.filter( c => {
-                        return c.constructor.name !== this.consumables[i].constructor.name
+                        return c.id !== this.consumables[i].id
                     })
             }
         })

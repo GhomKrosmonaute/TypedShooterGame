@@ -5,6 +5,7 @@ import p5 from 'p5'
 export default class Sniper extends Bonus implements Passive {
 
     public level = 1
+    public id = 'sniper'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

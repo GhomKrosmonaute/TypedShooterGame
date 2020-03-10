@@ -1,8 +1,8 @@
 import p5 from 'p5';
-import Drill from './Shooter/Bonus/Drill';
 import App from './Shooter/App';
 import Bonus from './Shooter/Bonus';
 import Enemy from './Shooter/Enemy';
+import Drill from './Shooter/Bonus/Drill';
 import Carnage from './Shooter/Bonus/Carnage';
 import Falcon from './Shooter/Bonus/Falcon';
 import Heal from './Shooter/Bonus/Heal';
@@ -45,27 +45,27 @@ export function pick<T>( list:T[] ): T {
 }
 
 export function pickEnemy( app:App ): Enemy {
-    const rdm = Math.random()
-    const enemyCount = 2
-    let i = 1
-    if (rdm < i / enemyCount) return new AyaEnemy(app); else i++
-    return new BlobEnemy(app)
+    const rdm = Math.floor(Math.random() * 2)
+    switch (rdm) {
+        case 0: return new AyaEnemy(app)
+        case 1: return new BlobEnemy(app)
+    }
 }
 
 export function pickBonus( app:App ): Bonus {
-    const rdm = Math.random()
-    const bonusCount = 12
-    let i = 1
-    if (rdm < i / bonusCount) return new Heal(app); else i++
-    if (rdm < i / bonusCount) return new Star(app); else i++
-    if (rdm < i / bonusCount) return new Carnage(app); else i++
-    if (rdm < i / bonusCount) return new Drill(app); else i++
-    if (rdm < i / bonusCount) return new Falcon(app); else i++
-    if (rdm < i / bonusCount) return new Shield(app); else i++
-    if (rdm < i / bonusCount) return new Shotgun(app); else i++
-    if (rdm < i / bonusCount) return new Bazooka(app); else i++
-    if (rdm < i / bonusCount) return new Minigun(app); else i++
-    if (rdm < i / bonusCount) return new Sniper(app); else i++
-    if (rdm < i / bonusCount) return new DeadChain(app)
-    return new Ping(app)
+    const rdm = Math.floor(Math.random() * 12)
+    switch (rdm) {
+        case 0: return new Heal(app)
+        case 1: return new Star(app)
+        case 2: return new Carnage(app)
+        case 3: return new Drill(app)
+        case 4: return new Falcon(app)
+        case 5: return new Shield(app)
+        case 6: return new Shotgun(app)
+        case 7: return new Bazooka(app)
+        case 8: return new Minigun(app)
+        case 9: return new Sniper(app)
+        case 10: return new DeadChain(app)
+        case 11: return new Ping(app)
+    }
 }

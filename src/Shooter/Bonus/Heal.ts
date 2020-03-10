@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class Heal extends Bonus implements Consumable {
 
     public quantity = 1
+    public id = 'heal'
 
     public exec(): void {
         this.app.player.life = this.app.player.baseLife

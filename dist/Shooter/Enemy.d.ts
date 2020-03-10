@@ -10,6 +10,7 @@ export default abstract class Enemy extends Positionable {
     abstract life: number;
     abstract speed: number;
     abstract pattern(): void;
+    abstract id: string;
     protected constructor(app: App);
     step(): void;
     draw(): void;

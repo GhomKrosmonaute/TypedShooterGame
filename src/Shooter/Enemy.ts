@@ -12,6 +12,7 @@ export default abstract class Enemy extends Positionable {
     public abstract life:number
     public abstract speed:number
     public abstract pattern():void
+    public abstract id:string
 
     protected constructor(
         public app:App
@@ -27,7 +28,7 @@ export default abstract class Enemy extends Positionable {
                     this.shoot(shoot)
         })
         if(this.app.areOnContact(this,this.app.player)){
-            if(this.constructor.name === 'AyaEnemy'){
+            if(this.id === 'aya'){
                 this.app.player.life -= this.life
                 this.kill()
             }else{

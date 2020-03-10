@@ -6,6 +6,7 @@ export default class AyaEnemy extends Enemy {
     speed: number = 4
     gain: number = 1
     life: number = 2
+    id = 'aya'
 
     constructor( app:App ) {
         super( app )
