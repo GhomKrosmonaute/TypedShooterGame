@@ -78,15 +78,18 @@ export default abstract class Enemy extends Positionable {
 
     public get currentRadius(){
         const bonusLife = this.life - this.baseLife
-        return Math.min(
-            this.p.map(
-                this.life,
-                0,
-                this.baseLife,
-                0,
-                this.radius
-            ),
-            bonusLife > 0 ? this.radius + bonusLife * 2 : this.radius
+        return Math.max(
+            this.radius / 2,
+            Math.min(
+                this.p.map(
+                    this.life,
+                    0,
+                    this.baseLife,
+                    0,
+                    this.radius
+                ),
+                bonusLife > 0 ? this.radius + bonusLife * 2 : this.radius
+            )
         )
     }
 

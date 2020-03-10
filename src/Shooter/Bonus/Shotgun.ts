@@ -12,6 +12,9 @@ export default class Shotgun extends Bonus implements Passive {
 
     shape(p:p5, x: number, y: number, w: number, h: number): void {
         // TODO: look for a good shape
+        this.p.textSize(h * .5)
+        this.p.textAlign(this.p.CENTER,this.p.CENTER)
+        this.p.text('SG',x + w * .5,y + h * .5)
     }
 
 }

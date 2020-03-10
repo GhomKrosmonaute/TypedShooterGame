@@ -8,6 +8,9 @@ export default class Falcon extends Bonus implements Passive {
 
     shape(p:p5, x: number, y: number, w: number, h: number): void {
         // TODO: psy eye
+        this.p.textSize(h * .5)
+        this.p.textAlign(this.p.CENTER,this.p.CENTER)
+        this.p.text('F',x + w * .5,y + h * .5)
     }
 
     applyEffect(): void {

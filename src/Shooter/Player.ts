@@ -9,7 +9,7 @@ export default class Player extends Positionable {
     public baseLife = 5
     public life = 5
     public score = 0
-    public baseShootSpeed = 15
+    public baseShootSpeed = 10
     public baseShootRange = 300
     public baseShootDamage = 1
     public baseShootRate = 500
@@ -49,7 +49,7 @@ export default class Player extends Positionable {
     public get shootRate(): number {
         const minigun = this.getPassive('minigun')
         if(!minigun) return this.baseShootRate
-        return this.baseShootRate / minigun.level
+        return this.baseShootRate / this.p.map(minigun.level,1,3,1.5,2)
     }
 
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
@@ -297,6 +297,10 @@ export default class Player extends Positionable {
                     )
                 }
             })
+        }
+
+        if(this.app.debug){
+
         }
 
     }

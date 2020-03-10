@@ -1,5 +1,6 @@
 import Bonus from './Shooter/Bonus';
 import p5 from 'p5';
+import App from "./Shooter/App";
 interface BonusExtender extends Bonus {
     shape: ShapeFunction;
 }
@@ -11,11 +12,21 @@ export interface Passive extends BonusExtender {
     level: number;
 }
 export interface TemporaryEffects {
-    [key: string]: {
-        shape: ShapeFunction;
-        triggerTime: number;
-        timeout: number;
-    };
+    [key: string]: TemporaryEffect;
+}
+export interface TemporaryEffect {
+    shape: ShapeFunction;
+    triggerTime: number;
+    timeout: number;
+}
+export interface GameAnimation {
+    draw: (app: App, time: number) => void;
+    duration: number;
+}
+export interface PuttedAnimation {
+    animation: GameAnimation;
+    startTime: number;
+    endTime: number;
 }
 export declare type ShapeFunction = (p: p5, x: number, y: number, w: number, h: number) => void;
 export interface Keys {

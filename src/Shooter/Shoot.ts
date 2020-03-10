@@ -5,6 +5,7 @@ import Player from './Player';
 export default class Shoot extends Positionable {
 
     public readonly basePosition:Positionable
+    public readonly direction:Positionable
     private readonly speed:number
     public readonly damage:number
     private drill:number = 1
@@ -12,11 +13,18 @@ export default class Shoot extends Positionable {
 
     constructor(
         public player:Player,
-        private readonly directionX:number,
-        private readonly directionY:number
+        directionX:number,
+        directionY:number
     ){
         super( player.p, player.x, player.y, 20 )
-        this.basePosition = new Positionable( this.p, player.x, player.y )
+        this.direction = new Positionable( this.p,
+            directionX * 5000,
+            directionY * 5000
+        )
+        this.basePosition = new Positionable( this.p,
+            player.x + player.speedX * 10,
+            player.y + player.speedY * 10
+        )
         this.speed = this.player.shootSpeed
         this.damage = this.player.shootDamage
         const drill = this.player.getPassive('drill')
@@ -49,25 +57,21 @@ export default class Shoot extends Positionable {
                     dist: Infinity
                 }
                 for(const enemy of this.player.app.enemies){
-                    const dist = enemy.dist(this)
-                    if(dist < falcon.level * 100 && temp.dist < dist){
-                        temp.enemy = enemy
-                        temp.dist = dist
+                    if(!this.toIgnore.includes(enemy)){
+                        const dist = enemy.dist(this)
+                        if(dist < falcon.level * 100 && temp.dist > dist){
+                            temp.enemy = enemy
+                            temp.dist = dist
+                        }
                     }
+
                 }
                 target = temp.enemy
             }
-            if(falcon && target){
-                // follow enemy
+            if(target){
                 this.follow(target,this.speed)
             }else{
-                // rectilinear uniform move
-                if(this.directionX !== 0){
-                    this.x += this.speed * this.directionX
-                }
-                if(this.directionY !== 0){
-                    this.y += this.speed * this.directionY
-                }
+                this.follow(this.direction,this.speed)
             }
         }
     }
@@ -89,7 +93,7 @@ export default class Shoot extends Positionable {
                         0
                     ),
                     this.p.map(
-                        this.dist(this.basePosition),
+                        this.dist(this.player),
                         0,
                         this.player.shootRange,
                         0,
@@ -98,6 +102,25 @@ export default class Shoot extends Positionable {
                 )
             )
         )
+        if(this.player.app.debug){
+            this.p.strokeWeight(1)
+            this.p.noFill()
+            this.p.stroke(255,0,0)
+            this.p.ellipse(
+                this.basePosition.x,
+                this.basePosition.y,
+                this.player.shootRange * 2
+            )
+            const falcon = this.player.getPassive('falcon')
+            if(falcon){
+                this.p.ellipse(
+                    this.x,
+                    this.y,
+                    falcon.level * 100
+                )
+            }
+            this.p.noStroke()
+        }
     }
 
     public get currentRadius(): number {

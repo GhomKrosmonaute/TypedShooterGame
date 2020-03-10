@@ -3,9 +3,8 @@ import Enemy from './Enemy';
 import Player from './Player';
 export default class Shoot extends Positionable {
     player: Player;
-    private readonly directionX;
-    private readonly directionY;
     readonly basePosition: Positionable;
+    readonly direction: Positionable;
     private readonly speed;
     readonly damage: number;
     private drill;

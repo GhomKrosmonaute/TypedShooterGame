@@ -1,5 +1,5 @@
 import p5 from 'p5';
-import { Keys } from '../interfaces';
+import { GameAnimation, Keys, PuttedAnimation } from '../interfaces';
 import Particles from './Particles';
 import Enemy from './Enemy';
 import Player from './Player';
@@ -12,6 +12,7 @@ export default class App {
     private readonly bonusFrequency;
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
+    readonly debug = false;
     private showKeys;
     private showKeysSteps;
     keys: Keys;
@@ -20,6 +21,7 @@ export default class App {
     background: Particles;
     foreground: Particles;
     particles: Particles;
+    animations: PuttedAnimation[];
     enemies: Enemy[];
     bonus: Bonus[];
     constructor(p: p5);
@@ -27,6 +29,7 @@ export default class App {
     step(): void;
     move(x: number, y: number): void;
     draw(): void;
+    setAnimation(animation: GameAnimation): void;
     keyReleased(key: string): void;
     keyPressed(key: string): void;
     moveKeysIsNotPressed(): boolean;

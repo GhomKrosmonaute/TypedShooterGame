@@ -11,7 +11,24 @@ export default class Bazooka extends Bonus implements Passive {
     }
 
     shape(p:p5, x: number, y: number, w: number, h: number): void {
-        // TODO: look to good shape
+        p.rect(
+            x + w * .2,
+            y + h * .2,
+            w * .2,
+            h * .6
+        )
+        p.rect(
+            x + w * .6,
+            y + h * .2,
+            w * .2,
+            h * .6
+        )
+        p.rect(
+            x + w * .4,
+            y + h * .4,
+            w * .2,
+            h * .4
+        )
     }
 
 }

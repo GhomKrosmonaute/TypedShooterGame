@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
 import keysImage from './images/keys.png'
-import { Keys, MoveKeys, ShotKeys } from '../interfaces';
+import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys} from '../interfaces';
 import Particles from './Particles'
 import Enemy from './Enemy'
 import Player from './Player'
@@ -17,6 +17,8 @@ export default class App {
     private readonly maxEnemyCount = 30
     private readonly minEnemyCount = 5
 
+    public readonly debug = false
+
     private showKeys:boolean
     private showKeysSteps:number
 
@@ -26,6 +28,7 @@ export default class App {
     public background:Particles
     public foreground:Particles
     public particles:Particles
+    public animations:PuttedAnimation[]
     public enemies:Enemy[]
     public bonus:Bonus[]
 
@@ -41,13 +44,14 @@ export default class App {
     }
 
     public reset(): void {
-        this.particles = new Particles(this,30,0,3)
+        this.particles = new Particles(this,50,0,5)
         this.background = new Particles(this,30,0,1)
         this.foreground = new Particles(this,10,1,2)
         this.player = new Player(this)
         this.rate = new Rate(25)
         this.showKeys = true
         this.showKeysSteps = this.showKeysStepsInit
+        this.animations = []
         this.enemies = []
         this.bonus = []
         for(let i=0; i<this.enemyCount; i++){
@@ -64,11 +68,17 @@ export default class App {
                 this.showKeys = false
             }else{
                 this.particles.step()
-                this.particles.move(0,-3)
+                this.particles.move(
+                    this.p.map(this.p.mouseX, 0, this.p.width, -2,2),
+                    this.p.map(this.p.mouseY, 0, this.p.height, -2,2)
+                )
             }
         }else if(this.showKeysSteps > 0){
             this.particles.step()
-            this.particles.move(0,-3)
+            this.particles.move(
+                this.p.map(this.p.mouseX, 0, this.p.width, -2,2),
+                this.p.map(this.p.mouseY, 0, this.p.height, -2,2)
+            )
             this.showKeysSteps --
         }else{
             this.background.step()
@@ -76,6 +86,7 @@ export default class App {
             this.bonus.forEach( bonus => bonus.step() )
             this.bonus = this.bonus.filter( bonus => !bonus.isOutOfLimits() )
             this.enemies = this.enemies.filter( enemy => !enemy.isOutOfLimits() )
+            this.animations = this.animations.filter( anim => Date.now() < anim.endTime )
             while(this.enemies.length < this.enemyCount)
                 this.enemies.push(pickEnemy(this))
             if(this.rate.canTrigger(true)){
@@ -107,6 +118,23 @@ export default class App {
         if(!this.showKeys){
             this.background.draw()
             this.enemies.forEach( enemy => enemy.draw() )
+            this.animations.forEach( anim => {
+                anim.animation.draw( this,
+                    Math.max(
+                        0,
+                        Math.min(
+                            anim.animation.duration,
+                            this.p.map(
+                                Date.now(),
+                                anim.startTime,
+                                anim.endTime,
+                                0,
+                                anim.animation.duration
+                            )
+                        )
+                    )
+                )
+            })
             this.bonus.forEach( bonus => bonus.draw() )
             this.player.draw()
             this.foreground.draw()
@@ -114,7 +142,11 @@ export default class App {
         if(this.showKeysSteps > 0){
             this.particles.draw()
             this.p.tint(255, this.p.map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
-            this.p.image(this.keysImage,-400,-300)
+            this.p.image(
+                this.keysImage,
+                -400 + this.p.map(this.p.mouseX,0,this.p.width,-15,15),
+                -300 + this.p.map(this.p.mouseY,0,this.p.height,-15,15)
+            )
         }else{
             const isHigh = this.player.score > this.player.highScore
             this.p.fill(0,90)
@@ -124,7 +156,19 @@ export default class App {
                 this.p.rect(
                     this.p.width*-.3,
                     this.p.height * -.5 + 50,
-                    Math.max(0,Math.min(this.p.map(this.player.score,0,this.player.highScore,0,this.p.width*.6),this.p.width*.6)),
+                    Math.max(
+                        0,
+                        Math.min(
+                            this.p.map(
+                                this.player.score,
+                                0,
+                                this.player.highScore,
+                                0,
+                                this.p.width*.6
+                            ),
+                            this.p.width*.6
+                        )
+                    ),
                     30,
                     2
                 )
@@ -140,6 +184,15 @@ export default class App {
             if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
             else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         }
+    }
+
+    public setAnimation( animation:GameAnimation ){
+        const puttedAnimation:PuttedAnimation = {
+            animation: animation,
+            startTime: Date.now(),
+            endTime: Date.now() + animation.duration
+        }
+        this.animations.push(puttedAnimation)
     }
 
     public keyReleased(key:string){ this.keys[key] = false }
