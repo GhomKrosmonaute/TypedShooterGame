@@ -1,5 +1,5 @@
 export default class Rate {
-    private interval;
+    interval: number;
     private triggerTime;
     constructor(interval: number);
     canTrigger(trigger?: boolean): boolean;

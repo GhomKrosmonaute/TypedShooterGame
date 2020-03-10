@@ -9,26 +9,47 @@ export default class Player extends Positionable {
     public baseLife = 5
     public life = 5
     public score = 0
-    public shootspeed = 15
-    public shootrange = 300
-    public shootdamage = 1
+    public baseShootSpeed = 15
+    public baseShootRange = 300
+    public baseShootDamage = 1
+    public baseShootRate = 500
     public speedX = 0
     public speedY = 0
     public speedMax = 10
     public acc = 3
     public desc = .7
-    public highscore:number = JSON.parse(localStorage.getItem('shooter')).highscore
+    public highScore:number = JSON.parse(localStorage.getItem('shooter')).highScore
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shoots:Shoot[] = []
     public temporary:TemporaryEffects = {}
 
-    private shootrate = new Rate(500)
+    public shootRating:Rate
 
     constructor(
         public app:App
     ){
         super( app.p, 0, 0, 50 )
+        this.shootRating = new Rate(this.baseShootRate)
+    }
+
+    public get shootSpeed(): number {
+        return this.baseShootSpeed
+    }
+    public get shootRange(): number {
+        const sniper = this.getPassive('sniper')
+        if(!sniper) return this.baseShootRange
+        return this.baseShootRange + sniper.level * (this.baseShootRange * .25)
+    }
+    public get shootDamage(): number {
+        const shotgun = this.getPassive('shotgun')
+        if(!shotgun) return this.baseShootDamage
+        return this.baseShootDamage + shotgun.level * (this.baseShootDamage * .25)
+    }
+    public get shootRate(): number {
+        const minigun = this.getPassive('minigun')
+        if(!minigun) return this.baseShootRate
+        return this.baseShootRate / minigun.level
     }
 
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
@@ -70,14 +91,18 @@ export default class Player extends Positionable {
         }
     }
 
+    public getPassive( name:string ): Passive | null {
+        return this.passives.find( p => p.constructor.name.toLowerCase() === name.toLowerCase() )
+    }
+
     public step(): void {
 
         // MORT ?
 
         if(this.life <= 0){
-            if(this.score > this.highscore){
+            if(this.score > this.highScore){
                 const storage = JSON.parse(localStorage.getItem('shooter'))
-                storage.highscore = this.score
+                storage.highScore = this.score
                 localStorage.setItem('shooter',JSON.stringify(storage))
             }
             this.app.reset()
@@ -129,14 +154,16 @@ export default class Player extends Positionable {
 
         // SHOOTS
 
-        if(this.shootrate.canTrigger()){
+        this.shootRating.interval = this.shootRate
+
+        if(this.shootRating.canTrigger()){
             const direction = {
                 x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5),
                 y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5)
             }
             if(this.getTemporary('star')){
                 if(!this.app.shootKeysIsNotPressed()){
-                    this.shootrate.trigger()
+                    this.shootRating.trigger()
                     this.shoots.push(
                         new Shoot( this,1 + direction.x,direction.y),
                         new Shoot( this,-1 + direction.x,direction.y),
@@ -154,7 +181,7 @@ export default class Player extends Positionable {
                 if(keys.s) direction.y += 1
                 if(keys.d) direction.x += 1
                 if(!this.app.shootKeysIsNotPressed()){
-                    this.shootrate.trigger()
+                    this.shootRating.trigger()
                     this.shoots.push( new Shoot( this,
                         direction.x,
                         direction.y

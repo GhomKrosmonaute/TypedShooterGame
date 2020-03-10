@@ -6,6 +6,7 @@ export default class BlobEnemy extends Enemy {
     baseLife: number;
     gain: number;
     life: number;
+    maxLife: number;
     constructor(app: App);
     pattern(): void;
     absorb(enemy: Enemy): void;

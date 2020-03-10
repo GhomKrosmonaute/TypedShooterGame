@@ -1,6 +1,7 @@
 import Positionable from './Positionable';
 import App from './App';
 import Shoot from './Shoot';
+import {isWhiteSpace} from "tslint";
 
 export default abstract class Enemy extends Positionable {
 
@@ -26,8 +27,17 @@ export default abstract class Enemy extends Positionable {
                     this.shoot(shoot)
         })
         if(this.app.areOnContact(this,this.app.player)){
-            this.app.player.life -= this.life
-            this.kill()
+            if(this.constructor.name === 'AyaEnemy'){
+                this.app.player.life -= this.life
+                this.kill()
+            }else{
+                const shield = this.app.player.getPassive('shield')
+                if(!shield || shield.level < this.life){
+                    this.app.player.life -= this.life
+                }
+                this.kill(!!shield)
+            }
+
         }
         if(!this.isOutOfLimits())
             this.pattern()
@@ -67,7 +77,17 @@ export default abstract class Enemy extends Positionable {
     }
 
     public get currentRadius(){
-        return Math.min(this.p.map(this.life, 0, this.baseLife, 0, this.radius),150)
+        const bonusLife = this.life - this.baseLife
+        return Math.min(
+            this.p.map(
+                this.life,
+                0,
+                this.baseLife,
+                0,
+                this.radius
+            ),
+            bonusLife > 0 ? this.radius + bonusLife * 2 : this.radius
+        )
     }
 
     public reset(): void {

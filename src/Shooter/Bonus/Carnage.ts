@@ -12,7 +12,7 @@ export default class Carnage extends Bonus implements Consumable {
 
     public exec(): void {
         this.app.enemies.forEach( enemy => {
-            if(this.dist(enemy) < 1000)
+            if(this.app.player.dist(enemy) < 1000)
                 enemy.kill(true)
         })
     }

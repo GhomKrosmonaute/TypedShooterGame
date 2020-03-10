@@ -4,7 +4,7 @@ export default class Rate {
     private triggerTime = Date.now()
 
     constructor(
-        private interval:number
+        public interval:number
     ){}
 
     public canTrigger( trigger:boolean = false ): boolean {

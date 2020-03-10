@@ -70,6 +70,7 @@ class Particle extends Positionable {
 
     public draw(){
         this.color.setAlpha(this.opacity)
+        this.p.noStroke()
         this.p.fill(this.color)
         this.p.ellipse(
             this.x,

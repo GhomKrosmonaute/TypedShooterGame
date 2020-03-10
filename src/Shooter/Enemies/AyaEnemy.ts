@@ -15,8 +15,6 @@ export default class AyaEnemy extends Enemy {
     }
 
     public pattern(): void {
-        if(this.life === undefined)
-            throw Error(`Aya life is undefined`)
         this.follow(this.app.player, this.speed)
     }
 

@@ -5,6 +5,7 @@ export default class Shoot extends Positionable {
     player: Player;
     private readonly directionX;
     private readonly directionY;
+    readonly basePosition: Positionable;
     private readonly speed;
     readonly damage: number;
     private drill;
@@ -13,4 +14,5 @@ export default class Shoot extends Positionable {
     handleShoot(enemy: Enemy): boolean;
     step(): void;
     draw(): void;
+    readonly currentRadius: number;
 }

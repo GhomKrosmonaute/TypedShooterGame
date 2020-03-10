@@ -9,7 +9,7 @@ export default class App {
     p: p5;
     private readonly keysImage;
     private readonly showKeysStepsInit;
-    private readonly bonusFrequence;
+    private readonly bonusFrequency;
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
     private showKeys;
@@ -19,6 +19,7 @@ export default class App {
     rate: Rate;
     background: Particles;
     foreground: Particles;
+    particles: Particles;
     enemies: Enemy[];
     bonus: Bonus[];
     constructor(p: p5);

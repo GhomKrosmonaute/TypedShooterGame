@@ -1,7 +1,7 @@
-import Bonus from '../Bonus';
-import {Consumable} from '../../interfaces';
-import {seconds, star} from '../../utils';
-import p5 from 'p5';
+import Bonus from '../Bonus'
+import {Consumable} from '../../interfaces'
+import {seconds, star} from '../../utils'
+import p5 from 'p5'
 
 export default class Star extends Bonus implements Consumable {
 

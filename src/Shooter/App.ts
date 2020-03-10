@@ -13,7 +13,7 @@ export default class App {
 
     private readonly keysImage:p5.Image
     private readonly showKeysStepsInit = 10
-    private readonly bonusFrequence = .01
+    private readonly bonusFrequency = .01
     private readonly maxEnemyCount = 30
     private readonly minEnemyCount = 5
 
@@ -25,19 +25,23 @@ export default class App {
     public rate:Rate
     public background:Particles
     public foreground:Particles
+    public particles:Particles
     public enemies:Enemy[]
     public bonus:Bonus[]
 
     constructor( public p:p5 ){
 
-        if(!localStorage.getItem('shooter'))
-            localStorage.setItem('shooter','{"highscore":0}')
+        const storage = localStorage.getItem('shooter')
+        if(!storage || !JSON.parse(storage).highScore)
+            localStorage.setItem('shooter','{"highScore":0}')
 
         this.keysImage = p.loadImage(keysImage)
+        this.p.smooth()
         this.reset()
     }
 
     public reset(): void {
+        this.particles = new Particles(this,30,0,3)
         this.background = new Particles(this,30,0,1)
         this.foreground = new Particles(this,10,1,2)
         this.player = new Player(this)
@@ -58,8 +62,13 @@ export default class App {
                 !this.shootKeysIsNotPressed()
             ){
                 this.showKeys = false
+            }else{
+                this.particles.step()
+                this.particles.move(0,-3)
             }
         }else if(this.showKeysSteps > 0){
+            this.particles.step()
+            this.particles.move(0,-3)
             this.showKeysSteps --
         }else{
             this.background.step()
@@ -72,7 +81,7 @@ export default class App {
             if(this.rate.canTrigger(true)){
                 this.enemies.forEach( enemy => enemy.step() )
                 this.player.step()
-                if(Math.random() < this.bonusFrequence)
+                if(Math.random() < this.bonusFrequency)
                     this.bonus.push(pickBonus(this))
             }
         }
@@ -82,7 +91,10 @@ export default class App {
         this.background.move( x, y )
         this.foreground.move( x, y )
         this.enemies.forEach( enemy => enemy.move(x,y) )
-        this.player.shoots.forEach( shoot => shoot.move(x,y) )
+        this.player.shoots.forEach( shoot => {
+            shoot.basePosition.move( x, y )
+            shoot.move( x, y )
+        })
         this.bonus.forEach( bonus => bonus.move(x,y) )
     }
 
@@ -100,10 +112,11 @@ export default class App {
             this.foreground.draw()
         }
         if(this.showKeysSteps > 0){
+            this.particles.draw()
             this.p.tint(255, this.p.map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
             this.p.image(this.keysImage,-400,-300)
         }else{
-            const isHigh = this.player.score > this.player.highscore
+            const isHigh = this.player.score > this.player.highScore
             this.p.fill(0,90)
             this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
             if(this.player.score > 0){
@@ -111,7 +124,7 @@ export default class App {
                 this.p.rect(
                     this.p.width*-.3,
                     this.p.height * -.5 + 50,
-                    Math.max(0,Math.min(this.p.map(this.player.score,0,this.player.highscore,0,this.p.width*.6),this.p.width*.6)),
+                    Math.max(0,Math.min(this.p.map(this.player.score,0,this.player.highScore,0,this.p.width*.6),this.p.width*.6)),
                     30,
                     2
                 )
@@ -124,8 +137,8 @@ export default class App {
             this.p.fill(255,200)
             this.p.textAlign(this.p.CENTER,this.p.CENTER)
             this.p.textSize(25)
-            if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highscore} pts`,0,this.p.height * -.5 + 65)
-            else this.p.text(`${this.player.highscore} + ${this.player.score - this.player.highscore} pts`,0,this.p.height * -.5 + 65)
+            if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
+            else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         }
     }
 
@@ -136,13 +149,13 @@ export default class App {
 
     public moveKeysIsNotPressed(){
         for(const key in this.keys)
-            if(this.keys[key] && Object.values(MoveKeys).includes(key)) return false
+            if(this.keys[key] && Object.values(MoveKeys).includes(key as MoveKeys)) return false
         return true
     }
 
     public shootKeysIsNotPressed(){
         for(const key in this.keys)
-            if(this.keys[key] && Object.values(ShotKeys).includes(key)) return false
+            if(this.keys[key] && Object.values(ShotKeys).includes(key as ShotKeys)) return false
         return true
     }
 

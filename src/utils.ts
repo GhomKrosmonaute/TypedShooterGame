@@ -7,7 +7,7 @@ import Carnage from './Shooter/Bonus/Carnage';
 import Falcon from './Shooter/Bonus/Falcon';
 import Heal from './Shooter/Bonus/Heal';
 import Star from './Shooter/Bonus/Star';
-import Shield from './Shooter/Bonus/Haki';
+import Shield from './Shooter/Bonus/Shield';
 import Shotgun from './Shooter/Bonus/Shotgun';
 import Bazooka from './Shooter/Bonus/Bazooka';
 import Minigun from './Shooter/Bonus/Minigun';

@@ -1,6 +1,6 @@
-import Bonus from '../Bonus';
-import {Passive} from '../../interfaces';
-import p5 from 'p5';
+import Bonus from '../Bonus'
+import {Passive} from '../../interfaces'
+import p5 from 'p5'
 
 export default class Sniper extends Bonus implements Passive {
 
