@@ -1,6 +1,7 @@
 import Positionable from './Positionable';
 import Enemy from './Enemy';
 import Player from './Player';
+import {fade} from "../utils";
 
 export default class Shoot extends Positionable {
 
@@ -57,7 +58,7 @@ export default class Shoot extends Positionable {
                     dist: Infinity
                 }
                 for(const enemy of this.player.app.enemies){
-                    if(!this.toIgnore.includes(enemy)){
+                    if(!this.toIgnore.includes(enemy) && !enemy.immune){
                         const dist = enemy.dist(this)
                         if(dist < falcon.level * 100 && temp.dist > dist){
                             temp.enemy = enemy
@@ -77,29 +78,22 @@ export default class Shoot extends Positionable {
     }
 
     public draw(): void {
+        this.p.noStroke()
         this.p.fill(255)
         this.p.ellipse(
             this.x,
             this.y,
-            Math.max(
-                0,
-                Math.min(
-                    this.currentRadius,
-                    this.p.map(
-                        this.dist(this.basePosition),
-                        0,
-                        this.player.shootRange,
-                        this.currentRadius * 5,
-                        0
-                    ),
-                    this.p.map(
-                        this.dist(this.player),
-                        0,
-                        this.player.shootRange,
-                        0,
-                        this.currentRadius * 5
-                    )
-                )
+            fade( this.p, this.currentRadius,
+                {
+                    value: this.dist(this.basePosition),
+                    valueMax: this.player.shootRange,
+                    overflow: 5
+                },
+                {
+                    value: this.dist(this.player),
+                    valueMax: this.player.shootRange,
+                    overflow: 5
+                }
             )
         )
         if(this.player.app.debug){

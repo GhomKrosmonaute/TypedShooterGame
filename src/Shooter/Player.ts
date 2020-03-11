@@ -78,6 +78,19 @@ export default class Player extends Positionable {
         }
     }
 
+    public removePassive( id:string ): void {
+        const passive = this.getPassive(id)
+        if(passive) {
+            passive.level--
+            if(passive.level <= 0)
+                this.passives = this.passives.filter( p => p.id === id )
+        }
+    }
+
+    public getPassive( id:string ): Passive | null {
+        return this.passives.find( p => p.id === id )
+    }
+
     public addConsumable( consumable:Consumable ): void {
         const exists = this.consumables.find( c => c.id === consumable.id )
         if(exists){
@@ -85,10 +98,6 @@ export default class Player extends Positionable {
         }else{
             this.consumables.push(consumable)
         }
-    }
-
-    public getPassive( id:string ): Passive | null {
-        return this.passives.find( p => p.id === id )
     }
 
     public step(): void {
@@ -207,6 +216,7 @@ export default class Player extends Positionable {
 
     public draw(): void {
         this.shoots.forEach( shoot => shoot.draw() )
+        this.p.noStroke()
         this.p.fill(255)
         this.p.ellipse(this.x,this.y,this.radius)
         this.p.fill(0,100)
@@ -215,9 +225,8 @@ export default class Player extends Positionable {
         this.p.rect(this.x - 40,this.y - 50,80,14,5)
         this.p.noStroke()
         this.p.fill(
-            this.p.map( this.life || this.baseLife, 0, this.baseLife, 255, 50 ),
-            this.p.map( this.life || this.baseLife, 0, this.baseLife, 50, 255 ),
-            50, 200
+            this.p.map( this.life || this.baseLife, 0, this.baseLife, 255, 50 ),50,
+            this.p.map( this.life || this.baseLife, 0, this.baseLife, 50, 255 ),200
         )
         this.p.rect(
             this.x - 40,

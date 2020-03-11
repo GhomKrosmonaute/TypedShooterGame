@@ -16,20 +16,38 @@ import Ping from './Shooter/Bonus/Ping';
 import DeadChain from './Shooter/Bonus/DeadChain';
 import AyaEnemy from './Shooter/Enemies/AyaEnemy';
 import BlobEnemy from './Shooter/Enemies/BlobEnemy';
+import MineEnemy from "./Shooter/Enemies/MineEnemy";
+
+export function fade( p:p5, fadeMax:number,
+    fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
+    fadeOut?: { value:number, valueMax:number, fadeMax?:number, overflow:number }
+): number {
+    if(!fadeOut) fadeOut = fadeIn
+    return Math.max(
+        0,
+        Math.min(
+            fadeMax,
+            p.map(fadeOut.value,0,fadeOut.valueMax, fadeOut.fadeMax || fadeMax * fadeOut.overflow, 0),
+            p.map(fadeIn.value,0,fadeIn.valueMax,0,fadeIn.fadeMax || fadeMax * fadeIn.overflow)
+        )
+    )
+}
 
 export function star( p:p5, x:number, y:number, radiusIn:number, radiusOut:number, points:number): void {
-    let angle = p.TWO_PI / points;
-    let halfAngle = angle / 2.0;
-    p.beginShape();
+    p.angleMode(p.RADIANS)
+    let angle = p.TWO_PI / points
+    let halfAngle = angle / 2.0
+    p.beginShape()
     for (let a = 0; a < p.TWO_PI; a += angle) {
-        let sx = x + p.cos(a) * radiusOut;
-        let sy = y + p.sin(a) * radiusOut;
-        p.vertex(sx, sy);
-        sx = x + p.cos(a + halfAngle) * radiusIn;
-        sy = y + p.sin(a + halfAngle) * radiusIn;
-        p.vertex(sx, sy);
+        let sx = x + p.cos(a) * radiusOut
+        let sy = y + p.sin(a) * radiusOut
+        p.vertex(sx, sy)
+        sx = x + p.cos(a + halfAngle) * radiusIn
+        sy = y + p.sin(a + halfAngle) * radiusIn
+        p.vertex(sx, sy)
     }
-    p.endShape(p.CLOSE);
+    p.endShape(p.CLOSE)
+    p.angleMode(p.DEGREES)
 }
 
 export function seconds( nbr:number ): number {
@@ -45,10 +63,11 @@ export function pick<T>( list:T[] ): T {
 }
 
 export function pickEnemy( app:App ): Enemy {
-    const rdm = Math.floor(Math.random() * 2)
+    const rdm = Math.floor(Math.random() * 3)
     switch (rdm) {
         case 0: return new AyaEnemy(app)
         case 1: return new BlobEnemy(app)
+        case 2: return new MineEnemy(app)
     }
 }
 

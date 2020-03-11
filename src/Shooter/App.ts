@@ -1,22 +1,22 @@
 import p5 from 'p5'
 // @ts-ignore
 import keysImage from './images/keys.png'
-import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys} from '../interfaces';
+import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys} from '../interfaces'
 import Particles from './Particles'
 import Enemy from './Enemy'
 import Player from './Player'
 import Bonus from './Bonus'
 import Rate from './Rate'
-import { pickBonus, pickEnemy } from '../utils';
+import {fade, pickBonus, pickEnemy} from '../utils'
 
 export default class App {
 
     private readonly keysImage:p5.Image
     private readonly showKeysStepsInit = 10
-    private readonly bonusFrequency = .01
-    private readonly maxEnemyCount = 30
+    private readonly maxEnemyCount = 35
     private readonly minEnemyCount = 5
 
+    public readonly version = '0.1.1'
     public readonly debug = false
 
     private showKeys:boolean
@@ -31,19 +31,30 @@ export default class App {
     public animations:PuttedAnimation[]
     public enemies:Enemy[]
     public bonus:Bonus[]
+    public bonusState:number
+    public lastBonusState:number
 
     constructor( public p:p5 ){
 
         const storage = localStorage.getItem('shooter')
-        if(!storage || !JSON.parse(storage).highScore)
-            localStorage.setItem('shooter','{"highScore":0}')
+        if( !storage ||
+            !JSON.parse(storage).highScore ||
+            JSON.parse(storage).version !== this.version
+        ) localStorage.setItem('shooter',JSON.stringify({
+            highScore: 0,
+            darkMode: true,
+            version: this.version
+        }))
 
         this.keysImage = p.loadImage(keysImage)
         this.p.smooth()
+        this.p.angleMode(this.p.DEGREES)
         this.reset()
     }
 
     public reset(): void {
+        this.lastBonusState = 0
+        this.bonusState = 2
         this.particles = new Particles(this,50,0,5)
         this.background = new Particles(this,30,0,1)
         this.foreground = new Particles(this,10,1,2)
@@ -92,8 +103,38 @@ export default class App {
             if(this.rate.canTrigger(true)){
                 this.enemies.forEach( enemy => enemy.step() )
                 this.player.step()
-                if(Math.random() < this.bonusFrequency)
-                    this.bonus.push(pickBonus(this))
+                if(this.player.score >= this.bonusState){
+                    this.lastBonusState = this.bonusState
+                    this.bonusState += Math.ceil(this.bonusState * .5)
+                    const bonus = pickBonus(this)
+                    this.bonus.push(bonus)
+                    this.setAnimation({
+                        value: { bonus, player: this.player },
+                        duration: 2000,
+                        draw: ( p, time, values ) => {
+                            if(!values.bonus.isOutOfLimits()){
+
+                                // TODO: c'est mieux si le bonus émet une faible onde autour de lui
+                                // TODO: il faut aussi faire briller le carré du score pour qu'on comprenne
+
+                                p.stroke(200,0,10)
+                                p.strokeWeight(
+                                    fade( this.p, 20, {
+                                        value: time,
+                                        valueMax: 2000,
+                                        overflow: 5
+                                    })
+                                )
+                                p.line(
+                                    values.player.x,
+                                    values.player.y,
+                                    values.bonus.x,
+                                    values.bonus.y
+                                )
+                            }
+                        }
+                    })
+                }
             }
         }
     }
@@ -110,7 +151,7 @@ export default class App {
     }
 
     public draw(){
-        this.p.background(0)
+        this.p.background(this.darkMode ? 0 : 255)
         this.p.translate(
             this.p.width * .5,
             this.p.height * .5
@@ -118,24 +159,22 @@ export default class App {
         if(!this.showKeys){
             this.background.draw()
             this.enemies.forEach( enemy => enemy.draw() )
+            this.bonus.forEach( bonus => bonus.draw() )
             this.animations.forEach( anim => {
-                anim.animation.draw( this,
-                    Math.max(
-                        0,
-                        Math.min(
-                            anim.animation.duration,
-                            this.p.map(
-                                Date.now(),
+                anim.animation.draw( this.p,
+                    Math.max(0,
+                        Math.min( anim.animation.duration,
+                            this.p.map( Date.now(),
                                 anim.startTime,
                                 anim.endTime,
                                 0,
                                 anim.animation.duration
                             )
                         )
-                    )
+                    ),
+                    anim.animation.value
                 )
             })
-            this.bonus.forEach( bonus => bonus.draw() )
             this.player.draw()
             this.foreground.draw()
         }
@@ -150,30 +189,45 @@ export default class App {
         }else{
             const isHigh = this.player.score > this.player.highScore
             this.p.fill(0,90)
-            this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
+            this.p.noStroke()
+            this.p.rect(this.p.width * -.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
             if(this.player.score > 0){
                 isHigh ? this.p.noFill() : this.p.fill(170,0,250)
                 this.p.rect(
-                    this.p.width*-.3,
+                    this.p.width * -.3,
                     this.p.height * -.5 + 50,
-                    Math.max(
-                        0,
-                        Math.min(
-                            this.p.map(
-                                this.player.score,
+                    Math.max(0,
+                        Math.min(this.p.width * .6,
+                            this.p.map( this.player.score,
                                 0,
                                 this.player.highScore,
                                 0,
-                                this.p.width*.6
-                            ),
-                            this.p.width*.6
+                                this.p.width * .6
+                            )
                         )
                     ),
                     30,
                     2
                 )
-                this.p.noFill()
+                this.p.fill(250,0,170)
+                this.p.rect(
+                    this.p.width * -.3,
+                    this.p.height * -.5 + 70,
+                    Math.max(0,
+                        Math.min(this.p.width * .6,
+                            this.p.map( this.player.score,
+                                this.lastBonusState,
+                                this.bonusState,
+                                0,
+                                this.p.width * .6
+                            )
+                        )
+                    ),
+                    10,
+                    5
+                )
             }
+            this.p.noFill()
             isHigh ? this.p.stroke(255,215,0) : this.p.stroke(100)
             this.p.strokeWeight(3)
             this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
@@ -184,6 +238,15 @@ export default class App {
             if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
             else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         }
+    }
+
+    public get darkMode(): boolean {
+        return JSON.parse(localStorage.getItem('shooter')).darkMode
+    }
+    public set darkMode( activate:boolean ){
+        const storage = JSON.parse(localStorage.getItem('shooter'))
+        storage.darkMode = activate
+        localStorage.setItem('shooter',JSON.stringify(storage))
     }
 
     public setAnimation( animation:GameAnimation ){

@@ -1,5 +1,5 @@
 
-export default class Variator {
+export default class Variation {
 
     public value = 0
     private sens = false

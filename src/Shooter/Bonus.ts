@@ -1,11 +1,10 @@
 import Positionable from './Positionable';
 import App from './App';
-import Variator from './Variator';
-import {pickBonus} from '../utils';
+import Variation from './Variation';
 
 export default abstract class Bonus extends Positionable {
 
-    private radiusVariator = new Variator(-1,1,.2)
+    private radiusVariation = new Variation(-1,1,.2)
     public abstract applyEffect(): void
     public abstract id: string
 
@@ -13,7 +12,7 @@ export default abstract class Bonus extends Positionable {
         public app:App
     ){
         super( app.p, 0, 0, 20 )
-        this.setPosition()
+        this.placeOutOfViewport(true)
     }
 
     public draw(): void {
@@ -29,17 +28,10 @@ export default abstract class Bonus extends Positionable {
     }
 
     public step(): void {
-        this.radius += this.radiusVariator.step()
+        this.radius += this.radiusVariation.step()
         if(this.app.areOnContact(this,this.app.player)){
             this.placeOutOfLimits()
             this.applyEffect()
-        }
-    }
-
-    private setPosition(): void {
-        while(this.isOnScreen()){
-            this.x = this.p.random( this.p.width * -2, this.p.width * 2 )
-            this.y = this.p.random( this.p.height * -2, this.p.height * 2 )
         }
     }
 

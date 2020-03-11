@@ -15,7 +15,7 @@ Les specs c'est en dessous.
 | Carnage | tue tous les ennemis dans un rayon de `1000` pixels | consomable |
 | Drill | les tirs traversent `LEVEL` ennemis | passif |
 | Falcon | les tirs suivent la cible la plus proche si elle est plus proche que `LEVEL * 100` pixels | passif |
-| Shield | les ennemis ayant `LEVEL` points de vie meurent avant de toucher le joueur | passif |
+| Shield | les ennemis ayant `LEVEL` points de vie meurent avant de toucher le joueur<br>les ennemis en ayant plus infligent leurs dégats et baissent le niveau du *shield* | passif |
 | Shotgun | les tirs infligent `LEVEL * 25%` degats en plus | passif |
 | Bazooka | les tirs sont `LEVEL * 25%` plus volumineux | passif |
 | Minigun | la cadence de tir est `LEVEL` fois plus rapide | passif |

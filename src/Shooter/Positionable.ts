@@ -1,4 +1,5 @@
 import p5 from 'p5';
+import {LIMITS, SECURITY, Vector2D, VIEWPORT} from "../interfaces";
 
 export default class Positionable {
 
@@ -9,22 +10,23 @@ export default class Positionable {
         public z:number = 0
     ){}
 
-    public get radius(){ return this.z }
+    public get radius(): number { return this.z }
     public set radius( z ){ this.z = z }
 
-    public move( x:number, y:number, z:number = 0 ){
+    public move( x:number, y:number, z:number = 0 ): void {
         this.x += x
         this.y += y
         this.z += z
     }
 
-    public place( x:number, y:number, z:number = this.z ){
+    public place( x:number, y:number, z:number = this.z ): void {
         this.x = x
         this.y = y
         this.z = z
     }
 
-    public follow( positionable:Positionable, speed:number ){
+    public follow( positionable:Vector2D, speed:number ): void {
+        this.p.angleMode(this.p.RADIANS)
         const angle = this.p.degrees(
             this.p.atan2(
                 positionable.y - this.y,
@@ -37,23 +39,45 @@ export default class Positionable {
             speedX * -2,
             speedY * -2
         )
+        this.p.angleMode(this.p.DEGREES)
     }
 
-    public placeOutOfLimits(){
-        this.x = this.p.width * 10
-        this.y = this.p.height * 10
+    public placeOutOfLimits(): void {
+        this.x = LIMITS * 2
+        this.y = LIMITS * 2
     }
 
-    public isOutOfLimits(){
-        return (
-            this.x > this.p.width * 4 ||
-            this.x < this.p.width * -4 ||
-            this.y > this.p.height * 4 ||
-            this.y < this.p.height * -4
-        )
+    public placeOutOfViewport( withSecurity:boolean = false ): void {
+        while(!this.isOutOfViewPort()){
+            if(withSecurity){
+                this.x = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )
+                this.y = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )
+            }else{
+                this.x = this.p.random( -LIMITS, LIMITS )
+                this.y = this.p.random( -LIMITS, LIMITS )
+            }
+        }
     }
 
-    public isOnScreen( ignoreRadius:boolean = false ){
+    public showIfNotOnScreen(){
+        if(!this.isOnScreen()){
+            this.p.ellipse(
+                this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
+                this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
+                15
+            )
+        }
+    }
+
+    public isOutOfLimits(): boolean {
+        return this.dist({ x:0, y:0}) > LIMITS
+    }
+
+    public isOutOfViewPort(): boolean {
+        return this.dist({ x:0, y:0}) > VIEWPORT
+    }
+
+    public isOnScreen( ignoreRadius:boolean = false ): boolean {
         const radius = ignoreRadius ? 0 : this.radius
         return (
             this.x + radius > this.p.width * -.5 &&
@@ -63,9 +87,10 @@ export default class Positionable {
         )
     }
 
-    public dist( positionable:Positionable ): number {
+    public dist( positionable:Vector2D ): number {
         return this.p.dist(
-            positionable.x, positionable.y,
+            positionable.x,
+            positionable.y,
             this.x, this.y
         )
     }

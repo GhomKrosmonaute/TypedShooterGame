@@ -1,5 +1,5 @@
 import Bonus from '../Bonus';
-import {Consumable} from '../../interfaces';
+import {Consumable, VIEWPORT} from '../../interfaces';
 import p5 from 'p5';
 
 export default class Carnage extends Bonus implements Consumable {
@@ -13,22 +13,23 @@ export default class Carnage extends Bonus implements Consumable {
 
     public exec(): void {
         this.app.setAnimation({
-            duration: 100,
-            draw: (app,time) => {
-                app.p.noFill()
-                app.p.strokeWeight(
-                    app.p.map(time,0,100,0,10)
+            value: this.app.player,
+            duration: 200,
+            draw: ( p, time, player) => {
+                p.noFill()
+                p.strokeWeight(
+                    p.map(time,0,200,0,10)
                 )
-                app.p.stroke(200,0,200, app.p.map(time,0,100,0,255))
-                app.p.ellipse(
-                    app.player.x,
-                    app.player.y,
-                    app.p.map(time,0,100,0,1000)
+                p.stroke(200,0,200, p.map(time,0,100,0,255))
+                p.ellipse(
+                    player.x,
+                    player.y,
+                    p.map(time,0,200,0,VIEWPORT)
                 )
             }
         })
         this.app.enemies.forEach( enemy => {
-            if(this.app.player.dist(enemy) < 1000)
+            if(!enemy.immune && this.app.player.dist(enemy) < VIEWPORT)
                 enemy.kill(true)
         })
     }

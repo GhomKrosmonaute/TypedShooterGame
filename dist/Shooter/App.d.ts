@@ -9,9 +9,9 @@ export default class App {
     p: p5;
     private readonly keysImage;
     private readonly showKeysStepsInit;
-    private readonly bonusFrequency;
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
+    readonly version = "0.1.1";
     readonly debug = false;
     private showKeys;
     private showKeysSteps;
@@ -24,11 +24,14 @@ export default class App {
     animations: PuttedAnimation[];
     enemies: Enemy[];
     bonus: Bonus[];
+    bonusState: number;
+    lastBonusState: number;
     constructor(p: p5);
     reset(): void;
     step(): void;
     move(x: number, y: number): void;
     draw(): void;
+    darkMode: boolean;
     setAnimation(animation: GameAnimation): void;
     keyReleased(key: string): void;
     keyPressed(key: string): void;

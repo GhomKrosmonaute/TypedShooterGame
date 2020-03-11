@@ -5,64 +5,50 @@ import {isWhiteSpace} from "tslint";
 
 export default abstract class Enemy extends Positionable {
 
+    protected readonly MIN_RADIUS = 15
     protected baseGain:number
     protected baseLife:number
     protected baseSpeed:number
+    protected baseDamage:number
     public abstract gain:number
     public abstract life:number
     public abstract speed:number
-    public abstract pattern():void
+    public abstract damage:number
+    public abstract immune:boolean
     public abstract id:string
+    public abstract pattern():void
+    public abstract onDraw():void
+    public abstract onShoot(shoot:Shoot):boolean
+    public abstract onPlayerContact():void
 
     protected constructor(
         public app:App
     ){
-        super( app.p, 0, 0, 40 )
+        super( app.p )
         this.reset()
     }
 
     public step(){
-        this.app.player.shoots.forEach( shoot => {
-            if(this.app.areOnContact(shoot,this))
-                if(shoot.handleShoot(this))
-                    this.shoot(shoot)
-        })
-        if(this.app.areOnContact(this,this.app.player)){
-            if(this.id === 'aya'){
-                this.app.player.life -= this.life
-                this.kill()
-            }else{
-                const shield = this.app.player.getPassive('shield')
-                if(!shield || shield.level < this.life){
-                    this.app.player.life -= this.life
-                }
-                this.kill(!!shield)
-            }
 
-        }
+        if(!this.immune)
+            for(const shoot of this.app.player.shoots)
+                if(this.app.areOnContact(shoot,this))
+                    if(this.onShoot(shoot))
+                        if(shoot.handleShoot(this))
+                            this.shoot(shoot)
+
+        if(this.app.areOnContact(this,this.app.player))
+            this.onPlayerContact()
+
         if(!this.isOutOfLimits())
             this.pattern()
+
     }
 
     public draw(){
-        this.p.fill(
-            Math.min(this.p.map(this.gain, 1, 10, 100, 255),255),
-            80,
-            Math.max(this.p.map(this.gain, 1, 10, 255, 100),100)
-        )
-        if(!this.isOnScreen()){
-            this.p.ellipse(
-                this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
-                this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
-                (this.currentRadius + 1) / 3
-            )
-        }
-        this.p.ellipse(
-            this.x,
-            this.y,
-            this.currentRadius
-        )
-
+        this.p.push()
+        this.onDraw()
+        this.p.pop()
     }
 
     public kill( addToScore:boolean = false ): void {
@@ -77,37 +63,19 @@ export default abstract class Enemy extends Positionable {
         }
     }
 
-    public get currentRadius(){
-        const bonusLife = this.life - this.baseLife
-        return Math.max(
-            this.radius / 2,
-            Math.min(
-                this.p.map(
-                    this.life,
-                    0,
-                    this.baseLife,
-                    0,
-                    this.radius
-                ),
-                bonusLife > 0 ? this.radius + bonusLife * 2 : this.radius
-            )
-        )
-    }
-
     public reset(): void {
         if(
             this.baseGain &&
             this.baseLife &&
-            this.baseSpeed
+            this.baseSpeed &&
+            this.baseDamage
         ){
             this.gain = this.baseGain
             this.life = this.baseLife
             this.speed = this.baseSpeed
+            this.damage = this.baseDamage
         }
-        while(this.isOnScreen()){
-            this.x = this.p.random( this.p.width * -1.5, this.p.width * 1.5 )
-            this.y = this.p.random( this.p.height * -1.5, this.p.height * 1.5 )
-        }
+        this.placeOutOfViewport()
     }
 
 }

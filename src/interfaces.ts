@@ -28,8 +28,9 @@ export interface TemporaryEffect {
 }
 
 export interface GameAnimation {
-    draw: ( app:App, time:number ) => void
+    draw: ( p:p5, time:number, values:any ) => void
     duration: number
+    value: any
 }
 
 export interface PuttedAnimation {
@@ -37,6 +38,8 @@ export interface PuttedAnimation {
     startTime: number
     endTime: number
 }
+
+export type Vector2D = Positionable | {x:number,y:number}
 
 export type ShapeFunction = (
     p:p5,
@@ -67,3 +70,7 @@ export const PowaKeys = '&é"\'(-è'.split('')
 export type MoveKey = 'ArrowDown'|'ArrowUp'|'ArrowLeft'|'ArrowRight'
 export type ShotKey = 's'|'z'|'q'|'d'
 export type PowaKey = '&'|'é'|'"'|"'"|'('|'-'|'è'
+
+export const LIMITS = 3000
+export const VIEWPORT = 1000
+export const SECURITY = 1000
