@@ -163,17 +163,17 @@ export default class Player extends Positionable {
 
         if(this.shootRating.canTrigger()){
             const direction = {
-                x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5),
-                y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.5, .5)
+                x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4),
+                y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4)
             }
             if(this.getTemporary('star')){
                 if(!this.app.shootKeysIsNotPressed()){
                     this.shootRating.trigger()
                     this.shoots.push(
-                        new Shoot( this,1 + direction.x,direction.y),
-                        new Shoot( this,-1 + direction.x,direction.y),
-                        new Shoot( this,direction.x,1 + direction.y),
-                        new Shoot( this,direction.x,-1 + direction.y),
+                        new Shoot( this,1 + direction.x, direction.y),
+                        new Shoot( this,-1 + direction.x, direction.y),
+                        new Shoot( this, direction.x,1 + direction.y),
+                        new Shoot( this, direction.x,-1 + direction.y),
                         new Shoot( this,1 + direction.x,1 + direction.y),
                         new Shoot( this,-1 + direction.x,1 + direction.y),
                         new Shoot( this,1 + direction.x,-1 + direction.y),
@@ -217,10 +217,10 @@ export default class Player extends Positionable {
     public draw(): void {
         this.shoots.forEach( shoot => shoot.draw() )
         this.p.noStroke()
-        this.p.fill(255)
+        this.p.fill(this.app.light)
         this.p.ellipse(this.x,this.y,this.radius)
         this.p.fill(0,100)
-        this.p.stroke(255)
+        this.p.stroke(this.app.light)
         this.p.strokeWeight(1)
         this.p.rect(this.x - 40,this.y - 50,80,14,5)
         this.p.noStroke()
@@ -239,7 +239,7 @@ export default class Player extends Positionable {
             if(this.getTemporary(flag)){
                 const temp = this.temporary[flag]
                 this.p.fill(0,100)
-                this.p.stroke(255)
+                this.p.stroke(this.app.light)
                 this.p.strokeWeight(1)
                 this.p.rect(
                     this.x - 40,
@@ -273,7 +273,7 @@ export default class Player extends Positionable {
         const bonusLength = this.consumables.length + this.passives.length
         if(bonusLength > 0){
             this.p.fill(0,100)
-            this.p.stroke(255)
+            this.p.stroke(this.app.light)
             this.p.strokeWeight(1)
             const width = bonusLength * 14
             this.p.rect(

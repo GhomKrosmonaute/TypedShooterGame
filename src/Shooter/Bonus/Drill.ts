@@ -7,6 +7,8 @@ export default class Drill extends Bonus implements Passive {
 
     public level = 1
     public id = 'drill'
+    public displayName = 'Drill'
+    public description = 'Piercing shots +'
 
     shape(p:p5, x:number,y:number,w:number,h:number){
         this.p.ellipse(x+w*.5,y+h*.5,w*.6,h*.25)

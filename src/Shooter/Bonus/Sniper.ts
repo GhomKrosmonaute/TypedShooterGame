@@ -6,6 +6,8 @@ export default class Sniper extends Bonus implements Passive {
 
     public level = 1
     public id = 'sniper'
+    public displayName = 'Sniper'
+    public description = 'Shots range +'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

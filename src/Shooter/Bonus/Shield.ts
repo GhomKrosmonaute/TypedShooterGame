@@ -6,6 +6,8 @@ export default class Shield extends Bonus implements Passive {
 
     public level = 1
     public id = 'shield'
+    public displayName = 'Shield'
+    public description = 'Damage protection +'
 
     shape(p:p5, x: number, y: number, w: number, h: number): void {
         // TODO: shield

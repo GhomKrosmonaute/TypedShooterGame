@@ -12,7 +12,6 @@ import Shotgun from './Shooter/Bonus/Shotgun';
 import Bazooka from './Shooter/Bonus/Bazooka';
 import Minigun from './Shooter/Bonus/Minigun';
 import Sniper from './Shooter/Bonus/Sniper';
-import Ping from './Shooter/Bonus/Ping';
 import DeadChain from './Shooter/Bonus/DeadChain';
 import AyaEnemy from './Shooter/Enemies/AyaEnemy';
 import BlobEnemy from './Shooter/Enemies/BlobEnemy';
@@ -72,7 +71,7 @@ export function pickEnemy( app:App ): Enemy {
 }
 
 export function pickBonus( app:App ): Bonus {
-    const rdm = Math.floor(Math.random() * 12)
+    const rdm = Math.floor(Math.random() * 11)
     switch (rdm) {
         case 0: return new Heal(app)
         case 1: return new Star(app)
@@ -85,6 +84,5 @@ export function pickBonus( app:App ): Bonus {
         case 8: return new Minigun(app)
         case 9: return new Sniper(app)
         case 10: return new DeadChain(app)
-        case 11: return new Ping(app)
     }
 }

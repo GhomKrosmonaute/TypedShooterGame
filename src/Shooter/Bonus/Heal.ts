@@ -6,6 +6,8 @@ export default class Heal extends Bonus implements Consumable {
 
     public quantity = 1
     public id = 'heal'
+    public displayName = 'Heal'
+    public description = 'Heals completely'
 
     public exec(): void {
         this.app.player.life = this.app.player.baseLife

@@ -6,6 +6,8 @@ export default class Shotgun extends Bonus implements Passive {
 
     public level = 1
     public id = 'shotgun'
+    public displayName = 'Shotgun'
+    public description = 'Shots damage +'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

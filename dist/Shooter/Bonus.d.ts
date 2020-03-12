@@ -5,7 +5,9 @@ export default abstract class Bonus extends Positionable {
     private radiusVariation;
     abstract applyEffect(): void;
     abstract id: string;
+    used: boolean;
     constructor(app: App);
     draw(): void;
     step(): void;
+    use(): void;
 }

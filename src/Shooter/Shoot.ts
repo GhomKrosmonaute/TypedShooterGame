@@ -79,18 +79,18 @@ export default class Shoot extends Positionable {
 
     public draw(): void {
         this.p.noStroke()
-        this.p.fill(255)
+        this.p.fill(this.player.app.light)
         this.p.ellipse(
             this.x,
             this.y,
             fade( this.p, this.currentRadius,
                 {
-                    value: this.dist(this.basePosition),
+                    value: this.dist(this.player),
                     valueMax: this.player.shootRange,
                     overflow: 5
                 },
                 {
-                    value: this.dist(this.player),
+                    value: this.dist(this.basePosition),
                     valueMax: this.player.shootRange,
                     overflow: 5
                 }

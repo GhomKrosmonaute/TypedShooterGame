@@ -7,6 +7,8 @@ export default class Star extends Bonus implements Consumable {
 
     public quantity = 1
     public id = 'star'
+    public displayName = 'Star'
+    public description = 'Temporary multidirectional shots'
     
     applyEffect(): void {
         this.app.player.addConsumable(this)

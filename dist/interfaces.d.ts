@@ -2,6 +2,8 @@ import Bonus from './Shooter/Bonus';
 import p5 from 'p5';
 import Positionable from "./Shooter/Positionable";
 interface BonusExtender extends Bonus {
+    displayName: string;
+    description: string;
     shape: ShapeFunction;
 }
 export interface Consumable extends BonusExtender {

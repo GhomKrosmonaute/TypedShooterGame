@@ -6,6 +6,8 @@ export default class DeadChain extends Bonus implements Passive {
 
     public level = 1
     public id = 'deadchain'
+    public displayName = 'Dead Chain'
+    public description = 'Chain explosion +'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

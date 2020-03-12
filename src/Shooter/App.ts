@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
-import keysImage from './images/keys.png'
-import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys} from '../interfaces'
+import docImage from './images/doc.png'
+import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys, Vector2D} from '../interfaces'
 import Particles from './Particles'
 import Enemy from './Enemy'
 import Player from './Player'
@@ -11,16 +11,16 @@ import {fade, pickBonus, pickEnemy} from '../utils'
 
 export default class App {
 
-    private readonly keysImage:p5.Image
-    private readonly showKeysStepsInit = 10
-    private readonly maxEnemyCount = 35
+    private readonly docImage:p5.Image
+    private readonly baseDocFadeOut = 10
+    private readonly maxEnemyCount = 50
     private readonly minEnemyCount = 5
 
-    public readonly version = '0.1.1'
+    public readonly version = '0.1.2'
     public readonly debug = false
 
-    private showKeys:boolean
-    private showKeysSteps:number
+    private showDoc:boolean
+    private docFadeOut:number
 
     public keys:Keys = {}
     public player:Player
@@ -33,6 +33,7 @@ export default class App {
     public bonus:Bonus[]
     public bonusState:number
     public lastBonusState:number
+    public darkModeTransition:number
 
     constructor( public p:p5 ){
 
@@ -46,7 +47,8 @@ export default class App {
             version: this.version
         }))
 
-        this.keysImage = p.loadImage(keysImage)
+        this.darkModeTransition = this.darkMode ? 0 : 255
+        this.docImage = p.loadImage(docImage)
         this.p.smooth()
         this.p.angleMode(this.p.DEGREES)
         this.reset()
@@ -60,8 +62,8 @@ export default class App {
         this.foreground = new Particles(this,10,1,2)
         this.player = new Player(this)
         this.rate = new Rate(25)
-        this.showKeys = true
-        this.showKeysSteps = this.showKeysStepsInit
+        this.showDoc = true
+        this.docFadeOut = this.baseDocFadeOut
         this.animations = []
         this.enemies = []
         this.bonus = []
@@ -70,32 +72,49 @@ export default class App {
         }
     }
 
+    public move( x:number, y:number ){
+        this.background.move( x, y )
+        this.foreground.move( x, y )
+        this.enemies.forEach( enemy => enemy.move( x, y ) )
+        this.player.shoots.forEach( shoot => {
+            shoot.basePosition.move( x, y )
+            shoot.move( x, y )
+        })
+        this.bonus.forEach( bonus => bonus.move( x, y ) )
+    }
+
     public step(){
-        if(this.showKeys){
+        if(this.darkMode){
+            if(this.darkModeTransition > 0)
+                this.darkModeTransition -= 25.5
+        }else{
+            if(this.darkModeTransition < 255)
+                this.darkModeTransition += 25.5
+        }
+        const particlesStep = () => {
+            this.particles.step()
+            this.particles.move(
+                this.p.map(this.p.mouseX, 0, this.p.width, -2,2) * -1,
+                this.p.map(this.p.mouseY, 0, this.p.height, -2,2) * -1
+            )
+        }
+        if(this.showDoc){
             if (
                 !this.moveKeysIsNotPressed() ||
                 !this.shootKeysIsNotPressed()
             ){
-                this.showKeys = false
+                this.showDoc = false
             }else{
-                this.particles.step()
-                this.particles.move(
-                    this.p.map(this.p.mouseX, 0, this.p.width, -2,2),
-                    this.p.map(this.p.mouseY, 0, this.p.height, -2,2)
-                )
+                particlesStep()
             }
-        }else if(this.showKeysSteps > 0){
-            this.particles.step()
-            this.particles.move(
-                this.p.map(this.p.mouseX, 0, this.p.width, -2,2),
-                this.p.map(this.p.mouseY, 0, this.p.height, -2,2)
-            )
-            this.showKeysSteps --
+        }else if(this.docFadeOut > 0){
+            particlesStep()
+            this.docFadeOut --
         }else{
             this.background.step()
             this.foreground.step()
             this.bonus.forEach( bonus => bonus.step() )
-            this.bonus = this.bonus.filter( bonus => !bonus.isOutOfLimits() )
+            this.bonus = this.bonus.filter( bonus => !bonus.used )
             this.enemies = this.enemies.filter( enemy => !enemy.isOutOfLimits() )
             this.animations = this.animations.filter( anim => Date.now() < anim.endTime )
             while(this.enemies.length < this.enemyCount)
@@ -111,7 +130,7 @@ export default class App {
                     this.setAnimation({
                         value: { bonus, player: this.player },
                         duration: 2000,
-                        draw: ( p, time, values ) => {
+                        draw: ( p, time, values:{ bonus:Bonus, player:Player } ) => {
                             if(!values.bonus.isOutOfLimits()){
 
                                 // TODO: c'est mieux si le bonus émet une faible onde autour de lui
@@ -139,24 +158,13 @@ export default class App {
         }
     }
 
-    public move( x:number, y:number ){
-        this.background.move( x, y )
-        this.foreground.move( x, y )
-        this.enemies.forEach( enemy => enemy.move(x,y) )
-        this.player.shoots.forEach( shoot => {
-            shoot.basePosition.move( x, y )
-            shoot.move( x, y )
-        })
-        this.bonus.forEach( bonus => bonus.move(x,y) )
-    }
-
     public draw(){
-        this.p.background(this.darkMode ? 0 : 255)
+        this.p.background(this.dark)
         this.p.translate(
             this.p.width * .5,
             this.p.height * .5
         )
-        if(!this.showKeys){
+        if(!this.showDoc){
             this.background.draw()
             this.enemies.forEach( enemy => enemy.draw() )
             this.bonus.forEach( bonus => bonus.draw() )
@@ -178,13 +186,27 @@ export default class App {
             this.player.draw()
             this.foreground.draw()
         }
-        if(this.showKeysSteps > 0){
+        if(this.docFadeOut > 0){
             this.particles.draw()
-            this.p.tint(255, this.p.map(this.showKeysSteps,this.showKeysStepsInit,0,255,0))
+            const docFade = (value:number) => this.p.map(this.docFadeOut,this.baseDocFadeOut,0,value,0)
+            const shift:Vector2D = {
+                x: this.p.map(this.p.mouseX,0,this.p.width,-15,15),
+                y: this.p.map(this.p.mouseY,0,this.p.height,-15,15)
+            }
+            this.p.noStroke()
+            this.p.fill(0,docFade(100))
+            this.p.rect(
+                -400 + shift.x,
+                -300 + shift.y,
+                800,
+                600,
+                50
+            )
+            this.p.tint(255, docFade(255))
             this.p.image(
-                this.keysImage,
-                -400 + this.p.map(this.p.mouseX,0,this.p.width,-15,15),
-                -300 + this.p.map(this.p.mouseY,0,this.p.height,-15,15)
+                this.docImage,
+                -400 + shift.x * 1.5,
+                -300 + shift.y * 1.5
             )
         }else{
             const isHigh = this.player.score > this.player.highScore
@@ -232,7 +254,7 @@ export default class App {
             this.p.strokeWeight(3)
             this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
             this.p.noStroke()
-            this.p.fill(255,200)
+            this.p.fill(this.light,200)
             this.p.textAlign(this.p.CENTER,this.p.CENTER)
             this.p.textSize(25)
             if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
@@ -248,6 +270,12 @@ export default class App {
         storage.darkMode = activate
         localStorage.setItem('shooter',JSON.stringify(storage))
     }
+    public get dark(): number {
+        return this.darkModeTransition
+    }
+    public get light(): number {
+        return 255 - this.darkModeTransition
+    }
 
     public setAnimation( animation:GameAnimation ){
         const puttedAnimation:PuttedAnimation = {
@@ -260,6 +288,7 @@ export default class App {
 
     public keyReleased(key:string){ this.keys[key] = false }
     public keyPressed(key:string){ this.keys[key] = true
+        if(key === 'm') this.darkMode = !this.darkMode
         this.player.keyPressed(key)
     }
 
@@ -292,7 +321,7 @@ export default class App {
             Math.floor(
                 Math.min(
                     this.p.map(
-                        this.player.score, 0, 100, 5, 10
+                        this.player.score, 0, 100, 5, 20
                     ),
                     this.maxEnemyCount
                 )

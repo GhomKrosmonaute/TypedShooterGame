@@ -6,6 +6,8 @@ export default class Bazooka extends Bonus implements Passive {
 
     public level = 1
     public id = 'bazooka'
+    public displayName = 'Bazooka'
+    public description = 'Shots size +'
 
     applyEffect(): void {
         this.app.player.addPassive(this)

@@ -1,11 +1,14 @@
 import Bonus from '../Bonus';
 import {Consumable, VIEWPORT} from '../../interfaces';
 import p5 from 'p5';
+import Player from "../Player";
 
 export default class Carnage extends Bonus implements Consumable {
 
     public quantity = 1
     public id = 'carnage'
+    public displayName = 'Carnage'
+    public description = 'Deadly wave'
 
     public applyEffect(){
         this.app.player.addConsumable(this)
@@ -15,7 +18,7 @@ export default class Carnage extends Bonus implements Consumable {
         this.app.setAnimation({
             value: this.app.player,
             duration: 200,
-            draw: ( p, time, player) => {
+            draw: ( p, time, player:Player) => {
                 p.noFill()
                 p.strokeWeight(
                     p.map(time,0,200,0,10)

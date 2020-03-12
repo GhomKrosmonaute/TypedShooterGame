@@ -5,6 +5,8 @@ import App from "./Shooter/App";
 import Positionable from "./Shooter/Positionable";
 
 interface BonusExtender extends Bonus {
+    displayName: string
+    description: string
     shape: ShapeFunction
 }
 

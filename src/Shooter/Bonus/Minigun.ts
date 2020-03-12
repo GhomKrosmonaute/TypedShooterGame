@@ -6,6 +6,8 @@ export default class Minigun extends Bonus implements Passive {
 
     public level = 1
     public id = 'minigun'
+    public displayName = 'Mini-Gun'
+    public description = 'Shots rate +'
 
     applyEffect(): void {
         this.app.player.addPassive(this)
