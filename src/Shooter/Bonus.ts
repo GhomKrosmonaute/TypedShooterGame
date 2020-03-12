@@ -22,6 +22,7 @@ export default abstract class Bonus extends Positionable {
         this.p.noFill()
         this.p.stroke(255,0,50)
         this.p.strokeWeight(3)
+        this.showIfNotOnScreen()
         this.p.ellipse(
             this.x,
             this.y,
@@ -46,7 +47,6 @@ export default abstract class Bonus extends Positionable {
         if(this.used) return
         this.used = true
         this.applyEffect()
-        if(this.app.debug)
         this.app.setAnimation({
             value: this,
             duration: 3000,
@@ -73,5 +73,4 @@ export default abstract class Bonus extends Positionable {
             }
         })
     }
-
 }

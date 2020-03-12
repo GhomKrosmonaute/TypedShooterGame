@@ -19,7 +19,7 @@ export default class MineEnemy extends Enemy {
 
     constructor( app:App ) {
         super( app )
-        this.radius = 40
+        this.radius = this.p.random(40,100)
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life

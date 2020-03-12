@@ -115,7 +115,9 @@ export default class App {
             this.foreground.step()
             this.bonus.forEach( bonus => bonus.step() )
             this.bonus = this.bonus.filter( bonus => !bonus.used )
-            this.enemies = this.enemies.filter( enemy => !enemy.isOutOfLimits() )
+            this.enemies = this.enemies.sort(( a:any, b:any ) => {
+                return (b.currentRadius || b.radius) - (a.currentRadius || a.radius)
+            }).filter( enemy => !enemy.isOutOfLimits() )
             this.animations = this.animations.filter( anim => Date.now() < anim.endTime )
             while(this.enemies.length < this.enemyCount)
                 this.enemies.push(pickEnemy(this))
@@ -127,32 +129,33 @@ export default class App {
                     this.bonusState += Math.ceil(this.bonusState * .5)
                     const bonus = pickBonus(this)
                     this.bonus.push(bonus)
-                    this.setAnimation({
-                        value: { bonus, player: this.player },
-                        duration: 2000,
-                        draw: ( p, time, values:{ bonus:Bonus, player:Player } ) => {
-                            if(!values.bonus.isOutOfLimits()){
+                    if(this.debug)
+                        this.setAnimation({
+                            value: { bonus, player: this.player },
+                            duration: 2000,
+                            draw: ( p, time, values:{ bonus:Bonus, player:Player } ) => {
+                                if(!values.bonus.isOutOfLimits()){
 
-                                // TODO: c'est mieux si le bonus émet une faible onde autour de lui
-                                // TODO: il faut aussi faire briller le carré du score pour qu'on comprenne
+                                    // TODO: c'est mieux si le bonus émet une faible onde autour de lui
+                                    // TODO: il faut aussi faire briller le carré du score pour qu'on comprenne
 
-                                p.stroke(200,0,10)
-                                p.strokeWeight(
-                                    fade( this.p, 20, {
-                                        value: time,
-                                        valueMax: 2000,
-                                        overflow: 5
-                                    })
-                                )
-                                p.line(
-                                    values.player.x,
-                                    values.player.y,
-                                    values.bonus.x,
-                                    values.bonus.y
-                                )
+                                    p.stroke(200,0,10)
+                                    p.strokeWeight(
+                                        fade( this.p, 20, {
+                                            value: time,
+                                            valueMax: 2000,
+                                            overflow: 5
+                                        })
+                                    )
+                                    p.line(
+                                        values.player.x,
+                                        values.player.y,
+                                        values.bonus.x,
+                                        values.bonus.y
+                                    )
+                                }
                             }
-                        }
-                    })
+                        })
                 }
             }
         }
