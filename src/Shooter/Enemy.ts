@@ -78,4 +78,19 @@ export default abstract class Enemy extends Positionable {
         this.placeOutOfViewport()
     }
 
+    public get lifeBasedRadius(): number {
+        return Math.max(
+            this.MIN_RADIUS,
+            Math.min(
+                this.p.map(
+                    this.life,
+                    0,
+                    this.baseLife,
+                    0,
+                    this.radius
+                )
+            )
+        )
+    }
+
 }

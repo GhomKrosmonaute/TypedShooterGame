@@ -26,6 +26,7 @@ export default class Positionable {
     }
 
     public follow( positionable:Vector2D, speed:number ): void {
+        if(this.dist(positionable) <= speed * 2) return
         this.p.angleMode(this.p.RADIANS)
         const angle = this.p.degrees(
             this.p.atan2(

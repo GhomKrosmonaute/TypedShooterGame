@@ -24,4 +24,5 @@ export default abstract class Enemy extends Positionable {
     kill(addToScore?: boolean): void;
     shoot(shoot: Shoot): void;
     reset(): void;
+    readonly lifeBasedRadius: number;
 }

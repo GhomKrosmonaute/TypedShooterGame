@@ -44,18 +44,7 @@ export default class AyaEnemy extends Enemy {
     }
 
     public get currentRadius(){
-        return Math.max(
-            this.radius / 2,
-            Math.min(
-                this.p.map(
-                    this.life,
-                    0,
-                    this.baseLife,
-                    0,
-                    this.radius
-                )
-            )
-        )
+        return this.lifeBasedRadius
     }
 
 }

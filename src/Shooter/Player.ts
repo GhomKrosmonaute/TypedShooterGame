@@ -39,12 +39,12 @@ export default class Player extends Positionable {
     public get shootRange(): number {
         const sniper = this.getPassive('sniper')
         if(!sniper) return this.baseShootRange
-        return this.baseShootRange + sniper.level * (this.baseShootRange * .25)
+        return this.baseShootRange + sniper.level * (this.baseShootRange * .5)
     }
     public get shootDamage(): number {
         const shotgun = this.getPassive('shotgun')
         if(!shotgun) return this.baseShootDamage
-        return this.baseShootDamage + shotgun.level * (this.baseShootDamage * .25)
+        return this.baseShootDamage + shotgun.level * (this.baseShootDamage * .5)
     }
     public get shootRate(): number {
         const minigun = this.getPassive('minigun')

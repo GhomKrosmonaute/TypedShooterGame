@@ -13,8 +13,8 @@ export default class App {
 
     private readonly docImage:p5.Image
     private readonly baseDocFadeOut = 10
-    private readonly maxEnemyCount = 50
-    private readonly minEnemyCount = 5
+    private readonly maxEnemyCount = 60
+    private readonly minEnemyCount = 10
 
     public readonly version = '0.1.2'
     public readonly debug = false
@@ -129,33 +129,6 @@ export default class App {
                     this.bonusState += Math.ceil(this.bonusState * .5)
                     const bonus = pickBonus(this)
                     this.bonus.push(bonus)
-                    if(this.debug)
-                        this.setAnimation({
-                            value: { bonus, player: this.player },
-                            duration: 2000,
-                            draw: ( p, time, values:{ bonus:Bonus, player:Player } ) => {
-                                if(!values.bonus.isOutOfLimits()){
-
-                                    // TODO: c'est mieux si le bonus émet une faible onde autour de lui
-                                    // TODO: il faut aussi faire briller le carré du score pour qu'on comprenne
-
-                                    p.stroke(200,0,10)
-                                    p.strokeWeight(
-                                        fade( this.p, 20, {
-                                            value: time,
-                                            valueMax: 2000,
-                                            overflow: 5
-                                        })
-                                    )
-                                    p.line(
-                                        values.player.x,
-                                        values.player.y,
-                                        values.bonus.x,
-                                        values.bonus.y
-                                    )
-                                }
-                            }
-                        })
                 }
             }
         }
@@ -323,9 +296,7 @@ export default class App {
         return Math.max(
             Math.floor(
                 Math.min(
-                    this.p.map(
-                        this.player.score, 0, 100, 5, 20
-                    ),
+                    this.p.map(this.player.score, 0, 150, this.minEnemyCount, this.maxEnemyCount),
                     this.maxEnemyCount
                 )
             ),

@@ -16,6 +16,7 @@ import DeadChain from './Shooter/Bonus/DeadChain';
 import AyaEnemy from './Shooter/Enemies/AyaEnemy';
 import BlobEnemy from './Shooter/Enemies/BlobEnemy';
 import MineEnemy from "./Shooter/Enemies/MineEnemy";
+import TeslaEnemy from "./Shooter/Enemies/TeslaEnemy";
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -62,11 +63,12 @@ export function pick<T>( list:T[] ): T {
 }
 
 export function pickEnemy( app:App ): Enemy {
-    const rdm = Math.floor(Math.random() * 3)
+    const rdm = Math.floor(Math.random() * 4)
     switch (rdm) {
         case 0: return new AyaEnemy(app)
         case 1: return new BlobEnemy(app)
         case 2: return new MineEnemy(app)
+        case 3: return new TeslaEnemy(app)
     }
 }
 
