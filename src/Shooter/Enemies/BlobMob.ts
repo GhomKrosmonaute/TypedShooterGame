@@ -1,8 +1,8 @@
 import Enemy from '../Enemy';
 import App from '../App';
-import Shoot from "../Shoot";
+import Shot from "../Shot";
 
-export default class BlobEnemy extends Enemy {
+export default class BlobMob extends Enemy {
 
     public immune: boolean = false
     public speed: number = 2
@@ -56,7 +56,7 @@ export default class BlobEnemy extends Enemy {
         this.kill(!!shield)
     }
 
-    onShoot(shoot: Shoot): boolean {
+    onShoot(shoot: Shot): boolean {
         return true
     }
 

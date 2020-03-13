@@ -1,6 +1,6 @@
 import App from './App';
 import Positionable from './Positionable';
-import Shoot from './Shoot';
+import Shot from './Shot';
 import {Consumable, Passive, ShapeFunction, TemporaryEffects} from '../interfaces';
 import Rate from './Rate';
 
@@ -9,10 +9,11 @@ export default class Player extends Positionable {
     public baseLife = 5
     public life = 5
     public score = 0
-    public baseShootSpeed = 10
-    public baseShootRange = 300
-    public baseShootDamage = 1
-    public baseShootRate = 500
+    public baseShotSpeed = 10
+    public baseShotRange = 300
+    public baseShotDamage = 1
+    public baseFireRate = 500
+    public baseShotSize = 15
     public speedX = 0
     public speedY = 0
     public speedMax = 10
@@ -21,7 +22,7 @@ export default class Player extends Positionable {
     public highScore:number = JSON.parse(localStorage.getItem('shooter')).highScore
     public consumables:Consumable[] = []
     public passives:Passive[] = []
-    public shoots:Shoot[] = []
+    public shots:Shot[] = []
     public temporary:TemporaryEffects = {}
 
     public shootRating:Rate
@@ -30,26 +31,31 @@ export default class Player extends Positionable {
         public app:App
     ){
         super( app.p, 0, 0, 50 )
-        this.shootRating = new Rate(this.baseShootRate)
+        this.shootRating = new Rate(this.baseFireRate)
     }
 
-    public get shootSpeed(): number {
-        return this.baseShootSpeed
+    public get shotSpeed(): number {
+        return this.baseShotSpeed
     }
-    public get shootRange(): number {
-        const sniper = this.getPassive('sniper')
-        if(!sniper) return this.baseShootRange
-        return this.baseShootRange + sniper.level * (this.baseShootRange * .5)
+    public get shotRange(): number {
+        const rangeUp = this.getPassive('rangeUp')
+        if(!rangeUp) return this.baseShotRange
+        return rangeUp.value
     }
-    public get shootDamage(): number {
-        const shotgun = this.getPassive('shotgun')
-        if(!shotgun) return this.baseShootDamage
-        return this.baseShootDamage + shotgun.level * (this.baseShootDamage * .5)
+    public get shotDamage(): number {
+        const damageUp = this.getPassive('damageUp')
+        if(!damageUp) return this.baseShotDamage
+        return damageUp.value
     }
-    public get shootRate(): number {
-        const minigun = this.getPassive('minigun')
-        if(!minigun) return this.baseShootRate
-        return this.baseShootRate / this.p.map(minigun.level,1,3,1.5,2)
+    public get shotSize(): number {
+        const shotsSizeUp = this.getPassive('shotsSizeUp')
+        if(!shotsSizeUp) return this.baseShotSize
+        return shotsSizeUp.value
+    }
+    public get fireRate(): number {
+        const fireRateUp = this.getPassive('fireRateUp')
+        if(!fireRateUp) return this.baseFireRate
+        return fireRateUp.value
     }
 
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
@@ -161,25 +167,25 @@ export default class Player extends Positionable {
 
         // SHOOTS
 
-        this.shootRating.interval = this.shootRate
+        this.shootRating.interval = this.fireRate
 
         if(this.shootRating.canTrigger()){
             const direction = {
                 x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4),
                 y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4)
             }
-            if(this.getTemporary('star')){
+            if(this.getTemporary('starBalls')){
                 if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
-                    this.shoots.push(
-                        new Shoot( this,1 + direction.x, direction.y),
-                        new Shoot( this,-1 + direction.x, direction.y),
-                        new Shoot( this, direction.x,1 + direction.y),
-                        new Shoot( this, direction.x,-1 + direction.y),
-                        new Shoot( this,1 + direction.x,1 + direction.y),
-                        new Shoot( this,-1 + direction.x,1 + direction.y),
-                        new Shoot( this,1 + direction.x,-1 + direction.y),
-                        new Shoot( this,-1 + direction.x,-1 + direction.y)
+                    this.shots.push(
+                        new Shot( this,1 + direction.x, direction.y),
+                        new Shot( this,-1 + direction.x, direction.y),
+                        new Shot( this, direction.x,1 + direction.y),
+                        new Shot( this, direction.x,-1 + direction.y),
+                        new Shot( this,1 + direction.x,1 + direction.y),
+                        new Shot( this,-1 + direction.x,1 + direction.y),
+                        new Shot( this,1 + direction.x,-1 + direction.y),
+                        new Shot( this,-1 + direction.x,-1 + direction.y)
                     )
                 }
             }else{
@@ -189,7 +195,7 @@ export default class Player extends Positionable {
                 if(this.app.keyIsPressed('shoot','right')) direction.x += 1
                 if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
-                    this.shoots.push( new Shoot( this,
+                    this.shots.push( new Shot( this,
                         direction.x,
                         direction.y
                     ))
@@ -198,8 +204,8 @@ export default class Player extends Positionable {
 
         }
 
-        this.shoots = this.shoots.filter( shoot => !shoot.isOutOfLimits() )
-        this.shoots.forEach( shoot => shoot.step() )
+        this.shots = this.shots.filter(shoot => !shoot.isOutOfLimits() )
+        this.shots.forEach(shoot => shoot.step() )
 
     }
 
@@ -217,7 +223,7 @@ export default class Player extends Positionable {
     }
 
     public draw(): void {
-        this.shoots.forEach( shoot => shoot.draw() )
+        this.shots.forEach(shoot => shoot.draw() )
         this.p.noStroke()
         this.p.fill(this.app.light)
         this.p.ellipse(this.x,this.y,this.radius)

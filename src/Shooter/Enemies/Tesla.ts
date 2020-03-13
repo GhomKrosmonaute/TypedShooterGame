@@ -1,10 +1,10 @@
 
 import Enemy from '../Enemy';
 import App from '../App';
-import Shoot from "../Shoot";
+import Shot from "../Shot";
 import {Vector2D} from "../../interfaces";
 
-export default class TeslaEnemy extends Enemy {
+export default class Tesla extends Enemy {
 
     public immune: boolean = false
     public speed: number = 3
@@ -17,7 +17,7 @@ export default class TeslaEnemy extends Enemy {
     public arcWeight:number
     public arcTime:number
     public cardinalIndex:number
-    public connections:TeslaEnemy[] = []
+    public connections:Tesla[] = []
 
     constructor( app:App ) {
         super( app )
@@ -43,9 +43,9 @@ export default class TeslaEnemy extends Enemy {
             if(
                 enemy.id === 'tesla' &&
                 this.dist(enemy) < this.arcSize &&
-                !(enemy as TeslaEnemy).connections.includes(this) &&
-                !this.connections.includes(enemy as TeslaEnemy)
-            ) this.connections.push(enemy as TeslaEnemy)
+                !(enemy as Tesla).connections.includes(this) &&
+                !this.connections.includes(enemy as Tesla)
+            ) this.connections.push(enemy as Tesla)
         }
 
         if(Date.now() > this.arcTime)
@@ -79,12 +79,12 @@ export default class TeslaEnemy extends Enemy {
         this.connections = []
         this.app.enemies.forEach( enemy => {
             if(enemy.id === 'tesla')
-                (enemy as TeslaEnemy).connections = (enemy as TeslaEnemy).connections.filter( tesla => tesla !== this )
+                (enemy as Tesla).connections = (enemy as Tesla).connections.filter(tesla => tesla !== this )
         })
         super.kill(addToScore)
     }
 
-    onShoot(shoot: Shoot): boolean {
+    onShoot(shoot: Shot): boolean {
         return true
     }
 
@@ -106,7 +106,7 @@ export default class TeslaEnemy extends Enemy {
         )
     }
 
-    arc( tesla:TeslaEnemy ): void {
+    arc( tesla:Tesla ): void {
         if(this.app.areOnContact(this,tesla)) return
         const points:Vector2D[] = []
         const pointCount = Math.ceil((this.dist(tesla) + 1) / 50)
@@ -132,7 +132,7 @@ export default class TeslaEnemy extends Enemy {
         this.p.endShape()
     }
 
-    isOnArc( tesla:TeslaEnemy, target:Vector2D|false ): boolean { if(!target) return false
+    isOnArc(tesla:Tesla, target:Vector2D|false ): boolean { if(!target) return false
         return this.dist(target) + tesla.dist(target) < this.dist(tesla) + (this.arcWeight + tesla.arcWeight) * .5
     }
 

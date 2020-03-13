@@ -1,6 +1,6 @@
 import App from './App';
 import Positionable from './Positionable';
-import Shoot from './Shoot';
+import Shot from './Shot';
 import { Consumable, Passive, ShapeFunction, TemporaryEffects } from '../interfaces';
 import Rate from './Rate';
 export default class Player extends Positionable {
@@ -8,10 +8,11 @@ export default class Player extends Positionable {
     baseLife: number;
     life: number;
     score: number;
-    baseShootSpeed: number;
-    baseShootRange: number;
-    baseShootDamage: number;
-    baseShootRate: number;
+    baseShotSpeed: number;
+    baseShotRange: number;
+    baseShotDamage: number;
+    baseFireRate: number;
+    baseShotSize: number;
     speedX: number;
     speedY: number;
     speedMax: number;
@@ -20,14 +21,15 @@ export default class Player extends Positionable {
     highScore: number;
     consumables: Consumable[];
     passives: Passive[];
-    shoots: Shoot[];
+    shots: Shot[];
     temporary: TemporaryEffects;
     shootRating: Rate;
     constructor(app: App);
-    readonly shootSpeed: number;
-    readonly shootRange: number;
-    readonly shootDamage: number;
-    readonly shootRate: number;
+    readonly shotSpeed: number;
+    readonly shotRange: number;
+    readonly shotDamage: number;
+    readonly shotSize: number;
+    readonly fireRate: number;
     setTemporary(flag: string, duration: number, shape: ShapeFunction): void;
     getTemporary(flag: string): boolean;
     addPassive(passive: Passive): void;

@@ -1,6 +1,6 @@
 import Positionable from './Positionable';
 import App from './App';
-import Shoot from './Shoot';
+import Shot from './Shot';
 export default abstract class Enemy extends Positionable {
     app: App;
     protected readonly MIN_RADIUS = 15;
@@ -16,7 +16,7 @@ export default abstract class Enemy extends Positionable {
     abstract id: string;
     abstract pattern(): void;
     abstract onDraw(): void;
-    abstract onShoot(shoot: Shoot): boolean;
+    abstract onShoot(shoot: Shot): boolean;
     abstract onPlayerContact(): void;
     protected constructor(app: App);
     step(): void;

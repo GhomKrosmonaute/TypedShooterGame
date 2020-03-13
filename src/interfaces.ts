@@ -15,6 +15,7 @@ export interface Consumable extends BonusExtender {
 }
 
 export interface Passive extends BonusExtender {
+    value: number
     level: number
 }
 

@@ -3,12 +3,12 @@ import {Passive} from '../../interfaces';
 import Bonus from '../Bonus';
 import p5 from 'p5';
 
-export default class Drill extends Bonus implements Passive {
+export default class PiercingShots extends Bonus implements Passive {
 
     public level = 1
-    public id = 'drill'
-    public displayName = 'Drill'
-    public description = 'Piercing shots +'
+    public id = 'piercingShots'
+    public displayName = 'Piercing Shots'
+    public description = 'Pierces {value} enemies'
 
     shape(p:p5, x:number,y:number,w:number,h:number){
         this.p.ellipse(x+w*.5,y+h*.5,w*.6,h*.25)
@@ -16,6 +16,10 @@ export default class Drill extends Bonus implements Passive {
 
     applyEffect(): void {
         this.app.player.addPassive(this)
+    }
+
+    get value(): number {
+        return this.level
     }
 
 }

@@ -2,21 +2,21 @@ import p5 from 'p5';
 import App from './Shooter/App';
 import Bonus from './Shooter/Bonus';
 import Enemy from './Shooter/Enemy';
-import Drill from './Shooter/Bonus/Drill';
-import Carnage from './Shooter/Bonus/Carnage';
-import Falcon from './Shooter/Bonus/Falcon';
+import PiercingShots from './Shooter/Bonus/PiercingShots';
+import DeadlyWave from './Shooter/Bonus/DeadlyWave';
+import AutoFireGuidance from './Shooter/Bonus/AutoFireGuidance';
 import Heal from './Shooter/Bonus/Heal';
-import Star from './Shooter/Bonus/Star';
+import StarBalls from './Shooter/Bonus/StarBalls';
 import Shield from './Shooter/Bonus/Shield';
-import Shotgun from './Shooter/Bonus/Shotgun';
-import Bazooka from './Shooter/Bonus/Bazooka';
-import Minigun from './Shooter/Bonus/Minigun';
-import Sniper from './Shooter/Bonus/Sniper';
+import DamageUp from './Shooter/Bonus/DamageUp';
+import ShotsSizeUp from './Shooter/Bonus/ShotsSizeUp';
+import FireRateUp from './Shooter/Bonus/FireRateUp';
+import RangeUp from './Shooter/Bonus/RangeUp';
 import DeadChain from './Shooter/Bonus/DeadChain';
-import AyaEnemy from './Shooter/Enemies/AyaEnemy';
-import BlobEnemy from './Shooter/Enemies/BlobEnemy';
-import MineEnemy from "./Shooter/Enemies/MineEnemy";
-import TeslaEnemy from "./Shooter/Enemies/TeslaEnemy";
+import ShieldPiercer from './Shooter/Enemies/ShieldPiercer';
+import BlobMob from './Shooter/Enemies/BlobMob';
+import CircularSaw from "./Shooter/Enemies/CircularSaw";
+import Tesla from "./Shooter/Enemies/Tesla";
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -65,10 +65,10 @@ export function pick<T>( list:T[] ): T {
 export function pickEnemy( app:App ): Enemy {
     const rdm = Math.floor(Math.random() * 4)
     switch (rdm) {
-        case 0: return new AyaEnemy(app)
-        case 1: return new BlobEnemy(app)
-        case 2: return new MineEnemy(app)
-        case 3: return new TeslaEnemy(app)
+        case 0: return new ShieldPiercer(app)
+        case 1: return new BlobMob(app)
+        case 2: return new CircularSaw(app)
+        case 3: return new Tesla(app)
     }
 }
 
@@ -76,15 +76,15 @@ export function pickBonus( app:App ): Bonus {
     const rdm = Math.floor(Math.random() * 11)
     switch (rdm) {
         case 0: return new Heal(app)
-        case 1: return new Star(app)
-        case 2: return new Carnage(app)
-        case 3: return new Drill(app)
-        case 4: return new Falcon(app)
+        case 1: return new StarBalls(app)
+        case 2: return new DeadlyWave(app)
+        case 3: return new PiercingShots(app)
+        case 4: return new AutoFireGuidance(app)
         case 5: return new Shield(app)
-        case 6: return new Shotgun(app)
-        case 7: return new Bazooka(app)
-        case 8: return new Minigun(app)
-        case 9: return new Sniper(app)
+        case 6: return new DamageUp(app)
+        case 7: return new ShotsSizeUp(app)
+        case 8: return new FireRateUp(app)
+        case 9: return new RangeUp(app)
         case 10: return new DeadChain(app)
     }
 }

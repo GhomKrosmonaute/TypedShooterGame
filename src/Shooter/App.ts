@@ -102,7 +102,7 @@ export default class App {
         this.background.move( x, y )
         this.foreground.move( x, y )
         this.enemies.forEach( enemy => enemy.move( x, y ) )
-        this.player.shoots.forEach( shoot => {
+        this.player.shots.forEach(shoot => {
             shoot.basePosition.move( x, y )
             shoot.move( x, y )
         })

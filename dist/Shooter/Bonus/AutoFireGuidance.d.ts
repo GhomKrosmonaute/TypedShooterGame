@@ -1,7 +1,7 @@
-import Bonus from '../Bonus';
 import { Passive } from '../../interfaces';
+import Bonus from '../Bonus';
 import p5 from 'p5';
-export default class Shield extends Bonus implements Passive {
+export default class AutoFireGuidance extends Bonus implements Passive {
     level: number;
     id: string;
     displayName: string;

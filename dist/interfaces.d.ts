@@ -9,6 +9,7 @@ export interface Consumable extends BonusExtender {
     exec: () => void;
 }
 export interface Passive extends BonusExtender {
+    value: number;
     level: number;
 }
 export interface TemporaryEffects {

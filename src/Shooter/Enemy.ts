@@ -1,7 +1,6 @@
 import Positionable from './Positionable';
 import App from './App';
-import Shoot from './Shoot';
-import {isWhiteSpace} from "tslint";
+import Shot from './Shot'
 import p5 from "p5";
 import {Vector2D} from "../interfaces";
 
@@ -20,7 +19,7 @@ export default abstract class Enemy extends Positionable {
     public abstract id:string
     public abstract pattern():void
     public abstract onDraw():void
-    public abstract onShoot(shoot:Shoot):boolean
+    public abstract onShoot(shoot:Shot):boolean
     public abstract onPlayerContact():void
 
     protected constructor(
@@ -33,7 +32,7 @@ export default abstract class Enemy extends Positionable {
     public step(){
 
         if(!this.immune)
-            for(const shoot of this.app.player.shoots)
+            for(const shoot of this.app.player.shots)
                 if(this.app.areOnContact(shoot,this))
                     if(this.onShoot(shoot))
                         if(shoot.handleShoot(this))
@@ -57,7 +56,7 @@ export default abstract class Enemy extends Positionable {
 
         const position:Vector2D = { x:this.x, y:this.y }
 
-        const deadChain = this.app.player.getPassive('deadchain')
+        const deadChain = this.app.player.getPassive('deadChain')
         if(addToScore && deadChain){
 
             setTimeout(() => {
@@ -66,7 +65,7 @@ export default abstract class Enemy extends Positionable {
                         enemy !== this &&
                         enemy.life > 0 &&
                         !enemy.immune &&
-                        enemy.dist(position) < deadChain.level * 100
+                        enemy.dist(position) < deadChain.value
                     ) enemy.inflictDamages(this.baseLife, true)
             },200)
 
@@ -77,11 +76,11 @@ export default abstract class Enemy extends Positionable {
                     const opacity = p.map(time,0,200,255,0)
                     p.noStroke()
                     p.fill(255,0,0, opacity)
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,values.deadChain.level * 100,1))
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,values.deadChain.value,1))
                     p.noFill()
                     p.stroke(255, opacity)
                     p.strokeWeight(p.map(time,0,200,1,10))
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, 1,values.deadChain.level * 100))
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,1,values.deadChain.value))
                 }
             })
 

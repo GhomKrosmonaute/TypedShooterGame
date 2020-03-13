@@ -3,13 +3,13 @@ import Enemy from './Enemy';
 import Player from './Player';
 import {fade} from "../utils";
 
-export default class Shoot extends Positionable {
+export default class Shot extends Positionable {
 
     public readonly basePosition:Positionable
     public readonly direction:Positionable
     private readonly speed:number
     public readonly damage:number
-    private drill:number = 1
+    private piercingShots:number = 1
     private toIgnore:Enemy[] = []
 
     constructor(
@@ -17,7 +17,7 @@ export default class Shoot extends Positionable {
         directionX:number,
         directionY:number
     ){
-        super( player.p, player.x, player.y, 20 )
+        super( player.p, player.x, player.y, player.shotSize )
         this.direction = new Positionable( this.p,
             directionX * 5000,
             directionY * 5000
@@ -26,17 +26,17 @@ export default class Shoot extends Positionable {
             player.x + player.speedX * 10,
             player.y + player.speedY * 10
         )
-        this.speed = this.player.shootSpeed
-        this.damage = this.player.shootDamage
-        const drill = this.player.getPassive('drill')
-        if(drill) this.drill += drill.level
+        this.speed = this.player.shotSpeed
+        this.damage = this.player.shotDamage
+        const piercingShots = this.player.getPassive('piercingShots')
+        if(piercingShots) this.piercingShots += piercingShots.level
     }
 
     public handleShoot( enemy:Enemy ): boolean {
         if(!this.toIgnore.includes(enemy)){
-            this.drill --
+            this.piercingShots --
             this.toIgnore.push(enemy)
-            if(this.drill === 0)
+            if(this.piercingShots === 0)
                 this.placeOutOfLimits()
             return true
         }
@@ -44,12 +44,12 @@ export default class Shoot extends Positionable {
     }
 
     public step(): void {
-        if(this.dist(this.basePosition) > this.player.shootRange){
+        if(this.dist(this.basePosition) > this.player.shotRange){
             this.placeOutOfLimits()
         }else{
-            const falcon = this.player.getPassive('falcon')
+            const autoFireGuidance = this.player.getPassive('autoFireGuidance')
             let target:Enemy = null
-            if(falcon){
+            if(autoFireGuidance){
                 const temp:{
                     enemy: Enemy
                     dist: number
@@ -60,7 +60,7 @@ export default class Shoot extends Positionable {
                 for(const enemy of this.player.app.enemies){
                     if(!this.toIgnore.includes(enemy) && !enemy.immune){
                         const dist = enemy.dist(this)
-                        if(dist < falcon.level * 100 && temp.dist > dist){
+                        if(dist < autoFireGuidance.value && temp.dist > dist){
                             temp.enemy = enemy
                             temp.dist = dist
                         }
@@ -83,15 +83,15 @@ export default class Shoot extends Positionable {
         this.p.ellipse(
             this.x,
             this.y,
-            fade( this.p, this.currentRadius,
+            fade( this.p, this.radius,
                 {
                     value: this.dist(this.player),
-                    valueMax: this.player.shootRange,
+                    valueMax: this.player.shotRange,
                     overflow: 5
                 },
                 {
                     value: this.dist(this.basePosition),
-                    valueMax: this.player.shootRange,
+                    valueMax: this.player.shotRange,
                     overflow: 5
                 }
             )
@@ -103,24 +103,18 @@ export default class Shoot extends Positionable {
             this.p.ellipse(
                 this.basePosition.x,
                 this.basePosition.y,
-                this.player.shootRange * 2
+                this.player.shotRange * 2
             )
-            const falcon = this.player.getPassive('falcon')
-            if(falcon){
+            const autoFireGuidance = this.player.getPassive('autoFireGuidance')
+            if(autoFireGuidance){
                 this.p.ellipse(
                     this.x,
                     this.y,
-                    falcon.level * 100
+                    autoFireGuidance.value
                 )
             }
             this.p.noStroke()
         }
-    }
-
-    public get currentRadius(): number {
-        const bazooka = this.player.getPassive('bazooka')
-        if(!bazooka) return this.radius
-        return this.radius + bazooka.level * (this.radius * .25)
     }
 
 }

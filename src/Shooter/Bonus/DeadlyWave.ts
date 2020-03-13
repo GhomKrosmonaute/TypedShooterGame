@@ -3,12 +3,12 @@ import {Consumable, VIEWPORT} from '../../interfaces';
 import p5 from 'p5';
 import Player from "../Player";
 
-export default class Carnage extends Bonus implements Consumable {
+export default class DeadlyWave extends Bonus implements Consumable {
 
     public quantity = 1
-    public id = 'carnage'
-    public displayName = 'Carnage'
-    public description = 'Deadly wave'
+    public id = 'deadlyWave'
+    public displayName = 'Deadly Wave'
+    public description = 'Kill enemies hit by 1000px wave'
 
     public applyEffect(){
         this.app.player.addConsumable(this)

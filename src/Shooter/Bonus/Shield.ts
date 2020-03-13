@@ -7,7 +7,7 @@ export default class Shield extends Bonus implements Passive {
     public level = 1
     public id = 'shield'
     public displayName = 'Shield'
-    public description = 'Damage protection +'
+    public description = 'Damage protection {value}'
 
     shape(p:p5, x: number, y: number, w: number, h: number): void {
         // TODO: shield
@@ -18,6 +18,10 @@ export default class Shield extends Bonus implements Passive {
 
     applyEffect(): void {
         this.app.player.addPassive(this)
+    }
+
+    get value(): number {
+        return this.level
     }
 
 }

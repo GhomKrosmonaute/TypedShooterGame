@@ -2,12 +2,12 @@ import Bonus from '../Bonus';
 import {Passive} from '../../interfaces';
 import p5 from 'p5';
 
-export default class Bazooka extends Bonus implements Passive {
+export default class ShotsSizeUp extends Bonus implements Passive {
 
     public level = 1
-    public id = 'bazooka'
-    public displayName = 'Bazooka'
-    public description = 'Shots size +'
+    public id = 'shotsSizeUp'
+    public displayName = 'Shots Size Up'
+    public description = '{value}px'
 
     applyEffect(): void {
         this.app.player.addPassive(this)
@@ -32,6 +32,10 @@ export default class Bazooka extends Bonus implements Passive {
             w * .2,
             h * .4
         )
+    }
+
+    get value(): number {
+        return this.app.player.baseShotSize + this.level * (this.app.player.baseShotSize * .25)
     }
 
 }

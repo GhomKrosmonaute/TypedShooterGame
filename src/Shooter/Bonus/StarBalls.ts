@@ -3,11 +3,11 @@ import {Consumable} from '../../interfaces'
 import {seconds, star} from '../../utils'
 import p5 from 'p5'
 
-export default class Star extends Bonus implements Consumable {
+export default class StarBalls extends Bonus implements Consumable {
 
     public quantity = 1
-    public id = 'star'
-    public displayName = 'Star'
+    public id = 'starBalls'
+    public displayName = 'Star Balls'
     public description = 'Temporary multidirectional shots'
     
     applyEffect(): void {

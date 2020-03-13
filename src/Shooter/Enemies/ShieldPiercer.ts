@@ -1,15 +1,15 @@
 import Enemy from '../Enemy';
 import App from '../App';
-import Shoot from "../Shoot";
+import Shot from "../Shot";
 
-export default class AyaEnemy extends Enemy {
+export default class ShieldPiercer extends Enemy {
 
     public immune: boolean = false
     public damage: number = 1
     public speed: number = 4
     public gain: number = 1
     public life: number = 2
-    public id = 'aya'
+    public id = 'shieldPiercer'
 
     constructor( app:App ) {
         super( app )
@@ -29,7 +29,7 @@ export default class AyaEnemy extends Enemy {
         this.kill()
     }
 
-    onShoot(shoot: Shoot): boolean {
+    onShoot(shoot: Shot): boolean {
         return true
     }
 

@@ -1,16 +1,16 @@
 import Enemy from '../Enemy';
 import App from '../App';
-import Shoot from "../Shoot";
+import Shot from "../Shot";
 import {star} from "../../utils";
 
-export default class MineEnemy extends Enemy {
+export default class CircularSaw extends Enemy {
 
     public gain: number = 0
     public life: number = 1
     public speed: number = 0
     public immune: boolean = true
     public damage: number = 5
-    public id: string = 'mine'
+    public id: string = 'circularSaw'
 
     private lastDamage = Date.now()
     private damageInterval = 1000
@@ -39,7 +39,7 @@ export default class MineEnemy extends Enemy {
         }
     }
 
-    onShoot(shoot: Shoot): boolean {
+    onShoot(shoot: Shot): boolean {
         return false
     }
 
