@@ -20,9 +20,9 @@ export interface TemporaryEffect {
     timeout: number;
 }
 export interface GameAnimation {
-    draw: (p: p5, time: number, values: any) => void;
-    duration: number;
     value: any;
+    duration: number;
+    draw: (p: p5, time: number, values: any) => void;
 }
 export interface PuttedAnimation {
     id?: string;

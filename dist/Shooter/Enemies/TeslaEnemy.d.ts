@@ -18,7 +18,7 @@ export default class TeslaEnemy extends Enemy {
     constructor(app: App);
     pattern(): void;
     onPlayerContact(): void;
-    kill(): void;
+    kill(addToScore?: boolean): void;
     onShoot(shoot: Shoot): boolean;
     onDraw(): void;
     arc(tesla: TeslaEnemy): void;

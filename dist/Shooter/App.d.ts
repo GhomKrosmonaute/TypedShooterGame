@@ -12,7 +12,7 @@ export default class App {
     private readonly ignoreKeysInterval;
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
-    readonly version = "0.1.3";
+    readonly version = "0.1.4";
     readonly debug = false;
     private showDoc;
     private docFadeOut;

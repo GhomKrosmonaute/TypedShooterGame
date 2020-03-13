@@ -7,7 +7,7 @@ import {Vector2D} from "../../interfaces";
 export default class TeslaEnemy extends Enemy {
 
     public immune: boolean = false
-    public speed: number = 2
+    public speed: number = 3
     public damage: number = 2
     public gain: number = 1
     public life: number = 2
@@ -48,12 +48,12 @@ export default class TeslaEnemy extends Enemy {
             ) this.connections.push(enemy as TeslaEnemy)
         }
 
-        if(Date.now() > this.arcTime){
-            this.arcTime = Date.now() + this.arcInterval
+        if(Date.now() > this.arcTime)
             for(const tesla of this.connections)
-                if(this.isOnArc(tesla,this.app.player))
+                if(this.isOnArc(tesla,this.app.player)){
+                    this.arcTime = Date.now() + this.arcInterval
                     this.app.player.life --
-        }
+                }
 
         let target:Vector2D = [
             { x: this.arcSize * -.4, y: 0 },
@@ -75,13 +75,13 @@ export default class TeslaEnemy extends Enemy {
         this.kill()
     }
 
-    kill(){
+    kill( addToScore:boolean = false ){
         this.connections = []
         this.app.enemies.forEach( enemy => {
             if(enemy.id === 'tesla')
                 (enemy as TeslaEnemy).connections = (enemy as TeslaEnemy).connections.filter( tesla => tesla !== this )
         })
-        super.kill()
+        super.kill(addToScore)
     }
 
     onShoot(shoot: Shoot): boolean {

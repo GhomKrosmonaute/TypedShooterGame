@@ -17,7 +17,7 @@ export default class App {
     private readonly maxEnemyCount = 60
     private readonly minEnemyCount = 10
 
-    public readonly version = '0.1.3'
+    public readonly version = '0.1.4'
     public readonly debug = false
 
     private showDoc:boolean

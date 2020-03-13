@@ -2,6 +2,8 @@ import Positionable from './Positionable';
 import App from './App';
 import Shoot from './Shoot';
 import {isWhiteSpace} from "tslint";
+import p5 from "p5";
+import {Vector2D} from "../interfaces";
 
 export default abstract class Enemy extends Positionable {
 
@@ -35,7 +37,7 @@ export default abstract class Enemy extends Positionable {
                 if(this.app.areOnContact(shoot,this))
                     if(this.onShoot(shoot))
                         if(shoot.handleShoot(this))
-                            this.shoot(shoot)
+                            this.inflictDamages(shoot.damage,true)
 
         if(this.app.areOnContact(this,this.app.player))
             this.onPlayerContact()
@@ -52,14 +54,62 @@ export default abstract class Enemy extends Positionable {
     }
 
     public kill( addToScore:boolean = false ): void {
+
+        const position:Vector2D = { x:this.x, y:this.y }
+
+        const deadChain = this.app.player.getPassive('deadchain')
+        if(addToScore && deadChain){
+
+            setTimeout(() => {
+                for(const enemy of this.app.enemies)
+                    if (
+                        enemy !== this &&
+                        enemy.life > 0 &&
+                        !enemy.immune &&
+                        enemy.dist(position) < deadChain.level * 100
+                    ) enemy.inflictDamages(this.baseLife, true)
+            },200)
+
+            this.app.setAnimation({
+                duration: 200,
+                value: {position,deadChain},
+                draw(p: p5, time: number, values: any ): void {
+                    const opacity = p.map(time,0,200,255,0)
+                    p.noStroke()
+                    p.fill(255,0,0, opacity)
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,values.deadChain.level * 100,1))
+                    p.noFill()
+                    p.stroke(255, opacity)
+                    p.strokeWeight(p.map(time,0,200,1,10))
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, 1,values.deadChain.level * 100))
+                }
+            })
+
+        }else{
+            this.app.setAnimation({
+                duration: 200,
+                value: {radius:this.radius,position},
+                draw(p: p5, time: number, values:any ): void {
+                    const opacity = p.map(time,0,200,255,0)
+                    p.noStroke()
+                    p.fill(200,0,100, opacity)
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, values.radius,1))
+                    p.noFill()
+                    p.stroke(255, opacity)
+                    p.strokeWeight(p.map(time,0,200,1,5))
+                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, 1,values.radius))
+                }
+            })
+        }
+
         if(addToScore) this.app.player.score += this.gain
         this.reset()
     }
 
-    public shoot( shoot:Shoot ): void {
-        this.life -= shoot.damage
+    public inflictDamages( damages:number, addToScore:boolean = false ): void {
+        this.life -= damages
         if(this.life <= 0) {
-            this.kill(true)
+            this.kill(addToScore)
         }
     }
 
