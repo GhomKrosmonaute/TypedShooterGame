@@ -3,10 +3,9 @@ import Bonus from './Shooter/Bonus';
 import p5 from 'p5';
 import App from "./Shooter/App";
 import Positionable from "./Shooter/Positionable";
+import createSpyObj = jasmine.createSpyObj;
 
 interface BonusExtender extends Bonus {
-    displayName: string
-    description: string
     shape: ShapeFunction
 }
 
@@ -36,6 +35,7 @@ export interface GameAnimation {
 }
 
 export interface PuttedAnimation {
+    id?: string
     animation: GameAnimation
     startTime: number
     endTime: number
@@ -53,25 +53,19 @@ export interface Keys {
     [key:string]: boolean
 }
 
-export enum MoveKeys {
-    DOWN = 'ArrowDown',
-    UP = 'ArrowUp',
-    LEFT = 'ArrowLeft',
-    RIGHT = 'ArrowRight'
+export interface KeyMode {
+    name: string
+    shoot: DirectionalKeys
+    move: DirectionalKeys
+    numeric: string[][]
 }
 
-export enum ShotKeys {
-    DOWN = 's',
-    UP = 'z',
-    LEFT = 'q',
-    RIGHT = 'd'
+export interface DirectionalKeys {
+    up: string[]
+    down: string[]
+    left: string[]
+    right: string[]
 }
-
-export const PowaKeys = '&é"\'(-è'.split('')
-
-export type MoveKey = 'ArrowDown'|'ArrowUp'|'ArrowLeft'|'ArrowRight'
-export type ShotKey = 's'|'z'|'q'|'d'
-export type PowaKey = '&'|'é'|'"'|"'"|'('|'-'|'è'
 
 export const LIMITS = 3000
 export const VIEWPORT = 1000

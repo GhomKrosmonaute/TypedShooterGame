@@ -1,7 +1,7 @@
 import App from './App';
 import Positionable from './Positionable';
 import Shoot from './Shoot';
-import {Consumable, Passive, PowaKeys, ShapeFunction, TemporaryEffects} from '../interfaces';
+import {Consumable, Passive, ShapeFunction, TemporaryEffects} from '../interfaces';
 import Rate from './Rate';
 
 export default class Player extends Positionable {
@@ -102,7 +102,7 @@ export default class Player extends Positionable {
 
     public step(): void {
 
-        // MORT ?
+        // DEATH ?
 
         if(this.life <= 0){
             if(this.score > this.highScore){
@@ -113,27 +113,29 @@ export default class Player extends Positionable {
             this.app.reset()
         }
 
-        // DEPLACEMENTS
+        // MOVES
 
-        const keys = this.app.keys
-
-        if(this.app.moveKeysIsNotPressed()){
+        if(!this.app.moveKeyIsPressed()){
 
             this.speedX *= this.desc
             this.speedY *= this.desc
 
         }else{
 
-            if(!keys.ArrowLeft && !keys.ArrowRight)
-                this.speedX *= this.desc
+            if(
+                !this.app.keyIsPressed('move','left') &&
+                !this.app.keyIsPressed('move','right')
+            ) this.speedX *= this.desc
 
-            if(!keys.ArrowUp && !keys.ArrowDown)
-                this.speedY *= this.desc
+            if(
+                !this.app.keyIsPressed('move','up') &&
+                !this.app.keyIsPressed('move','down')
+            ) this.speedY *= this.desc
 
-            if(keys.ArrowLeft) this.speedX -= this.acc
-            if(keys.ArrowRight) this.speedX += this.acc
-            if(keys.ArrowUp) this.speedY -= this.acc
-            if(keys.ArrowDown) this.speedY += this.acc
+            if(this.app.keyIsPressed('move','left')) this.speedX -= this.acc
+            if(this.app.keyIsPressed('move','right')) this.speedX += this.acc
+            if(this.app.keyIsPressed('move','up')) this.speedY -= this.acc
+            if(this.app.keyIsPressed('move','down')) this.speedY += this.acc
 
             if(this.speedX < this.speedMax * -1) this.speedX = this.speedMax * -1
             if(this.speedY < this.speedMax * -1) this.speedY = this.speedMax * -1
@@ -167,7 +169,7 @@ export default class Player extends Positionable {
                 y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4)
             }
             if(this.getTemporary('star')){
-                if(!this.app.shootKeysIsNotPressed()){
+                if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
                     this.shoots.push(
                         new Shoot( this,1 + direction.x, direction.y),
@@ -181,11 +183,11 @@ export default class Player extends Positionable {
                     )
                 }
             }else{
-                if(keys.z) direction.y -= 1
-                if(keys.q) direction.x -= 1
-                if(keys.s) direction.y += 1
-                if(keys.d) direction.x += 1
-                if(!this.app.shootKeysIsNotPressed()){
+                if(this.app.keyIsPressed('shoot','up')) direction.y -= 1
+                if(this.app.keyIsPressed('shoot','left')) direction.x -= 1
+                if(this.app.keyIsPressed('shoot','down')) direction.y += 1
+                if(this.app.keyIsPressed('shoot','right')) direction.x += 1
+                if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
                     this.shoots.push( new Shoot( this,
                         direction.x,
@@ -202,8 +204,8 @@ export default class Player extends Positionable {
     }
 
     public keyPressed(key:string): void {
-        PowaKeys.forEach( (pk,i) => {
-            if(key === pk && this.consumables[i]){
+        this.app.keyMode.numeric.forEach( (keys, i) => {
+            if(keys.includes(key) && this.consumables[i]){
                 this.consumables[i].exec()
                 this.consumables[i].quantity --
                 if(this.consumables[i].quantity <= 0)

@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
 import docImage from './images/doc.png'
-import {GameAnimation, Keys, MoveKeys, PuttedAnimation, ShotKeys, Vector2D} from '../interfaces'
+import {Consumable, GameAnimation, KeyMode, Keys, Passive, PuttedAnimation, Vector2D} from '../interfaces'
 import Particles from './Particles'
 import Enemy from './Enemy'
 import Player from './Player'
@@ -13,14 +13,16 @@ export default class App {
 
     private readonly docImage:p5.Image
     private readonly baseDocFadeOut = 10
+    private readonly ignoreKeysInterval = 500
     private readonly maxEnemyCount = 60
     private readonly minEnemyCount = 10
 
-    public readonly version = '0.1.2'
+    public readonly version = '0.1.3'
     public readonly debug = false
 
     private showDoc:boolean
     private docFadeOut:number
+    private ignoreKeysTime:number
 
     public keys:Keys = {}
     public player:Player
@@ -34,18 +36,43 @@ export default class App {
     public bonusState:number
     public lastBonusState:number
     public darkModeTransition:number
+    public keyModes:KeyMode[] = [
+        {
+            name: 'Right handed AZERTY',
+            shoot: { up: ['z','Z'], down: ['s','S'], left: ['q','Q'], right: ['d','D'] },
+            move: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+            numeric: [['&','1'],['é','2'],['"','3'],["'",'4'],['(','5'],['-','6'],['è','7']]
+        },
+        {
+            name: 'Left handed AZERTY',
+            shoot: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+            move: { up: ['z','Z'], down: ['s','S'], left: ['q','Q'], right: ['d','D'] },
+            numeric: [['&','1'],['é','2'],['"','3'],["'",'4'],['(','5'],['-','6'],['è','7']]
+        },
+        {
+            name: 'Right handed QWERTY',
+            shoot: { up: ['w','W'], down: ['s','S'], left: ['a','A'], right: ['d','D'] },
+            move: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+            numeric: [['!','1'],['@','2'],['#','3'],['$','4'],['%','5'],['^','6'],['&','7']]
+        },
+        {
+            name: 'Left handed QWERTY',
+            shoot: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
+            move: { up: ['w','W'], down: ['s','S'], left: ['a','A'], right: ['d','D'] },
+            numeric: [['!','1'],['@','2'],['#','3'],['$','4'],['%','5'],['^','6'],['&','7']]
+        }
+    ]
 
     constructor( public p:p5 ){
 
         const storage = localStorage.getItem('shooter')
-        if( !storage ||
-            !JSON.parse(storage).highScore ||
-            JSON.parse(storage).version !== this.version
-        ) localStorage.setItem('shooter',JSON.stringify({
-            highScore: 0,
-            darkMode: true,
-            version: this.version
-        }))
+        if( !storage || JSON.parse(storage).version !== this.version )
+            localStorage.setItem('shooter', JSON.stringify({
+                highScore: 0,
+                keyModeIndex: 0,
+                darkMode: true,
+                version: this.version
+            }))
 
         this.darkModeTransition = this.darkMode ? 0 : 255
         this.docImage = p.loadImage(docImage)
@@ -55,6 +82,7 @@ export default class App {
     }
 
     public reset(): void {
+        this.pause()
         this.lastBonusState = 0
         this.bonusState = 2
         this.particles = new Particles(this,50,0,5)
@@ -62,8 +90,6 @@ export default class App {
         this.foreground = new Particles(this,10,1,2)
         this.player = new Player(this)
         this.rate = new Rate(25)
-        this.showDoc = true
-        this.docFadeOut = this.baseDocFadeOut
         this.animations = []
         this.enemies = []
         this.bonus = []
@@ -99,10 +125,10 @@ export default class App {
             )
         }
         if(this.showDoc){
-            if (
-                !this.moveKeysIsNotPressed() ||
-                !this.shootKeysIsNotPressed()
-            ){
+            if ( Date.now() > this.ignoreKeysTime && (
+                this.moveKeyIsPressed() ||
+                this.shootKeyIsPressed()
+            )){
                 this.showDoc = false
             }else{
                 particlesStep()
@@ -238,46 +264,111 @@ export default class App {
         }
     }
 
-    public get darkMode(): boolean {
-        return JSON.parse(localStorage.getItem('shooter')).darkMode
-    }
-    public set darkMode( activate:boolean ){
+    public save( key:string, value:any ): void {
         const storage = JSON.parse(localStorage.getItem('shooter'))
-        storage.darkMode = activate
+        storage[key] = value
         localStorage.setItem('shooter',JSON.stringify(storage))
     }
-    public get dark(): number {
-        return this.darkModeTransition
-    }
-    public get light(): number {
-        return 255 - this.darkModeTransition
+    public load( key:string ): any {
+        return JSON.parse(localStorage.getItem('shooter'))[key]
     }
 
-    public setAnimation( animation:GameAnimation ){
-        const puttedAnimation:PuttedAnimation = {
+    public switchKeyMode(): void {
+        this.keyModeIndex ++
+        if(this.keyModeIndex >= this.keyModes.length)
+            this.keyModeIndex = 0
+        this.keys = {}
+        this.setPopup('KeyMode changed : ' + this.keyMode.name)
+    }
+
+    public get keyMode(): KeyMode {
+        return this.keyModes[this.keyModeIndex]
+    }
+
+    public keyIsPressed( type:'move'|'shoot', direction:'up'|'down'|'left'|'right' ): boolean {
+        for(const key in this.keys)
+            if(this.keys[key])
+                if(this.keyMode[type][direction].includes(key))
+                    return true
+        return false
+    }
+
+    public pause(): void {
+        this.showDoc = true
+        this.docFadeOut = this.baseDocFadeOut
+        this.ignoreKeysTime = Date.now() + this.ignoreKeysInterval
+    }
+
+    public get keyModeIndex(): number { return this.load('keyModeIndex') }
+    public set keyModeIndex( index:number ){ this.save('keyModeIndex',index) }
+    public get darkMode(): boolean { return this.load('darkMode') }
+    public set darkMode( isActivate:boolean ){ this.save('darkMode',isActivate) }
+    public get dark(): number { return this.darkModeTransition  }
+    public get light(): number { return 255 - this.darkModeTransition }
+
+    public setAnimation( animation:GameAnimation, id?:string ): void {
+        const puttedAnimation:PuttedAnimation = { id,
             animation: animation,
             startTime: Date.now(),
             endTime: Date.now() + animation.duration
         }
         this.animations.push(puttedAnimation)
     }
+    public setPopup( text:string ): void {
+        this.setAnimation({
+            value: {
+                app: this,
+                index: this.animations.filter( (anim:PuttedAnimation) => anim.id === 'popup' ).length - 1
+            },
+            duration: 3000,
+            draw(p, time, values ): void {
+                const shift:number = values.index * p.height * .10
+                p.noStroke()
+                p.fill(values.app.light, fade(p,30, {
+                    value: time,
+                    valueMax: 3000,
+                    overflow: 7
+                }))
+                p.rect(
+                    p.width * -.5,
+                    p.height * -.25 + shift,
+                    p.width,
+                    p.height * .1
+                )
+                p.fill(values.app.light, fade(p,255, {
+                    value: time,
+                    valueMax: 3000,
+                    overflow: 4
+                }))
+                p.textAlign(p.CENTER,p.CENTER)
+                p.text(text, 0, p.height * -.2 + shift)
+            }
+        }, 'popup')
+    }
 
     public keyReleased(key:string){ this.keys[key] = false }
-    public keyPressed(key:string){ this.keys[key] = true
-        if(key === 'm') this.darkMode = !this.darkMode
-        this.player.keyPressed(key)
+    public keyPressed(key:string){
+        if(key === 'Escape') this.pause()
+        else if(key === 'm') this.darkMode = !this.darkMode
+        else if(key === 'k') this.switchKeyMode()
+        else{
+            this.player.keyPressed(key)
+            this.keys[key] = true
+        }
     }
 
-    public moveKeysIsNotPressed(){
+    public moveKeyIsPressed(): boolean { return this.directionalKeyIsPressed('move') }
+    public shootKeyIsPressed(): boolean { return this.directionalKeyIsPressed('shoot') }
+    private directionalKeyIsPressed( type:'shoot'|'move' ): boolean {
         for(const key in this.keys)
-            if(this.keys[key] && Object.values(MoveKeys).includes(key as MoveKeys)) return false
-        return true
-    }
-
-    public shootKeysIsNotPressed(){
-        for(const key in this.keys)
-            if(this.keys[key] && Object.values(ShotKeys).includes(key as ShotKeys)) return false
-        return true
+            if(this.keys[key])
+                if(
+                    this.keyMode[type].up.includes(key) ||
+                    this.keyMode[type].down.includes(key) ||
+                    this.keyMode[type].left.includes(key) ||
+                    this.keyMode[type].right.includes(key)
+                ) return true
+        return false
     }
 
     public areOnContact( positionable1:any, positionable2:any ){

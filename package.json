@@ -1,11 +1,11 @@
 {
-  "name": "webpack-typescript-starter",
+  "name": "ghom-shooter-game",
   "version": "0.0.1",
-  "description": "A simple Webpack 4 starter with TypeScript transpilation",
+  "description": "A Shooter Game make with p5",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base src/ --mode development",
-    "git": "npm run build && git add * && git commit -m",
+    "git": "npm run build && git add *",
     "build": "webpack --config webpack.config.js --mode production",
     "build.prod": "webpack --config webpack.config.js -p",
     "build.esnext": "npm run build:types && npm run build:js",
@@ -19,7 +19,7 @@
     "webpack4",
     "typescript"
   ],
-  "author": "Juri Strumpflohner",
+  "author": "Ghom",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
