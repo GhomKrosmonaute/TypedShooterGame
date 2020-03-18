@@ -1,5 +1,6 @@
 import p5 from 'p5';
-import {LIMITS, SECURITY, Vector2D, VIEWPORT} from "../interfaces";
+import {Vector2D} from "../interfaces";
+import {LIMITS,SECURITY,VIEWPORT} from '../config'
 
 export default class Positionable {
 

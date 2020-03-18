@@ -66,7 +66,7 @@ export default abstract class Enemy extends Positionable {
                         enemy.life > 0 &&
                         !enemy.immune &&
                         enemy.dist(position) < deadChain.value
-                    ) enemy.inflictDamages(this.baseLife, true)
+                    ) enemy.inflictDamages(this.baseLife * .5, true)
             },200)
 
             this.app.setAnimation({

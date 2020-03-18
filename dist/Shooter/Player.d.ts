@@ -18,13 +18,15 @@ export default class Player extends Positionable {
     speedMax: number;
     acc: number;
     desc: number;
-    highScore: number;
     consumables: Consumable[];
     passives: Passive[];
     shots: Shot[];
     temporary: TemporaryEffects;
     shootRating: Rate;
+    highScore: number;
     constructor(app: App);
+    getHighScore(): Promise<number>;
+    setHighScore(score: number): Promise<any>;
     readonly shotSpeed: number;
     readonly shotRange: number;
     readonly shotDamage: number;
@@ -36,7 +38,7 @@ export default class Player extends Positionable {
     removePassive(id: string): void;
     getPassive(id: string): Passive | null;
     addConsumable(consumable: Consumable): void;
-    step(): void;
-    keyPressed(key: string): void;
+    step(): Promise<void>;
     draw(): void;
+    keyPressed(key: string): void;
 }

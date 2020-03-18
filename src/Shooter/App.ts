@@ -1,28 +1,46 @@
 import p5 from 'p5'
+import axios from 'axios'
+import qs from 'querystring'
 // @ts-ignore
 import docImage from './images/doc.png'
-import {Consumable, GameAnimation, KeyMode, Keys, Passive, PuttedAnimation, Vector2D} from '../interfaces'
+// @ts-ignore
+import cursorImage from './images/cursor.png'
+import {GameAnimation, KeyMode, Keys, PuttedAnimation, SceneName, Scenes, Vector2D} from '../interfaces'
 import Particles from './Particles'
 import Enemy from './Enemy'
 import Player from './Player'
 import Bonus from './Bonus'
 import Rate from './Rate'
 import {fade, pickBonus, pickEnemy} from '../utils'
+import {baseURL, keyModes} from '../config';
+import PartyScene from './Scenes/Party';
+import PauseScene from './Scenes/Pause';
+import Scene from './Scene';
 
 export default class App {
 
     private readonly docImage:p5.Image
+    private readonly cursorImage:p5.Image
     private readonly baseDocFadeOut = 10
+    private readonly baseCursorFadeOut = 1000
     private readonly ignoreKeysInterval = 500
     private readonly maxEnemyCount = 60
     private readonly minEnemyCount = 10
 
+    public scene:SceneName
+    private readonly scenes:Scenes = {
+        party: new PartyScene(this),
+        pause: new PauseScene(this)
+    }
+
     public readonly version = '0.1.4'
     public readonly debug = false
 
+    private fullscreen:boolean
     private showDoc:boolean
     private docFadeOut:number
     private ignoreKeysTime:number
+    private cursorFadeOut:number
 
     public keys:Keys = {}
     public player:Player
@@ -36,39 +54,13 @@ export default class App {
     public bonusState:number
     public lastBonusState:number
     public darkModeTransition:number
-    public keyModes:KeyMode[] = [
-        {
-            name: 'Right handed AZERTY',
-            shoot: { up: ['z','Z'], down: ['s','S'], left: ['q','Q'], right: ['d','D'] },
-            move: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
-            numeric: [['&','1'],['é','2'],['"','3'],["'",'4'],['(','5'],['-','6'],['è','7']]
-        },
-        {
-            name: 'Left handed AZERTY',
-            shoot: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
-            move: { up: ['z','Z'], down: ['s','S'], left: ['q','Q'], right: ['d','D'] },
-            numeric: [['&','1'],['é','2'],['"','3'],["'",'4'],['(','5'],['-','6'],['è','7']]
-        },
-        {
-            name: 'Right handed QWERTY',
-            shoot: { up: ['w','W'], down: ['s','S'], left: ['a','A'], right: ['d','D'] },
-            move: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
-            numeric: [['!','1'],['@','2'],['#','3'],['$','4'],['%','5'],['^','6'],['&','7']]
-        },
-        {
-            name: 'Left handed QWERTY',
-            shoot: { down: ['ArrowDown'], up: ['ArrowUp'], left: ['ArrowLeft'], right: ['ArrowRight'] },
-            move: { up: ['w','W'], down: ['s','S'], left: ['a','A'], right: ['d','D'] },
-            numeric: [['!','1'],['@','2'],['#','3'],['$','4'],['%','5'],['^','6'],['&','7']]
-        }
-    ]
+    public keyModes:KeyMode[] = keyModes
 
-    constructor( public p:p5 ){
+    constructor( public p:p5, public apiToken:string ){
 
         const storage = localStorage.getItem('shooter')
         if( !storage || JSON.parse(storage).version !== this.version )
             localStorage.setItem('shooter', JSON.stringify({
-                highScore: 0,
                 keyModeIndex: 0,
                 darkMode: true,
                 version: this.version
@@ -76,9 +68,29 @@ export default class App {
 
         this.darkModeTransition = this.darkMode ? 0 : 255
         this.docImage = p.loadImage(docImage)
+        this.cursorImage = p.loadImage(cursorImage)
         this.p.smooth()
         this.p.angleMode(this.p.DEGREES)
         this.reset()
+    }
+
+    public get( route:string ): Promise<any> {
+        return new Promise((resolve,reject) => {
+            axios.get('/'+route,{
+                baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
+            })
+                .then( res => res.status === 200 ? resolve(res.data) : reject(res.status))
+                .catch(reject)
+        })
+    }
+    public post( route:string, data:{[key:string]:string|boolean|number} ): Promise<void> {
+        return new Promise((resolve,reject) => {
+            axios.post('/'+route,qs.stringify(data),{
+                baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
+            })
+                .then( res => res.status === 200 ? resolve() : reject(res.status))
+                .catch(reject)
+        })
     }
 
     public reset(): void {
@@ -109,7 +121,7 @@ export default class App {
         this.bonus.forEach( bonus => bonus.move( x, y ) )
     }
 
-    public step(){
+    public async step(){
         if(this.darkMode){
             if(this.darkModeTransition > 0)
                 this.darkModeTransition -= 25.5
@@ -149,7 +161,7 @@ export default class App {
                 this.enemies.push(pickEnemy(this))
             if(this.rate.canTrigger(true)){
                 this.enemies.forEach( enemy => enemy.step() )
-                this.player.step()
+                await this.player.step()
                 if(this.player.score >= this.bonusState){
                     this.lastBonusState = this.bonusState
                     this.bonusState += Math.ceil(this.bonusState * .5)
@@ -160,7 +172,7 @@ export default class App {
         }
     }
 
-    public draw(){
+    public async draw(){
         this.p.background(this.dark)
         this.p.translate(
             this.p.width * .5,
@@ -262,6 +274,24 @@ export default class App {
             if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
             else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         }
+        this.p.translate(
+            this.p.width * -.5,
+            this.p.height * -.5
+        )
+        if(Date.now() < this.cursorFadeOut){
+            this.p.noStroke()
+            this.p.tint(
+                255,
+                this.p.map(
+                    this.cursorFadeOut - Date.now(),
+                    0,
+                    this.baseCursorFadeOut,
+                    0,
+                    255
+                )
+            )
+            this.p.image(this.cursorImage,this.p.mouseX,this.p.mouseY)
+        }
     }
 
     public save( key:string, value:any ): void {
@@ -346,8 +376,12 @@ export default class App {
         }, 'popup')
     }
 
-    public keyReleased(key:string){ this.keys[key] = false }
-    public keyPressed(key:string){
+    public mouseMoved(): void {
+        this.cursorFadeOut = Date.now() + this.baseCursorFadeOut
+    }
+
+    public keyReleased(key:string): void { this.keys[key] = false }
+    public keyPressed(key:string): void {
         if(key === 'Escape') this.pause()
         else if(key === 'm') this.darkMode = !this.darkMode
         else if(key === 'k') this.switchKeyMode()
@@ -371,7 +405,7 @@ export default class App {
         return false
     }
 
-    public areOnContact( positionable1:any, positionable2:any ){
+    public areOnContact( positionable1:any, positionable2:any ): boolean {
         return (
             this.p.dist(
                 positionable1.x, positionable1.y,

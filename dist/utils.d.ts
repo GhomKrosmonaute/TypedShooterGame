@@ -19,3 +19,4 @@ export declare function minutes(nbr: number): number;
 export declare function pick<T>(list: T[]): T;
 export declare function pickEnemy(app: App): Enemy;
 export declare function pickBonus(app: App): Bonus;
+export declare function getInput(id: string): HTMLInputElement;

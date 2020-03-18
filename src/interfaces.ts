@@ -4,6 +4,7 @@ import p5 from 'p5';
 import App from "./Shooter/App";
 import Positionable from "./Shooter/Positionable";
 import createSpyObj = jasmine.createSpyObj;
+import Scene from './Shooter/Scene';
 
 interface BonusExtender extends Bonus {
     shape: ShapeFunction
@@ -68,6 +69,8 @@ export interface DirectionalKeys {
     right: string[]
 }
 
-export const LIMITS = 3000
-export const VIEWPORT = 1000
-export const SECURITY = 1000
+export interface Scenes {
+    [key:string]: Scene
+}
+
+export type SceneName = 'party' | 'pause'

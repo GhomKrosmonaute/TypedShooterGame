@@ -15,7 +15,7 @@ export default class StarBalls extends Bonus implements Consumable {
     }
 
     public exec(): void {
-        this.app.player.setTemporary('star', seconds(15), this.shape )
+        this.app.player.setTemporary('starBalls', seconds(15), this.shape )
     }
 
     public shape(p:p5,x:number,y:number,w:number,h:number): void {

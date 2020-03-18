@@ -88,3 +88,7 @@ export function pickBonus( app:App ): Bonus {
         case 10: return new DeadChain(app)
     }
 }
+
+export function getInput( id:string ): HTMLInputElement {
+    return document.getElementById(id) as HTMLInputElement
+}

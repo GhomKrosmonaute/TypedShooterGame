@@ -1,5 +1,5 @@
 import p5 from 'p5';
-import { GameAnimation, KeyMode, Keys, PuttedAnimation } from '../interfaces';
+import { GameAnimation, KeyMode, Keys, PuttedAnimation, SceneName } from '../interfaces';
 import Particles from './Particles';
 import Enemy from './Enemy';
 import Player from './Player';
@@ -7,16 +7,23 @@ import Bonus from './Bonus';
 import Rate from './Rate';
 export default class App {
     p: p5;
+    apiToken: string;
     private readonly docImage;
+    private readonly cursorImage;
     private readonly baseDocFadeOut;
+    private readonly baseCursorFadeOut;
     private readonly ignoreKeysInterval;
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
+    scene: SceneName;
+    private readonly scenes;
     readonly version = "0.1.4";
     readonly debug = false;
+    private fullscreen;
     private showDoc;
     private docFadeOut;
     private ignoreKeysTime;
+    private cursorFadeOut;
     keys: Keys;
     player: Player;
     rate: Rate;
@@ -30,11 +37,15 @@ export default class App {
     lastBonusState: number;
     darkModeTransition: number;
     keyModes: KeyMode[];
-    constructor(p: p5);
+    constructor(p: p5, apiToken: string);
+    get(route: string): Promise<any>;
+    post(route: string, data: {
+        [key: string]: string | boolean | number;
+    }): Promise<void>;
     reset(): void;
     move(x: number, y: number): void;
-    step(): void;
-    draw(): void;
+    step(): Promise<void>;
+    draw(): Promise<void>;
     save(key: string, value: any): void;
     load(key: string): any;
     switchKeyMode(): void;
@@ -47,6 +58,7 @@ export default class App {
     readonly light: number;
     setAnimation(animation: GameAnimation, id?: string): void;
     setPopup(text: string): void;
+    mouseMoved(): void;
     keyReleased(key: string): void;
     keyPressed(key: string): void;
     moveKeyIsPressed(): boolean;

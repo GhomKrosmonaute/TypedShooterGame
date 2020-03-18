@@ -41,13 +41,12 @@
         ],
         "no-eval": true,
         "no-internal-module": true,
-        "no-trailing-whitespace": true,
+        "no-trailing-whitespace": false,
         "no-unsafe-finally": true,
         "no-var-keyword": false,
         "one-line": [
             true,
-            "check-open-brace",
-            "check-whitespace"
+            "check-open-brace"
         ],
         "quotemark": [
             true,

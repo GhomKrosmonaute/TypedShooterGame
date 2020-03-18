@@ -1,5 +1,5 @@
 const path = require('path');
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const ROOT = path.resolve( __dirname, 'src' );
 const DESTINATION = path.resolve( __dirname, 'dist' );
@@ -15,6 +15,11 @@ module.exports = {
         filename: '[name].bundle.js',
         path: DESTINATION
     },
+
+    plugins: [new HtmlWebpackPlugin({
+        template: "index.html",
+        favicon: "Shooter/images/favicon.png"
+    })],
 
     resolve: {
         extensions: ['.ts', '.js'],
@@ -45,7 +50,7 @@ module.exports = {
             * LOADERS
             *****************/
             {
-                test: /\.ts$/,
+                test: /\.ts$/i,
                 exclude: [ /node_modules/ ],
                 use: 'awesome-typescript-loader'
             },
@@ -54,8 +59,12 @@ module.exports = {
                 use: ['style-loader', 'css-loader'],
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
+                test: /\.(?:png|svg|jpg|gif)$/i,
                 use: ['file-loader']
+            },
+            {
+                test: /\.html$/i,
+                use: 'html-loader'
             }
         ]
     },

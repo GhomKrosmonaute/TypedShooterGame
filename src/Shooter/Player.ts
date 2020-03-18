@@ -3,6 +3,7 @@ import Positionable from './Positionable';
 import Shot from './Shot';
 import {Consumable, Passive, ShapeFunction, TemporaryEffects} from '../interfaces';
 import Rate from './Rate';
+import axios from 'axios'
 
 export default class Player extends Positionable {
 
@@ -19,19 +20,29 @@ export default class Player extends Positionable {
     public speedMax = 10
     public acc = 3
     public desc = .7
-    public highScore:number = JSON.parse(localStorage.getItem('shooter')).highScore
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shots:Shot[] = []
     public temporary:TemporaryEffects = {}
-
     public shootRating:Rate
+    public highScore:number = 0
 
     constructor(
         public app:App
     ){
         super( app.p, 0, 0, 50 )
         this.shootRating = new Rate(this.baseFireRate)
+        this.getHighScore().catch()
+    }
+
+    public getHighScore(): Promise<number> {
+        return this.app.get('score').then( data => {
+            this.highScore = data.score
+            return this.highScore
+        })
+    }
+    public setHighScore( score:number ): Promise<any> {
+        return this.app.post('score',{score})
     }
 
     public get shotSpeed(): number {
@@ -106,15 +117,13 @@ export default class Player extends Positionable {
         }
     }
 
-    public step(): void {
+    public async step(): Promise<void> {
 
         // DEATH ?
 
         if(this.life <= 0){
-            if(this.score > this.highScore){
-                const storage = JSON.parse(localStorage.getItem('shooter'))
-                storage.highScore = this.score
-                localStorage.setItem('shooter',JSON.stringify(storage))
+            if(this.score > await this.getHighScore()){
+                await this.setHighScore(this.score)
             }
             this.app.reset()
         }
@@ -209,19 +218,6 @@ export default class Player extends Positionable {
 
     }
 
-    public keyPressed(key:string): void {
-        this.app.keyMode.numeric.forEach( (keys, i) => {
-            if(keys.includes(key) && this.consumables[i]){
-                this.consumables[i].exec()
-                this.consumables[i].quantity --
-                if(this.consumables[i].quantity <= 0)
-                    this.consumables = this.consumables.filter( c => {
-                        return c.id !== this.consumables[i].id
-                    })
-            }
-        })
-    }
-
     public draw(): void {
         this.shots.forEach(shoot => shoot.draw() )
         this.p.noStroke()
@@ -239,7 +235,7 @@ export default class Player extends Positionable {
         this.p.rect(
             this.x - 40,
             this.y - 50,
-            this.p.map( this.life || this.baseLife, 0, this.baseLife, 0, 80 ),
+            Math.max(0,this.p.map( this.life || this.baseLife, 0, this.baseLife, 0, 80 )),
             14, 5
         )
         let flagIndex = 0
@@ -316,6 +312,19 @@ export default class Player extends Positionable {
 
         }
 
+    }
+
+    public keyPressed(key:string): void {
+        this.app.keyMode.numeric.forEach( (keys, i) => {
+            if(keys.includes(key) && this.consumables[i]){
+                this.consumables[i].exec()
+                this.consumables[i].quantity --
+                if(this.consumables[i].quantity <= 0)
+                    this.consumables = this.consumables.filter( c => {
+                        return c.id !== this.consumables[i].id
+                    })
+            }
+        })
     }
 
 }
