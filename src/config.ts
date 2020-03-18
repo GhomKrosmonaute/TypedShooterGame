@@ -3,7 +3,7 @@ import {KeyMode} from './interfaces';
 export const LIMITS = 3000
 export const VIEWPORT = 1000
 export const SECURITY = 1000
-export const baseURL = 'http://163.172.176.138:4266'
+export const baseURL = 'https://shooter-api.tk'
 export const keyModes:KeyMode[] = [
     {
         name: 'Right handed AZERTY',
