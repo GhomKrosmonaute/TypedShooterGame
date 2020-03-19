@@ -1,0 +1,30 @@
+import Positionable from './Positionable';
+import App from '../App';
+import Shot from './Shot';
+import Party from './Scenes/Party';
+export default abstract class Enemy extends Positionable {
+    party: Party;
+    protected readonly MIN_RADIUS = 15;
+    protected baseGain: number;
+    protected baseLife: number;
+    protected baseSpeed: number;
+    protected baseDamage: number;
+    abstract gain: number;
+    abstract life: number;
+    abstract speed: number;
+    abstract damage: number;
+    abstract immune: boolean;
+    abstract id: string;
+    abstract pattern(): void;
+    abstract onDraw(): void;
+    abstract onShoot(shoot: Shot): boolean;
+    abstract onPlayerContact(): void;
+    app: App;
+    protected constructor(party: Party);
+    step(): void;
+    draw(): void;
+    kill(addToScore?: boolean): void;
+    inflictDamages(damages: number, addToScore?: boolean): void;
+    reset(): void;
+    readonly lifeBasedRadius: number;
+}

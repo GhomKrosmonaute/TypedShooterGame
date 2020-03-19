@@ -1,10 +1,10 @@
 
-import Bonus from './Shooter/Bonus';
+import Bonus from './Shooter/Entities/Bonus';
 import p5 from 'p5';
 import App from "./Shooter/App";
-import Positionable from "./Shooter/Positionable";
+import Positionable from "./Shooter/Entities/Positionable";
 import createSpyObj = jasmine.createSpyObj;
-import Scene from './Shooter/Scene';
+import Scene from './Shooter/Entities/Scene';
 
 interface BonusExtender extends Bonus {
     shape: ShapeFunction

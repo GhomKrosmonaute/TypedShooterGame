@@ -6,6 +6,7 @@ import qs from 'querystring'
 import App from './Shooter/App'
 import { getInput } from './utils'
 import { baseURL } from './config'
+import API from './Shooter/API';
 
 function sketch( p:p5, apiToken:string ){
 
@@ -13,7 +14,7 @@ function sketch( p:p5, apiToken:string ){
 
     p.setup = () => {
         p.createCanvas(p.windowWidth,p.windowHeight)
-        app = new App(p,apiToken)
+        app = new App(p,new API(apiToken))
     }
 
     p.draw = async () => {

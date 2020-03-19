@@ -1,22 +1,23 @@
 import p5 from 'p5';
 import App from './Shooter/App';
-import Bonus from './Shooter/Bonus';
-import Enemy from './Shooter/Enemy';
-import PiercingShots from './Shooter/Bonus/PiercingShots';
-import DeadlyWave from './Shooter/Bonus/DeadlyWave';
-import AutoFireGuidance from './Shooter/Bonus/AutoFireGuidance';
-import Heal from './Shooter/Bonus/Heal';
-import StarBalls from './Shooter/Bonus/StarBalls';
-import Shield from './Shooter/Bonus/Shield';
-import DamageUp from './Shooter/Bonus/DamageUp';
-import ShotsSizeUp from './Shooter/Bonus/ShotsSizeUp';
-import FireRateUp from './Shooter/Bonus/FireRateUp';
-import RangeUp from './Shooter/Bonus/RangeUp';
-import DeadChain from './Shooter/Bonus/DeadChain';
-import ShieldPiercer from './Shooter/Enemies/ShieldPiercer';
-import BlobMob from './Shooter/Enemies/BlobMob';
-import CircularSaw from "./Shooter/Enemies/CircularSaw";
-import Tesla from "./Shooter/Enemies/Tesla";
+import Bonus from './Shooter/Entities/Bonus';
+import Enemy from './Shooter/Entities/Enemy';
+import PiercingShots from './Shooter/Entities/Bonus/PiercingShots';
+import DeadlyWave from './Shooter/Entities/Bonus/DeadlyWave';
+import AutoFireGuidance from './Shooter/Entities/Bonus/AutoFireGuidance';
+import Heal from './Shooter/Entities/Bonus/Heal';
+import StarBalls from './Shooter/Entities/Bonus/StarBalls';
+import Shield from './Shooter/Entities/Bonus/Shield';
+import DamageUp from './Shooter/Entities/Bonus/DamageUp';
+import ShotsSizeUp from './Shooter/Entities/Bonus/ShotsSizeUp';
+import FireRateUp from './Shooter/Entities/Bonus/FireRateUp';
+import RangeUp from './Shooter/Entities/Bonus/RangeUp';
+import DeadChain from './Shooter/Entities/Bonus/DeadChain';
+import ShieldPiercer from './Shooter/Entities/Enemies/ShieldPiercer';
+import BlobMob from './Shooter/Entities/Enemies/BlobMob';
+import CircularSaw from "./Shooter/Entities/Enemies/CircularSaw";
+import Tesla from "./Shooter/Entities/Enemies/Tesla";
+import PartyScene from './Shooter/Entities/Scenes/Party';
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -62,30 +63,30 @@ export function pick<T>( list:T[] ): T {
     return list[Math.floor(Math.random()*list.length)]
 }
 
-export function pickEnemy( app:App ): Enemy {
+export function pickEnemy( party:PartyScene ): Enemy {
     const rdm = Math.floor(Math.random() * 4)
     switch (rdm) {
-        case 0: return new ShieldPiercer(app)
-        case 1: return new BlobMob(app)
-        case 2: return new CircularSaw(app)
-        case 3: return new Tesla(app)
+        case 0: return new ShieldPiercer(party)
+        case 1: return new BlobMob(party)
+        case 2: return new CircularSaw(party)
+        case 3: return new Tesla(party)
     }
 }
 
-export function pickBonus( app:App ): Bonus {
+export function pickBonus( party:PartyScene ): Bonus {
     const rdm = Math.floor(Math.random() * 11)
     switch (rdm) {
-        case 0: return new Heal(app)
-        case 1: return new StarBalls(app)
-        case 2: return new DeadlyWave(app)
-        case 3: return new PiercingShots(app)
-        case 4: return new AutoFireGuidance(app)
-        case 5: return new Shield(app)
-        case 6: return new DamageUp(app)
-        case 7: return new ShotsSizeUp(app)
-        case 8: return new FireRateUp(app)
-        case 9: return new RangeUp(app)
-        case 10: return new DeadChain(app)
+        case 0: return new Heal(party)
+        case 1: return new StarBalls(party)
+        case 2: return new DeadlyWave(party)
+        case 3: return new PiercingShots(party)
+        case 4: return new AutoFireGuidance(party)
+        case 5: return new Shield(party)
+        case 6: return new DamageUp(party)
+        case 7: return new ShotsSizeUp(party)
+        case 8: return new FireRateUp(party)
+        case 9: return new RangeUp(party)
+        case 10: return new DeadChain(party)
     }
 }
 
