@@ -15,7 +15,7 @@ export default class App {
     private readonly cursorImage:p5.Image
     private readonly baseCursorFadeOut = 1000
 
-    public sceneName:SceneName
+    public _sceneName:SceneName
     private readonly scenes:Scenes = {
         party: new Party(this),
         pause: new Pause(this)
@@ -99,6 +99,12 @@ export default class App {
 
     public get scene(): Scene {
         return this.scenes[this.sceneName]
+    }
+    public get sceneName(): SceneName {
+        return this._sceneName
+    }
+    public set sceneName( name:SceneName ){
+        this._sceneName = name
     }
 
     public setAnimation( animation:GameAnimation, id?:string ): void {

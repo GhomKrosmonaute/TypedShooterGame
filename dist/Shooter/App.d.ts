@@ -8,7 +8,7 @@ export default class App {
     api: API;
     private readonly cursorImage;
     private readonly baseCursorFadeOut;
-    sceneName: SceneName;
+    _sceneName: SceneName;
     private readonly scenes;
     readonly version = "0.1.4";
     readonly debug = false;
@@ -24,6 +24,7 @@ export default class App {
     step(): Promise<void>;
     draw(): Promise<void>;
     readonly scene: Scene;
+    sceneName: SceneName;
     setAnimation(animation: GameAnimation, id?: string): void;
     setPopup(text: string): void;
     switchDarkMode(): void;

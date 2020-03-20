@@ -1,5 +1,4 @@
 import Scene from '../Scene';
-import Rate from '../Rate';
 import Particles from '../Particles';
 import {Vector2D} from '../../../interfaces';
 import p5 from 'p5';
@@ -18,6 +17,10 @@ export default class PauseScene extends Scene {
         super(app)
         this.docImage = this.p.loadImage(docImage)
         this.particles = new Particles(this.app,50,0,5)
+        this.reset()
+    }
+
+    reset(){
         this.ignoreKeysTime = Date.now() + this.ignoreKeysInterval
     }
 

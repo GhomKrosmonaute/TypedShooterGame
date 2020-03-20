@@ -48,7 +48,7 @@ export default class Player extends Positionable {
         })
     }
     public setHighScore( score:number ): Promise<any> {
-        return this.app.api.post('score',{score})
+        return this.app.api.patch('score',{score})
     }
 
     public get shotSpeed(): number {

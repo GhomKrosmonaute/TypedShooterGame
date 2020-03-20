@@ -17,9 +17,9 @@ export default class API {
         })
     }
 
-    post( route:string, data:{[key:string]:string|boolean|number} ): Promise<void> {
+    patch(route:string, data:{[key:string]:string|boolean|number} ): Promise<void> {
         return new Promise((resolve,reject) => {
-            axios.post('/'+route,qs.stringify(data),{
+            axios.patch('/'+route, qs.stringify(data),{
                 baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
             })
                 .then( res => res.status === 200 ? resolve() : reject(res.status))

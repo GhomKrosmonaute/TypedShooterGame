@@ -7,6 +7,7 @@ export default class PauseScene extends Scene {
     private readonly docImage;
     private readonly ignoreKeysInterval;
     constructor(app: App);
+    reset(): void;
     draw(): void;
     step(): void;
     keyPressed(key: string): void;

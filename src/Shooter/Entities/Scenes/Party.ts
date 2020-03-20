@@ -3,7 +3,7 @@ import Enemy from '../Enemy';
 import Bonus from '../Bonus';
 import Particles from '../Particles';
 import Player from '../Player';
-import {fade, pickBonus, pickEnemy} from '../../../utils';
+import {pickBonus, pickEnemy} from '../../../utils';
 import App from '../../App';
 
 export default class PartyScene extends Scene {
