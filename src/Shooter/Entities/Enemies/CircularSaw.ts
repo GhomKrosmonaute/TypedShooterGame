@@ -12,13 +12,14 @@ export default class CircularSaw extends Enemy {
     public damage: number = 5
     public id: string = 'circularSaw'
 
-    private lastDamage = Date.now()
+    private lastDamage:number
     private damageInterval = 1000
     private rotation = 0
     private rotationSpeed = 10
 
     constructor( party:Party ) {
         super( party )
+        this.lastDamage = party.time
         this.radius = this.p.random(60,200)
         this.baseSpeed = this.speed
         this.baseGain = this.gain
@@ -30,11 +31,14 @@ export default class CircularSaw extends Enemy {
         this.rotation += this.rotationSpeed
         if(this.rotation > 360)
             this.rotation -= 360
+        for(const enemy of this.party.enemies)
+            if(!enemy.immune && this.party.app.areOnContact(this,enemy))
+                enemy.kill()
     }
 
     onPlayerContact(): void {
-        if(Date.now() > this.lastDamage + this.damageInterval){
-            this.lastDamage = Date.now()
+        if(this.party.time > this.lastDamage + this.damageInterval){
+            this.lastDamage = this.party.time
             this.party.player.life -= this.damage
         }
     }

@@ -5,10 +5,12 @@ import Particles from '../Particles';
 import Player from '../Player';
 import {pickBonus, pickEnemy} from '../../../utils';
 import App from '../../App';
+import Rate from '../Rate';
+import Animation from '../Animation';
 
 export default class Party extends Scene {
 
-    private readonly maxEnemyCount = 60
+    private readonly maxEnemyCount = 40
     private readonly minEnemyCount = 10
 
     public background:Particles
@@ -18,6 +20,9 @@ export default class Party extends Scene {
     public enemies:Enemy[]
     public bonus:Bonus[]
     public player:Player
+    public time:number
+    public animations:Animation[]
+    public rate:Rate
 
     constructor( app:App ) {
         super(app)
@@ -27,11 +32,14 @@ export default class Party extends Scene {
     }
 
     reset(){
+        this.time = 0
+        this.rate = new Rate(25)
         this.lastBonusState = 0
         this.bonusState = 2
         this.player = new Player(this)
         this.enemies = []
         this.bonus = []
+        this.animations = []
         for(let i=0; i<this.enemyCount; i++){
             this.enemies.push(pickEnemy(this))
         }
@@ -99,6 +107,7 @@ export default class Party extends Scene {
     async step() {
         this.background.step()
         this.foreground.step()
+        this.animations = this.animations.filter( a => this.time < a.endTime )
         this.bonus.forEach( bonus => bonus.step() )
         this.bonus = this.bonus.filter( bonus => !bonus.used )
         this.enemies = this.enemies.sort(( a:any, b:any ) => {
@@ -122,7 +131,7 @@ export default class Party extends Scene {
     }
 
     public move( x:number, y:number ) {
-        this.app.animations
+        this.animations
             .filter( a => a.class !== 'popup' )
             .forEach( a => a.move( x, y ) )
         this.background.move( x, y )

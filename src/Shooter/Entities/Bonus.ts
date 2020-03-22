@@ -51,6 +51,6 @@ export default abstract class Bonus extends Positionable {
         this.used = true
         this.applyEffect()
         const value = (this as any).value
-        this.app.setPopup(`${this.displayName} : ${this.description.replace('{value}',value)}`)
+        this.party.setPopup(`${this.displayName} : ${this.description.replace('{value}',value)}`)
     }
 }

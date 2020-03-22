@@ -2,11 +2,12 @@
 import {AnimationOptions, Vector2D} from '../../interfaces';
 import p5 from 'p5';
 import App from '../App';
+import Scene from './Scene';
 
 export default class Animation {
 
     public readonly p:p5
-    public readonly startTime = Date.now()
+    public readonly startTime:number
     public readonly endTime:number
     public readonly duration:number
     public position:Vector2D
@@ -16,10 +17,11 @@ export default class Animation {
     private readonly onDraw:( animation:Animation ) => void
 
     constructor(
-        public app:App,
+        public scene:Scene,
         options:AnimationOptions
     ) {
-        this.p = app.p
+        this.p = scene.p
+        this.startTime = scene.time
         this.endTime = this.startTime + options.duration
         this.onDraw = options.draw
         this.duration = options.duration
@@ -27,7 +29,7 @@ export default class Animation {
         this.position = options.position || {x:0,y:0}
         if(options.id){
             this.id = options.id
-            app.animations = app.animations.filter( a => {
+            scene.animations = scene.animations.filter( a => {
                 return a === this || a.id !== options.id
             })
         }
@@ -39,7 +41,7 @@ export default class Animation {
     }
 
     public get time(): number {
-        return Date.now() - this.startTime
+        return this.scene.time - this.startTime
     }
 
     public get timeIsOut(): boolean {

@@ -15,13 +15,15 @@ export default class Rocket extends Enemy {
 
     private rotation = 0
     private rotationSpeed = 3
-    private lockTime = Date.now() + 2000
-    private damageTime = Date.now() + 3000
+    private readonly lockTime:number
+    private readonly damageTime:number
     private damageZone = 200
     private damageOccured = false
 
     constructor( party:Party ) {
         super( party )
+        this.lockTime = party.time + 1000
+        this.damageTime = party.time + 2000
         this.radius = 50
         this.baseSpeed = this.speed
         this.baseGain = this.gain
@@ -33,15 +35,20 @@ export default class Rocket extends Enemy {
         this.rotation += this.rotationSpeed
         if(this.rotation > 360)
             this.rotation -= 360
-        if(Date.now() < this.lockTime){
+        if(this.party.time < this.lockTime){
             this.target(this.party.player,.15)
         }else{
-            if(!this.damageOccured && Date.now() > this.damageTime){
+            if(!this.damageOccured && this.party.time > this.damageTime){
                 this.damageOccured = true
-                if(this.dist(this.party.player) < this.damageZone){
+
+                for(const enemy of this.party.enemies)
+                    if(this.dist(enemy) < this.damageZone)
+                        enemy.inflictDamages(this.damage)
+
+                if(this.dist(this.party.player) < this.damageZone)
                     this.party.player.life -= this.damage
-                }
-                this.app.setAnimation({
+
+                this.party.setAnimation({
                     value: this.damageZone * 2,
                     position: { x:this.x, y:this.y },
                     duration: 100,
@@ -65,12 +72,12 @@ export default class Rocket extends Enemy {
             this.y
         )
         this.p.rotate(this.rotation)
-        if(Date.now() < this.lockTime){
+        if(this.party.time < this.lockTime){
             color = this.p.color(255,0,0,100)
         }else{
-            if(Date.now() < this.damageTime){
+            if(this.party.time < this.damageTime){
                 color = this.p.color(255,0,0,this.p.map(
-                    Date.now(),
+                    this.party.time,
                     this.lockTime,
                     this.damageTime,
                     100,
@@ -96,7 +103,7 @@ export default class Rocket extends Enemy {
                 this.radius * .2
             )
         })
-        if(Date.now() > this.lockTime){
+        if(this.party.time > this.lockTime){
             color.setAlpha(Math.max(0,this.p.alpha(color) - 200))
             this.p.noFill()
             this.p.stroke(color)

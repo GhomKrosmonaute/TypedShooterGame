@@ -1,9 +1,8 @@
 import p5 from 'p5';
-import { AnimationOptions, KeyMode, Keys, SceneName, Vector2D } from '../interfaces';
+import { KeyMode, Keys, SceneName, Vector2D } from '../interfaces';
 import Rate from './Entities/Rate';
 import Scene from './Entities/Scene';
 import API from './API';
-import Animation from './Entities/Animation';
 export default class App {
     p: p5;
     api: API;
@@ -19,7 +18,6 @@ export default class App {
     rate: Rate;
     darkModeTransition: number;
     keyModes: KeyMode[];
-    animations: Animation[];
     constructor(p: p5, api: API);
     reset(): void;
     step(): Promise<void>;
@@ -27,8 +25,6 @@ export default class App {
     readonly scene: Scene;
     sceneName: SceneName;
     readonly mouse: Vector2D;
-    setAnimation(options: AnimationOptions): void;
-    setPopup(text: string): void;
     switchDarkMode(): void;
     switchKeyMode(): void;
     readonly keyMode: KeyMode;

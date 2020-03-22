@@ -10,6 +10,7 @@ export default class Player extends Positionable {
     baseLife: number;
     life: number;
     score: number;
+    baseSpeedMax: number;
     baseShotSpeed: number;
     baseShotRange: number;
     baseShotDamage: number;
@@ -17,7 +18,6 @@ export default class Player extends Positionable {
     baseShotSize: number;
     speedX: number;
     speedY: number;
-    speedMax: number;
     acc: number;
     desc: number;
     consumables: Consumable[];
@@ -33,6 +33,7 @@ export default class Player extends Positionable {
     constructor(party: Party);
     getHighScore(): Promise<number>;
     setHighScore(score: number): Promise<any>;
+    readonly speedMax: number;
     readonly shotSpeed: number;
     readonly shotRange: number;
     readonly shotDamage: number;

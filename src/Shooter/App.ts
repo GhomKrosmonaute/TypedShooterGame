@@ -36,7 +36,6 @@ export default class App {
     public rate:Rate
     public darkModeTransition:number
     public keyModes:KeyMode[] = keyModes
-    public animations:Animation[]
 
     constructor( public p:p5, public api:API ){
 
@@ -58,12 +57,10 @@ export default class App {
     public reset(): void {
         this.sceneName = 'manual'
         this.rate = new Rate(25)
-        this.animations = []
     }
 
     public async step(){
         if(this.rate.canTrigger(true)){
-            this.animations = this.animations.filter( anim => Date.now() < anim.endTime )
             if(this.darkMode){
                 if(this.darkModeTransition > 0)
                     this.darkModeTransition -= 25.5
@@ -71,6 +68,9 @@ export default class App {
                 if(this.darkModeTransition < 255)
                     this.darkModeTransition += 25.5
             }
+        }
+        if(this.scene.rate.canTrigger(true)){
+            this.scene.time += this.scene.rate.interval
             this.scene.step()
         }
     }
@@ -86,12 +86,12 @@ export default class App {
             this.p.width * -.5,
             this.p.height * -.5
         )
-        if(Date.now() < this.cursorFadeOut){
+        if(this.scene.time < this.cursorFadeOut){
             this.p.noStroke()
             this.p.tint(
                 255,
                 this.p.map(
-                    this.cursorFadeOut - Date.now(),
+                    this.cursorFadeOut - this.scene.time,
                     0,
                     this.baseCursorFadeOut,
                     0,
@@ -119,41 +119,6 @@ export default class App {
         }
     }
 
-    public setAnimation( options:AnimationOptions ): void {
-        const animation = new Animation( this, options )
-        this.animations.push(animation)
-    }
-    public setPopup( text:string ): void {
-        this.setAnimation({
-            class: 'popup',
-            value: this.animations.filter( a => a.class === 'popup' ).length - 1,
-            duration: 3000,
-            draw: (a:Animation) => {
-                const shift = a.value * a.p.height * .10
-                const { x, y } = a.position
-                a.p.noStroke()
-                a.p.fill(a.app.light, fade(a.p,30, {
-                    value: a.time,
-                    valueMax: 3000,
-                    overflow: 7
-                }))
-                a.p.rect(
-                    x + a.p.width * -.5,
-                    y + a.p.height * -.25 + shift,
-                    a.p.width,
-                    a.p.height * .1
-                )
-                a.p.fill(a.app.light, fade(a.p,255, {
-                    value: a.time,
-                    valueMax: 3000,
-                    overflow: 4
-                }))
-                a.p.textAlign(a.p.CENTER,a.p.CENTER)
-                a.p.text(text, 0, a.p.height * -.2 + shift)
-            }
-        })
-    }
-
     public switchDarkMode(): void {
         this.darkMode = !this.darkMode
     }
@@ -163,7 +128,7 @@ export default class App {
         if(this.keyModeIndex >= this.keyModes.length)
             this.keyModeIndex = 0
         this.keys = {}
-        this.setPopup('KeyMode changed : ' + this.keyMode.name)
+        this.scene.setPopup('KeyMode changed : ' + this.keyMode.name)
     }
 
     public get keyMode(): KeyMode {
@@ -186,7 +151,7 @@ export default class App {
     public get light(): number { return 255 - this.darkModeTransition }
 
     public mouseMoved(): void {
-        this.cursorFadeOut = Date.now() + this.baseCursorFadeOut
+        this.cursorFadeOut = this.scene.time + this.baseCursorFadeOut
     }
 
     public keyReleased(key:string): void { this.keys[key] = false }

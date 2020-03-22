@@ -10,8 +10,8 @@ export default class Rocket extends Enemy {
     id: string;
     private rotation;
     private rotationSpeed;
-    private lockTime;
-    private damageTime;
+    private readonly lockTime;
+    private readonly damageTime;
     private damageZone;
     private damageOccured;
     constructor(party: Party);

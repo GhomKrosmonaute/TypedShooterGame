@@ -5,8 +5,14 @@ import p5 from 'p5';
 //@ts-ignore
 import docImage from '../../images/doc.png';
 import App from '../../App';
+import Rate from '../Rate';
+import Animation from '../Animation';
 
 export default class Manual extends Scene {
+
+    public animations:Animation[]
+    public rate = new Rate(25)
+    public time = 0
 
     public particles:Particles
     private ignoreKeysTime:number
@@ -21,7 +27,7 @@ export default class Manual extends Scene {
     }
 
     reset(){
-        this.ignoreKeysTime = Date.now() + this.ignoreKeysInterval
+        this.ignoreKeysTime = this.time + this.ignoreKeysInterval
     }
 
     draw() {
@@ -54,7 +60,7 @@ export default class Manual extends Scene {
             this.p.map(this.p.mouseX, 0, this.p.width, -2,2) * -1,
             this.p.map(this.p.mouseY, 0, this.p.height, -2,2) * -1
         )
-        if ( Date.now() > this.ignoreKeysTime && (
+        if ( this.time > this.ignoreKeysTime && (
             this.app.moveKeyIsPressed() ||
             this.app.shootKeyIsPressed()
         ))  this.app.sceneName = 'party'

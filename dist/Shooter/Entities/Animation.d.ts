@@ -1,8 +1,8 @@
 import { AnimationOptions, Vector2D } from '../../interfaces';
 import p5 from 'p5';
-import App from '../App';
+import Scene from './Scene';
 export default class Animation {
-    app: App;
+    scene: Scene;
     readonly p: p5;
     readonly startTime: number;
     readonly endTime: number;
@@ -12,7 +12,7 @@ export default class Animation {
     class?: string;
     id?: string;
     private readonly onDraw;
-    constructor(app: App, options: AnimationOptions);
+    constructor(scene: Scene, options: AnimationOptions);
     draw(): void;
     readonly time: number;
     readonly timeIsOut: boolean;

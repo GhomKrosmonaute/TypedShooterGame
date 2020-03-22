@@ -20,6 +20,7 @@ import Tesla from "./Shooter/Entities/Enemies/Tesla";
 import Party from './Shooter/Entities/Scenes/Party';
 import Rocket from './Shooter/Entities/Enemies/Rocket';
 import Animation from './Shooter/Entities/Animation';
+import SpeedUp from './Shooter/Entities/Bonus/SpeedUp';
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -54,14 +55,14 @@ export function star( p:p5, x:number, y:number, radiusIn:number, radiusOut:numbe
 }
 
 export function explosion( a:Animation ): void {
-    const opacity = a.p.map(a.time,0,200,255,0)
+    const opacity = a.p.map(a.time,0,a.duration,255,0)
     a.p.noStroke()
     a.p.fill(255,0,0, opacity)
-    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,200,a.value,1))
+    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,a.duration,a.value,1))
     a.p.noFill()
     a.p.stroke(255, opacity)
-    a.p.strokeWeight(a.p.map(a.time,0,200,1,10))
-    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,200,1,a.value))
+    a.p.strokeWeight(a.p.map(a.time,0,a.duration,1,10))
+    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,a.duration,1,a.value))
 }
 
 export function seconds( nbr:number ): number {
@@ -88,7 +89,7 @@ export function pickEnemy( party:Party ): Enemy {
 }
 
 export function pickBonus( party:Party ): Bonus {
-    const rdm = Math.floor(Math.random() * 11)
+    const rdm = Math.floor(Math.random() * 12)
     switch (rdm) {
         case 0: return new Heal(party)
         case 1: return new StarBalls(party)
@@ -101,6 +102,7 @@ export function pickBonus( party:Party ): Bonus {
         case 8: return new FireRateUp(party)
         case 9: return new RangeUp(party)
         case 10: return new DeadChain(party)
+        case 11: return new SpeedUp(party)
     }
 }
 

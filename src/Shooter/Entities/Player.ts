@@ -12,6 +12,7 @@ export default class Player extends Positionable {
     public baseLife = 5
     public life = 5
     public score = 0
+    public baseSpeedMax = 10
     public baseShotSpeed = 10
     public baseShotRange = 300
     public baseShotDamage = 1
@@ -19,7 +20,6 @@ export default class Player extends Positionable {
     public baseShotSize = 15
     public speedX = 0
     public speedY = 0
-    public speedMax = 10
     public acc = 3
     public desc = .7
     public consumables:Consumable[] = []
@@ -54,6 +54,11 @@ export default class Player extends Positionable {
         return this.app.api.patch('score',{score})
     }
 
+    public get speedMax(): number {
+        const speedUp = this.getPassive('speedUp')
+        if(!speedUp) return this.baseSpeedMax
+        return speedUp.value
+    }
     public get shotSpeed(): number {
         return this.baseShotSpeed
     }
@@ -81,18 +86,18 @@ export default class Player extends Positionable {
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
         if(
             !this.temporary[flag] ||
-            this.temporary[flag].timeout < Date.now()
+            this.temporary[flag].timeout < this.party.time
         )
             this.temporary[flag] = { shape,
-                triggerTime: Date.now(),
-                timeout: Date.now() + duration
+                triggerTime: this.party.time,
+                timeout: this.party.time + duration
             }
         else this.temporary[flag].timeout += duration
     }
 
     public getTemporary( flag:string ): boolean {
         if(!this.temporary[flag]) return false
-        return this.temporary[flag].timeout > Date.now()
+        return this.temporary[flag].timeout > this.party.time
     }
 
     public addPassive( passive:Passive ): void {
@@ -134,14 +139,14 @@ export default class Player extends Positionable {
             this.combo = {
                 score,
                 hits: 1,
-                time: Date.now(),
+                time: this.party.time,
                 multiplicator: 1
             }
         }else{
-            this.combo.time = Date.now()
+            this.combo.time = this.party.time
             this.combo.hits ++
             this.combo.score += score
-            this.combo.multiplicator = 1 + Math.floor((this.combo.hits + 1) / (10 + this.combo.multiplicator * 3))
+            this.combo.multiplicator = Math.min(5,1 + Math.floor(this.combo.hits / 10))
         }
     }
 
@@ -149,7 +154,7 @@ export default class Player extends Positionable {
 
         // COMBO
 
-        if(this.combo && Date.now() > this.combo.time + this.comboTimeout){
+        if(this.combo && this.party.time > this.combo.time + this.comboTimeout){
             this.score += this.combo.score * this.combo.multiplicator
             this.combo = null
         }
@@ -277,7 +282,7 @@ export default class Player extends Positionable {
         )
         if(this.combo){
             this.p.fill(this.app.light,Math.min(255,this.p.map(
-                Date.now(),
+                this.party.time,
                 this.combo.time,
                 this.combo.time + this.comboTimeout,
                 500,
@@ -307,9 +312,9 @@ export default class Player extends Positionable {
                 this.p.noStroke()
                 this.p.fill(255,0,190)
                 this.p.rect(
-                    (this.x - 40) + this.p.map( Date.now(), temp.triggerTime, temp.timeout, 0, 66 ),
+                    (this.x - 40) + this.p.map( this.party.time, temp.triggerTime, temp.timeout, 0, 66 ),
                     this.y - (64 + 14 * flagIndex),
-                    this.p.map( Date.now(), temp.triggerTime, temp.timeout, 66, 0 ),
+                    this.p.map( this.party.time, temp.triggerTime, temp.timeout, 66, 0 ),
                     14, 5
                 )
                 this.p.fill(200,100)

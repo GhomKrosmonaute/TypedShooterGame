@@ -23,7 +23,7 @@ export default class Tesla extends Enemy {
         super( party )
         const factor = this.p.random(30,50)
         this.radius = factor
-        this.arcTime = Date.now()
+        this.arcTime = party.time
         this.arcSize = factor * 10
         this.arcWeight = 15
         this.cardinalIndex = Math.floor(Math.random() * 8)
@@ -48,10 +48,10 @@ export default class Tesla extends Enemy {
             ) this.connections.push(enemy as Tesla)
         }
 
-        if(Date.now() > this.arcTime)
+        if(this.party.time > this.arcTime)
             for(const tesla of this.connections)
                 if(this.isOnArc(tesla,this.party.player)){
-                    this.arcTime = Date.now() + this.arcInterval
+                    this.arcTime = this.party.time + this.arcInterval
                     this.party.player.life --
                 }
 

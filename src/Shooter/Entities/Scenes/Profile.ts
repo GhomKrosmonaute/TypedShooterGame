@@ -3,9 +3,14 @@ import Scene from '../Scene';
 import App from '../../App';
 import Input from '../Input';
 import Form from '../Form';
+import Rate from '../Rate';
+import Animation from '../Animation';
 
 export default class Profile extends Scene {
 
+    public animations:Animation[]
+    public rate = new Rate(25)
+    public time = 0
     private form:Form
 
     constructor( app:App ) {

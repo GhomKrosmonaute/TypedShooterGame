@@ -68,18 +68,18 @@ export default abstract class Enemy extends Positionable {
                 for(const enemy of this.party.enemies)
                     if (
                         enemy !== this &&
-                        Date.now() > enemy.lastDeadChain + 2000 &&
+                        this.party.time > enemy.lastDeadChain + 2000 &&
                         enemy.life > 0 &&
                         !enemy.immune &&
                         enemy.dist(position) < deadChain.value
                     ) {
                         enemy.inflictDamages(this.baseLife * .5, true)
-                        enemy.lastDeadChain = Date.now()
+                        enemy.lastDeadChain = this.party.time
                     }
             },200)
         }
 
-        this.app.setAnimation({
+        this.party.setAnimation({
             position,
             duration: 200,
             value: addToScore && deadChain ? deadChain.value * 2 : this.radius,
@@ -91,6 +91,7 @@ export default abstract class Enemy extends Positionable {
     }
 
     public inflictDamages( damages:number, addToScore:boolean = false ): void {
+        if(this.immune) return
         this.life -= damages
         if(this.life <= 0) {
             this.kill(addToScore)
