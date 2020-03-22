@@ -3,6 +3,7 @@ import {Consumable} from '../../../interfaces';
 import {VIEWPORT} from '../../../config';
 import p5 from 'p5';
 import Player from "../Player";
+import {explosion} from '../../../utils';
 
 export default class DeadlyWave extends Bonus implements Consumable {
 
@@ -17,20 +18,9 @@ export default class DeadlyWave extends Bonus implements Consumable {
 
     public exec(): void {
         this.app.setAnimation({
-            value: this.party.player,
+            value: VIEWPORT * 2,
             duration: 200,
-            draw: ( p, time, player:Player) => {
-                p.noFill()
-                p.strokeWeight(
-                    p.map(time,0,200,0,10)
-                )
-                p.stroke(200,0,200, p.map(time,0,100,0,255))
-                p.ellipse(
-                    player.x,
-                    player.y,
-                    p.map(time,0,200,0,VIEWPORT)
-                )
-            }
+            draw: explosion
         })
         this.party.enemies.forEach( enemy => {
             if(!enemy.immune && this.party.player.dist(enemy) < VIEWPORT)

@@ -7,6 +7,7 @@ export default abstract class Scene {
     public abstract draw(): any
     public abstract step(): any
     public abstract keyPressed( key:string ): any
+    public abstract mousePressed(): any
 
     public p:p5
 
@@ -15,21 +16,7 @@ export default abstract class Scene {
     }
 
     protected drawAnimations(): void {
-        this.app.animations.forEach( anim => {
-            anim.animation.draw( this.p,
-                Math.max(0,
-                    Math.min( anim.animation.duration,
-                        this.p.map( Date.now(),
-                            anim.startTime,
-                            anim.endTime,
-                            0,
-                            anim.animation.duration
-                        )
-                    )
-                ),
-                anim.animation.value
-            )
-        })
+        this.app.animations.forEach( a => a.draw() )
     }
 
 }

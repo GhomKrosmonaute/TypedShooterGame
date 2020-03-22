@@ -1,9 +1,9 @@
 
 import Positionable from './Positionable';
 import Shot from './Shot';
-import {Consumable, Passive, ShapeFunction, TemporaryEffects} from '../../interfaces';
+import {Combo, Consumable, Passive, ShapeFunction, TemporaryEffects} from '../../interfaces';
 import Rate from './Rate';
-import PartyScene from './Scenes/Party';
+import Party from './Scenes/Party';
 import App from '../App';
 import API from '../API';
 
@@ -31,8 +31,11 @@ export default class Player extends Positionable {
     public app:App
     public api:API
 
+    private combo:Combo = null
+    private comboTimeout = 2500
+
     constructor(
-        public party:PartyScene
+        public party:Party
     ){
         super( party.app.p, 0, 0, 50 )
         this.app = party.app
@@ -93,9 +96,12 @@ export default class Player extends Positionable {
     }
 
     public addPassive( passive:Passive ): void {
+        this.party.player.addScore(1)
         const exists = this.passives.find( p => p.id === passive.id )
         if(exists){
-            exists.level ++
+            if(exists.level < exists.levelMax)
+                exists.level ++
+            else this.party.player.addScore(10)
         }else{
             this.passives.push(passive)
         }
@@ -123,15 +129,39 @@ export default class Player extends Positionable {
         }
     }
 
+    public addScore( score:number ): void {
+        if(!this.combo){
+            this.combo = {
+                score,
+                hits: 1,
+                time: Date.now(),
+                multiplicator: 1
+            }
+        }else{
+            this.combo.time = Date.now()
+            this.combo.hits ++
+            this.combo.score += score
+            this.combo.multiplicator = 1 + Math.floor((this.combo.hits + 1) / (10 + this.combo.multiplicator * 3))
+        }
+    }
+
     public async step(): Promise<void> {
+
+        // COMBO
+
+        if(this.combo && Date.now() > this.combo.time + this.comboTimeout){
+            this.score += this.combo.score * this.combo.multiplicator
+            this.combo = null
+        }
 
         // DEATH ?
 
         if(this.life <= 0){
+            if(this.combo) this.score += this.combo.score * this.combo.multiplicator
             if(this.score > await this.getHighScore()){
                 await this.setHighScore(this.score)
             }
-            this.app.sceneName = 'pause'
+            this.app.sceneName = 'manual'
             this.party.reset()
         }
 
@@ -245,6 +275,23 @@ export default class Player extends Positionable {
             Math.max(0,this.p.map( this.life || this.baseLife, 0, this.baseLife, 0, 80 )),
             14, 5
         )
+        if(this.combo){
+            this.p.fill(this.app.light,Math.min(255,this.p.map(
+                Date.now(),
+                this.combo.time,
+                this.combo.time + this.comboTimeout,
+                500,
+                0
+            )))
+            this.p.noStroke()
+            this.p.textAlign(this.p.LEFT,this.p.CENTER)
+            this.p.textSize(this.radius * .5)
+            this.p.text(
+                `+ ${this.combo.score} ${this.combo.multiplicator > 1 ? ` x${this.combo.multiplicator}` : ''} pts`,
+                this.x + this.radius,
+                this.y
+            )
+        }
         let flagIndex = 0
         for(const flag in this.temporary){
             if(this.getTemporary(flag)){
@@ -295,7 +342,7 @@ export default class Player extends Positionable {
             this.p.noStroke()
             const bonus:any[] = [ ...this.consumables, ...this.passives ]
             bonus.forEach( (bonus, index) => {
-                this.p.fill(200,100)
+                bonus.level && bonus.level >= bonus.levelMax ? this.p.fill(200, 200, 0,100) : this.p.fill(200,100)
                 this.p.rect(
                     this.x - width * .5 + index * 14,
                     this.y + 36, 14, 14, 5

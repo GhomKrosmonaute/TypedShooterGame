@@ -4,7 +4,7 @@ import Bonus from '../Bonus';
 import Particles from '../Particles';
 import Player from '../Player';
 import App from '../../App';
-export default class PartyScene extends Scene {
+export default class Party extends Scene {
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
     background: Particles;
@@ -21,4 +21,5 @@ export default class PartyScene extends Scene {
     keyPressed(key: string): void;
     move(x: number, y: number): void;
     readonly enemyCount: number;
+    mousePressed(): any;
 }

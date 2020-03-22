@@ -19,7 +19,7 @@ export default class CircularSaw extends Enemy {
 
     constructor( party:Party ) {
         super( party )
-        this.radius = this.p.random(40,100)
+        this.radius = this.p.random(60,200)
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life

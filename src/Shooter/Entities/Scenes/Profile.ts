@@ -1,49 +1,48 @@
 
 import Scene from '../Scene';
-import Particles from '../Particles';
-import {Vector2D} from '../../../interfaces';
-import p5 from 'p5';
-//@ts-ignore
-import docImage from '../../images/doc.png';
 import App from '../../App';
-import Zone from '../Zone';
+import Input from '../Input';
+import Form from '../Form';
 
-export default class ProfileScene extends Scene {
+export default class Profile extends Scene {
 
-    private username:string = ''
-    private password:string = ''
-    private usernameZone:Zone
-    private passwordZone:Zone
+    private form:Form
 
     constructor( app:App ) {
         super(app)
-        this.usernameZone = new Zone(
-            this.p.width * -.4, this.p.height * -.2,
-            this.p.width * .4, this.p.height * -.05
-        )
-        this.usernameZone = new Zone(
-            this.p.width * -.4, this.p.height * .05,
-            this.p.width * .4, this.p.height * .2
+        this.form = new Form( app,
+            0, 0, this.p.width * .4, this.p.height * .4,
+            [
+                { placeholder: 'New username' },
+                { placeholder: 'New password', hide: true },
+                { placeholder: 'Current password', hide: true }
+            ], true
         )
         this.reset()
     }
 
     reset(){
+        this.form.inputs[1].value = ''
+        this.form.inputs[2].value = ''
         this.app.api.get('profile').then( profile => {
-            this.username = profile.username
+            this.form.inputs[0].value = profile.username
         })
     }
 
     draw() {
-
+        this.form.draw()
     }
 
     step() {
 
     }
 
-    keyPressed(key: string) {
+    keyPressed( key:string ) {
+        this.form.keyPressed(key)
+    }
 
+    mousePressed(){
+        this.form.mousePressed()
     }
 
 }

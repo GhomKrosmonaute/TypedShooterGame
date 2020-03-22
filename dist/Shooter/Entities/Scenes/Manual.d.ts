@@ -1,7 +1,7 @@
 import Scene from '../Scene';
 import Particles from '../Particles';
 import App from '../../App';
-export default class PauseScene extends Scene {
+export default class Manual extends Scene {
     particles: Particles;
     private ignoreKeysTime;
     private readonly docImage;
@@ -11,4 +11,5 @@ export default class PauseScene extends Scene {
     draw(): void;
     step(): void;
     keyPressed(key: string): void;
+    mousePressed(): any;
 }

@@ -17,7 +17,9 @@ import ShieldPiercer from './Shooter/Entities/Enemies/ShieldPiercer';
 import BlobMob from './Shooter/Entities/Enemies/BlobMob';
 import CircularSaw from "./Shooter/Entities/Enemies/CircularSaw";
 import Tesla from "./Shooter/Entities/Enemies/Tesla";
-import PartyScene from './Shooter/Entities/Scenes/Party';
+import Party from './Shooter/Entities/Scenes/Party';
+import Rocket from './Shooter/Entities/Enemies/Rocket';
+import Animation from './Shooter/Entities/Animation';
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -51,6 +53,17 @@ export function star( p:p5, x:number, y:number, radiusIn:number, radiusOut:numbe
     p.angleMode(p.DEGREES)
 }
 
+export function explosion( a:Animation ): void {
+    const opacity = a.p.map(a.time,0,200,255,0)
+    a.p.noStroke()
+    a.p.fill(255,0,0, opacity)
+    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,200,a.value,1))
+    a.p.noFill()
+    a.p.stroke(255, opacity)
+    a.p.strokeWeight(a.p.map(a.time,0,200,1,10))
+    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,200,1,a.value))
+}
+
 export function seconds( nbr:number ): number {
     return nbr * 1000
 }
@@ -63,17 +76,18 @@ export function pick<T>( list:T[] ): T {
     return list[Math.floor(Math.random()*list.length)]
 }
 
-export function pickEnemy( party:PartyScene ): Enemy {
-    const rdm = Math.floor(Math.random() * 4)
+export function pickEnemy( party:Party ): Enemy {
+    const rdm = Math.floor(Math.random() * 5)
     switch (rdm) {
         case 0: return new ShieldPiercer(party)
         case 1: return new BlobMob(party)
         case 2: return new CircularSaw(party)
         case 3: return new Tesla(party)
+        case 4: return new Rocket(party)
     }
 }
 
-export function pickBonus( party:PartyScene ): Bonus {
+export function pickBonus( party:Party ): Bonus {
     const rdm = Math.floor(Math.random() * 11)
     switch (rdm) {
         case 0: return new Heal(party)

@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class DeadChain extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 4
     public id = 'deadChain'
     public displayName = 'Dead Chain'
     public description = 'Explosion {value}px'

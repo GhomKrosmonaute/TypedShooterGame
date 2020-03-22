@@ -27,9 +27,9 @@ Les specs c'est en dessous.
 | Implemented | Name | Description | Pattern |
 | :---: | --- | --- | --- |
 | ✅ | Shield Piercer | ignore le `shield` du joueur | suit le joueur, vitesse `4` |
-| ✅ | Blob | absorbe les ennemis qu'il touche | suit le joueur lentement |
-| ❌ | Rocket | immortel, pensez juste à l'esquiver | place précisément une cible sur le joueur au bout de 2 secondes, s'arrète. au bout de 2.5 secondes, s'active et meure |
+| ✅ | Blob | absorbe les ennemis qu'il touche | suit le joueur, vitesse `2` |
+| ✅ | Rocket | immortel, pensez juste à l'esquiver | place précisément une cible sur le joueur au bout de 2 secondes, s'arrète. au bout de 2.5 secondes, inflige `3` dégât au joueur si il se trouve dans la zone d'explosion (`200` pixels) |
 | ✅ | Circular Saw | immortel, pensez juste à l'esquiver | ne bouge jamais, peut avoir différentes tailles |
 | ❌ | Bound | transcende la 2D, gare à son apparition | suit le joueur lentement fait des bonds tres rapides sur la carte en passant des foit en dessous, des fois par dessus |
-| ✅ | Tesla | crée des arcs électriques entre lui et ses congénères les plus proches | suit le joueur lentement |
+| ✅ | Tesla | crée des arcs électriques entre lui et ses congénères les plus proches | essaye de se placer autour du joueur, vitesse `3` |
 | ❌ | Slug | laisse une courte trainée derrière lui qui inflige des DPS a qui la touche | suit le joueur lentement |

@@ -26,13 +26,13 @@ export default class Positionable {
         this.z = z
     }
 
-    public follow( positionable:Vector2D, speed:number ): void {
-        if(this.dist(positionable) <= speed * 2) return
+    public follow( target:Vector2D, speed:number ): void {
+        if(this.dist(target) <= speed * 2) return
         this.p.angleMode(this.p.RADIANS)
         const angle = this.p.degrees(
             this.p.atan2(
-                positionable.y - this.y,
-                positionable.x - this.x
+                target.y - this.y,
+                target.x - this.x
             ) + this.p.PI
         )
         const speedX = speed * this.p.cos(this.p.radians(angle))
@@ -42,6 +42,14 @@ export default class Positionable {
             speedY * -2
         )
         this.p.angleMode(this.p.DEGREES)
+    }
+
+    public target( target:Vector2D, speedFraction:number ): void {
+        if(this.dist(target) > 5)
+            this.move(
+                (target.x - this.x) * speedFraction,
+                (target.y - this.y) * speedFraction
+            )
     }
 
     public placeOutOfLimits(): void {

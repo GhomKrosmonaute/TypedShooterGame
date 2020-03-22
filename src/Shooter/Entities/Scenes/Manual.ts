@@ -6,7 +6,7 @@ import p5 from 'p5';
 import docImage from '../../images/doc.png';
 import App from '../../App';
 
-export default class PauseScene extends Scene {
+export default class Manual extends Scene {
 
     public particles:Particles
     private ignoreKeysTime:number
@@ -60,6 +60,11 @@ export default class PauseScene extends Scene {
         ))  this.app.sceneName = 'party'
     }
 
-    keyPressed(key: string) {}
+    keyPressed(key: string) {
+
+    }
+
+    mousePressed(): any {
+    }
 
 }

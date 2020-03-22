@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class FireRateUp extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 4
     public id = 'fireRateUp'
     public displayName = 'Fire Rate Up'
     public description = 'Fires every {value}ms'

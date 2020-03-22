@@ -3,6 +3,7 @@ import { Passive } from '../../../interfaces';
 import p5 from 'p5';
 export default class ShotsSizeUp extends Bonus implements Passive {
     level: number;
+    levelMax: number;
     id: string;
     displayName: string;
     description: string;

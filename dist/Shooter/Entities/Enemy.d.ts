@@ -20,6 +20,7 @@ export default abstract class Enemy extends Positionable {
     abstract onShoot(shoot: Shot): boolean;
     abstract onPlayerContact(): void;
     app: App;
+    private lastDeadChain;
     protected constructor(party: Party);
     step(): void;
     draw(): void;

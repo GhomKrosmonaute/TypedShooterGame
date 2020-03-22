@@ -2,11 +2,11 @@ import Positionable from './Positionable';
 import Shot from './Shot';
 import { Consumable, Passive, ShapeFunction, TemporaryEffects } from '../../interfaces';
 import Rate from './Rate';
-import PartyScene from './Scenes/Party';
+import Party from './Scenes/Party';
 import App from '../App';
 import API from '../API';
 export default class Player extends Positionable {
-    party: PartyScene;
+    party: Party;
     baseLife: number;
     life: number;
     score: number;
@@ -28,7 +28,9 @@ export default class Player extends Positionable {
     highScore: number;
     app: App;
     api: API;
-    constructor(party: PartyScene);
+    private combo;
+    private comboTimeout;
+    constructor(party: Party);
     getHighScore(): Promise<number>;
     setHighScore(score: number): Promise<any>;
     readonly shotSpeed: number;
@@ -42,6 +44,7 @@ export default class Player extends Positionable {
     removePassive(id: string): void;
     getPassive(id: string): Passive | null;
     addConsumable(consumable: Consumable): void;
+    addScore(score: number): void;
     step(): Promise<void>;
     draw(): void;
     keyPressed(key: string): void;

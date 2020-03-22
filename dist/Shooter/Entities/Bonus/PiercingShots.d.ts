@@ -3,6 +3,7 @@ import Bonus from '../Bonus';
 import p5 from 'p5';
 export default class PiercingShots extends Bonus implements Passive {
     level: number;
+    levelMax: number;
     id: string;
     displayName: string;
     description: string;

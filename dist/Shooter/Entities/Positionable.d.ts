@@ -9,7 +9,8 @@ export default class Positionable {
     radius: number;
     move(x: number, y: number, z?: number): void;
     place(x: number, y: number, z?: number): void;
-    follow(positionable: Vector2D, speed: number): void;
+    follow(target: Vector2D, speed: number): void;
+    target(target: Vector2D, speedFraction: number): void;
     placeOutOfLimits(): void;
     placeOutOfViewport(withSecurity?: boolean): void;
     showIfNotOnScreen(): void;

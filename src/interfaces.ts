@@ -5,6 +5,8 @@ import App from "./Shooter/App";
 import Positionable from "./Shooter/Entities/Positionable";
 import createSpyObj = jasmine.createSpyObj;
 import Scene from './Shooter/Entities/Scene';
+import Input from './Shooter/Entities/Input';
+import Animation from './Shooter/Entities/Animation';
 
 interface BonusExtender extends Bonus {
     shape: ShapeFunction
@@ -17,7 +19,15 @@ export interface Consumable extends BonusExtender {
 
 export interface Passive extends BonusExtender {
     value: number
+    levelMax: number
     level: number
+}
+
+export interface Combo {
+    score:number
+    hits:number
+    time:number
+    multiplicator:number
 }
 
 export interface TemporaryEffects {
@@ -30,17 +40,13 @@ export interface TemporaryEffect {
     timeout: number
 }
 
-export interface GameAnimation {
-    value: any
-    duration: number
-    draw: ( p:p5, time:number, values:any ) => void
-}
-
-export interface PuttedAnimation {
-    id?: string
-    animation: GameAnimation
-    startTime: number
-    endTime: number
+export interface AnimationOptions {
+    id?:string
+    class?:string
+    position?:Vector2D
+    value:any
+    duration:number
+    draw: ( animation:Animation ) => void
 }
 
 export type Vector2D = Positionable | {x:number,y:number}
@@ -73,4 +79,11 @@ export interface Scenes {
     [key:string]: Scene
 }
 
-export type SceneName = 'party' | 'pause'
+export type SceneName = 'party' | 'manual' | 'scores' | 'profile'
+
+export interface InputOptions {
+    placeholder:string
+    value?:string
+    hide?:boolean
+    focus?:boolean
+}

@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class AutoFireGuidance extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 3
     public id = 'autoFireGuidance'
     public displayName = 'Automatic Fire Guidance'
     public description = '{value}px detection'

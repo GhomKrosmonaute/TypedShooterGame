@@ -33,6 +33,11 @@ function sketch( p:p5, apiToken:string ){
         app.keyReleased(p.key)
     }
 
+    p.mousePressed = () => {
+        if(!app) return
+        app.mousePressed()
+    }
+
     p.mouseMoved = () => {
         if(!app) return
         app.mouseMoved()

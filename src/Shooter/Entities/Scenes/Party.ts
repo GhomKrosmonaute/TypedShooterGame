@@ -6,7 +6,7 @@ import Player from '../Player';
 import {pickBonus, pickEnemy} from '../../../utils';
 import App from '../../App';
 
-export default class PartyScene extends Scene {
+export default class Party extends Scene {
 
     private readonly maxEnemyCount = 60
     private readonly minEnemyCount = 10
@@ -117,11 +117,14 @@ export default class PartyScene extends Scene {
     }
 
     keyPressed( key:string ) {
-        if(key === 'Escape') this.app.sceneName = 'pause'
+        if(key === 'Escape') this.app.sceneName = 'manual'
         else this.player.keyPressed(key)
     }
 
     public move( x:number, y:number ) {
+        this.app.animations
+            .filter( a => a.class !== 'popup' )
+            .forEach( a => a.move( x, y ) )
         this.background.move( x, y )
         this.foreground.move( x, y )
         this.enemies.forEach( enemy => enemy.move( x, y ) )
@@ -142,6 +145,9 @@ export default class PartyScene extends Scene {
             ),
             this.minEnemyCount
         )
+    }
+
+    mousePressed(): any {
     }
 
 }

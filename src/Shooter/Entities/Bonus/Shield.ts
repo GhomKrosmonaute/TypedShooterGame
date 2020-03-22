@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class Shield extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 3
     public id = 'shield'
     public displayName = 'Shield'
     public description = 'Damage protection {value}'

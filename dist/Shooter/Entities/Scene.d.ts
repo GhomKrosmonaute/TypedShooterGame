@@ -6,6 +6,7 @@ export default abstract class Scene {
     abstract draw(): any;
     abstract step(): any;
     abstract keyPressed(key: string): any;
+    abstract mousePressed(): any;
     p: p5;
     protected constructor(app: App);
     protected drawAnimations(): void;

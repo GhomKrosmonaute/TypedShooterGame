@@ -5,6 +5,7 @@ import p5 from 'p5'
 export default class RangeUp extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 5
     public id = 'rangeUp'
     public displayName = 'Range Up'
     public description = '{value}px'

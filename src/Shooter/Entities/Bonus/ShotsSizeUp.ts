@@ -5,6 +5,7 @@ import p5 from 'p5';
 export default class ShotsSizeUp extends Bonus implements Passive {
 
     public level = 1
+    public levelMax = 6
     public id = 'shotsSizeUp'
     public displayName = 'Shots Size Up'
     public description = '{value}px'

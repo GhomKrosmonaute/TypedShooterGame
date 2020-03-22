@@ -1,14 +1,17 @@
 import p5 from 'p5'
 // @ts-ignore
 import cursorImage from './images/cursor.png'
-import {GameAnimation, KeyMode, Keys, PuttedAnimation, SceneName, Scenes} from '../interfaces'
+import {AnimationOptions, KeyMode, Keys, SceneName, Scenes, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {fade} from '../utils'
 import {keyModes} from '../config';
 import Party from './Entities/Scenes/Party';
-import Pause from './Entities/Scenes/Pause';
+import Manual from './Entities/Scenes/Manual';
 import Scene from './Entities/Scene';
 import API from './API';
+import Profile from './Entities/Scenes/Profile';
+import Scores from './Entities/Scenes/Scores';
+import Animation from './Entities/Animation';
 
 export default class App {
 
@@ -18,7 +21,9 @@ export default class App {
     public _sceneName:SceneName
     private readonly scenes:Scenes = {
         party: new Party(this),
-        pause: new Pause(this)
+        manual: new Manual(this),
+        profile: new Profile(this),
+        scores: new Scores(this)
     }
 
     public readonly version = '0.1.4'
@@ -31,7 +36,7 @@ export default class App {
     public rate:Rate
     public darkModeTransition:number
     public keyModes:KeyMode[] = keyModes
-    public animations:PuttedAnimation[]
+    public animations:Animation[]
 
     constructor( public p:p5, public api:API ){
 
@@ -51,7 +56,7 @@ export default class App {
     }
 
     public reset(): void {
-        this.sceneName = 'pause'
+        this.sceneName = 'manual'
         this.rate = new Rate(25)
         this.animations = []
     }
@@ -107,44 +112,46 @@ export default class App {
         this._sceneName = name
     }
 
-    public setAnimation( animation:GameAnimation, id?:string ): void {
-        const puttedAnimation:PuttedAnimation = { id,
-            animation: animation,
-            startTime: Date.now(),
-            endTime: Date.now() + animation.duration
+    public get mouse(): Vector2D {
+        return {
+            x: this.p.mouseX,
+            y: this.p.mouseY
         }
-        this.animations.push(puttedAnimation)
+    }
+
+    public setAnimation( options:AnimationOptions ): void {
+        const animation = new Animation( this, options )
+        this.animations.push(animation)
     }
     public setPopup( text:string ): void {
         this.setAnimation({
-            value: {
-                app: this,
-                index: this.animations.filter( (anim:PuttedAnimation) => anim.id === 'popup' ).length - 1
-            },
+            class: 'popup',
+            value: this.animations.filter( a => a.class === 'popup' ).length - 1,
             duration: 3000,
-            draw(p, time, values ): void {
-                const shift:number = values.index * p.height * .10
-                p.noStroke()
-                p.fill(values.app.light, fade(p,30, {
-                    value: time,
+            draw: (a:Animation) => {
+                const shift = a.value * a.p.height * .10
+                const { x, y } = a.position
+                a.p.noStroke()
+                a.p.fill(a.app.light, fade(a.p,30, {
+                    value: a.time,
                     valueMax: 3000,
                     overflow: 7
                 }))
-                p.rect(
-                    p.width * -.5,
-                    p.height * -.25 + shift,
-                    p.width,
-                    p.height * .1
+                a.p.rect(
+                    x + a.p.width * -.5,
+                    y + a.p.height * -.25 + shift,
+                    a.p.width,
+                    a.p.height * .1
                 )
-                p.fill(values.app.light, fade(p,255, {
-                    value: time,
+                a.p.fill(a.app.light, fade(a.p,255, {
+                    value: a.time,
                     valueMax: 3000,
                     overflow: 4
                 }))
-                p.textAlign(p.CENTER,p.CENTER)
-                p.text(text, 0, p.height * -.2 + shift)
+                a.p.textAlign(a.p.CENTER,a.p.CENTER)
+                a.p.text(text, 0, a.p.height * -.2 + shift)
             }
-        }, 'popup')
+        })
     }
 
     public switchDarkMode(): void {
@@ -184,9 +191,14 @@ export default class App {
 
     public keyReleased(key:string): void { this.keys[key] = false }
     public keyPressed(key:string): void { this.keys[key] = true
-        if(key === 'm') this.switchDarkMode()
-        else if(key === 'k') this.switchKeyMode()
-        this.scene.keyPressed(key)
+        if(this.sceneName !== 'profile'){
+            if(key === 'm') this.switchDarkMode()
+            else if(key === 'k') this.switchKeyMode()
+        } this.scene.keyPressed(key)
+    }
+
+    mousePressed(){
+        this.scene.mousePressed()
     }
 
     public moveKeyIsPressed(): boolean { return this.directionalKeyIsPressed('move') }

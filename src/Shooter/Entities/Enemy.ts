@@ -4,6 +4,7 @@ import Shot from './Shot'
 import p5 from "p5";
 import {Vector2D} from "../../interfaces";
 import Party from './Scenes/Party';
+import {explosion} from '../../utils';
 
 export default abstract class Enemy extends Positionable {
 
@@ -23,6 +24,8 @@ export default abstract class Enemy extends Positionable {
     public abstract onShoot(shoot:Shot):boolean
     public abstract onPlayerContact():void
     public app:App
+
+    private lastDeadChain = 0
 
     protected constructor(
         public party:Party
@@ -61,50 +64,29 @@ export default abstract class Enemy extends Positionable {
 
         const deadChain = this.party.player.getPassive('deadChain')
         if(addToScore && deadChain){
-
             setTimeout(() => {
                 for(const enemy of this.party.enemies)
                     if (
                         enemy !== this &&
+                        Date.now() > enemy.lastDeadChain + 2000 &&
                         enemy.life > 0 &&
                         !enemy.immune &&
                         enemy.dist(position) < deadChain.value
-                    ) enemy.inflictDamages(this.baseLife * .5, true)
+                    ) {
+                        enemy.inflictDamages(this.baseLife * .5, true)
+                        enemy.lastDeadChain = Date.now()
+                    }
             },200)
-
-            this.app.setAnimation({
-                duration: 200,
-                value: {position,deadChain},
-                draw(p: p5, time: number, values: any ): void {
-                    const opacity = p.map(time,0,200,255,0)
-                    p.noStroke()
-                    p.fill(255,0,0, opacity)
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,values.deadChain.value,1))
-                    p.noFill()
-                    p.stroke(255, opacity)
-                    p.strokeWeight(p.map(time,0,200,1,10))
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200,1,values.deadChain.value))
-                }
-            })
-
-        }else{
-            this.app.setAnimation({
-                duration: 200,
-                value: {radius:this.radius,position},
-                draw(p: p5, time: number, values:any ): void {
-                    const opacity = p.map(time,0,200,255,0)
-                    p.noStroke()
-                    p.fill(200,0,100, opacity)
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, values.radius,1))
-                    p.noFill()
-                    p.stroke(255, opacity)
-                    p.strokeWeight(p.map(time,0,200,1,5))
-                    p.ellipse(values.position.x,values.position.y,p.map(time,0,200, 1,values.radius))
-                }
-            })
         }
 
-        if(addToScore) this.party.player.score += this.gain
+        this.app.setAnimation({
+            position,
+            duration: 200,
+            value: addToScore && deadChain ? deadChain.value * 2 : this.radius,
+            draw: explosion
+        })
+
+        if(addToScore) this.party.player.addScore(this.gain)
         this.reset()
     }
 
