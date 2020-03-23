@@ -30,6 +30,11 @@ export default class Player extends Positionable {
     api: API;
     private combo;
     private comboTimeout;
+    private comboStateSize;
+    private comboMaxMultiplicator;
+    private killed;
+    private immune;
+    private immuneTime;
     constructor(party: Party);
     getHighScore(): Promise<number>;
     setHighScore(score: number): Promise<any>;
@@ -46,6 +51,7 @@ export default class Player extends Positionable {
     getPassive(id: string): Passive | null;
     addConsumable(consumable: Consumable): void;
     addScore(score: number): void;
+    inflictDamages(damages: number): void;
     step(): Promise<void>;
     draw(): void;
     keyPressed(key: string): void;

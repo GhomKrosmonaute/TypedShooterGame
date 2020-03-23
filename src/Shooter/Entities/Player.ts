@@ -6,6 +6,7 @@ import Rate from './Rate';
 import Party from './Scenes/Party';
 import App from '../App';
 import API from '../API';
+import {ellipseColorFadeOut, explosion} from '../../utils';
 
 export default class Player extends Positionable {
 
@@ -33,6 +34,11 @@ export default class Player extends Positionable {
 
     private combo:Combo = null
     private comboTimeout = 2500
+    private comboStateSize = 10
+    private comboMaxMultiplicator = 5
+    private killed = false
+    private immune:number
+    private immuneTime = 500
 
     constructor(
         public party:Party
@@ -40,6 +46,7 @@ export default class Player extends Positionable {
         super( party.app.p, 0, 0, 50 )
         this.app = party.app
         this.api = party.app.api
+        this.immune = party.time
         this.shootRating = new Rate(this.baseFireRate)
         this.getHighScore().catch()
     }
@@ -126,6 +133,7 @@ export default class Player extends Positionable {
     }
 
     public addConsumable( consumable:Consumable ): void {
+        this.party.player.addScore(1)
         const exists = this.consumables.find( c => c.id === consumable.id )
         if(exists){
             exists.quantity ++
@@ -136,38 +144,66 @@ export default class Player extends Positionable {
 
     public addScore( score:number ): void {
         if(!this.combo){
+            this.score += score
             this.combo = {
-                score,
                 hits: 1,
-                time: this.party.time,
-                multiplicator: 1
+                multiplicator: 1,
+                time: this.party.time
             }
         }else{
-            this.combo.time = this.party.time
             this.combo.hits ++
-            this.combo.score += score
-            this.combo.multiplicator = Math.min(5,1 + Math.floor(this.combo.hits / 10))
+            this.combo.time = this.party.time
+            this.combo.multiplicator = Math.min(
+                this.comboMaxMultiplicator,
+                1 + Math.floor(this.combo.hits / this.comboStateSize)
+            )
+            this.score += score * this.combo.multiplicator
+        }
+    }
+
+    public inflictDamages( damages:number ): void {
+        this.party.setAnimation({
+            attach: true,
+            className: 'high',
+            duration: 150,
+            value: this.party.time > this.immune ?
+                 this.p.color(255,0,0) :
+                 this.p.color(0,0,255),
+            draw: ellipseColorFadeOut,
+            position: this
+        })
+        if(this.party.time > this.immune){
+            this.immune = this.party.time + this.immuneTime
+            this.life -= damages
         }
     }
 
     public async step(): Promise<void> {
 
+        if(this.killed) return
+
         // COMBO
 
-        if(this.combo && this.party.time > this.combo.time + this.comboTimeout){
-            this.score += this.combo.score * this.combo.multiplicator
+        if(this.combo && this.party.time > this.combo.time + this.comboTimeout)
             this.combo = null
-        }
 
         // DEATH ?
 
         if(this.life <= 0){
-            if(this.combo) this.score += this.combo.score * this.combo.multiplicator
-            if(this.score > await this.getHighScore()){
+            if(this.score > await this.getHighScore())
                 await this.setHighScore(this.score)
-            }
-            this.app.sceneName = 'manual'
-            this.party.reset()
+            this.killed = true
+            this.party.setAnimation({
+                className: 'low',
+                value: this.radius * 1.5,
+                duration: 700,
+                draw: explosion,
+                callback: a => {
+                    a.scene.app.sceneName = 'manual'
+                    a.scene.app.scenes.party.reset()
+                }
+            })
+            return
         }
 
         // MOVES
@@ -262,8 +298,13 @@ export default class Player extends Positionable {
 
     public draw(): void {
         this.shots.forEach(shoot => shoot.draw() )
-        this.p.noStroke()
-        this.p.fill(this.app.light)
+        if(this.killed) return
+        if(this.app.darkMode) this.p.noStroke()
+        else {
+            this.p.stroke(0)
+            this.p.strokeWeight(1)
+        }
+        this.p.fill(200,200,255)
         this.p.ellipse(this.x,this.y,this.radius)
         this.p.fill(0,100)
         this.p.stroke(this.app.light)
@@ -281,20 +322,72 @@ export default class Player extends Positionable {
             14, 5
         )
         if(this.combo){
-            this.p.fill(this.app.light,Math.min(255,this.p.map(
+            if(this.combo.multiplicator > 1){
+                this.p.fill(this.app.light,Math.min(255,this.p.map(
+                    this.party.time,
+                    this.combo.time,
+                    this.combo.time + this.comboTimeout,
+                    500,
+                    0
+                )))
+                this.p.noStroke()
+                this.p.textAlign(this.p.LEFT,this.p.CENTER)
+                this.p.textSize(this.radius * .6)
+                this.p.text(
+                    `x${this.combo.multiplicator}`,
+                    this.x + this.radius * 1.6,
+                    this.y
+                )
+            }
+            const timeBar = this.p.map(
                 this.party.time,
                 this.combo.time,
                 this.combo.time + this.comboTimeout,
-                500,
-                0
-            )))
+                1, 0
+            )
+            const stateBar = this.p.map(
+                this.combo.hits,
+                (this.combo.multiplicator - 1) * this.comboStateSize,
+                this.combo.multiplicator * this.comboStateSize,
+                0, 1
+            )
             this.p.noStroke()
-            this.p.textAlign(this.p.LEFT,this.p.CENTER)
-            this.p.textSize(this.radius * .5)
-            this.p.text(
-                `+ ${this.combo.score} ${this.combo.multiplicator > 1 ? ` x${this.combo.multiplicator}` : ''} pts`,
+            this.p.fill(
+                this.p.map( timeBar, 0, 1, 255, 50 ),50,
+                this.p.map( timeBar, 0, 1, 50, 255 ),200
+            )
+            this.p.rect(
                 this.x + this.radius,
-                this.y
+                this.y + this.radius * -.5 + this.p.map( timeBar, 0, 1, this.radius, 0 ),
+                this.radius * .3,
+                this.radius - this.p.map( timeBar, 0, 1, this.radius, 0 ),
+                5
+            )
+            this.p.fill(200,50,200,200)
+            this.p.rect(
+                this.x + this.radius * .7,
+                this.y + this.radius * -.5 + this.p.map( stateBar, 0, 1, this.radius, 0 ),
+                this.radius * .3,
+                this.radius - this.p.map( stateBar, 0, 1, this.radius, 0 ),
+                5
+            )
+
+            this.p.noFill()
+            this.p.stroke(this.app.light,200)
+            this.p.strokeWeight(1)
+            this.p.rect(
+                this.x + this.radius * .7,
+                this.y + this.radius * -.5,
+                this.radius * .3,
+                this.radius,
+                5
+            )
+            this.p.rect(
+                this.x + this.radius,
+                this.y + this.radius * -.5,
+                this.radius * .3,
+                this.radius,
+                5
             )
         }
         let flagIndex = 0

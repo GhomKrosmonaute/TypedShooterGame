@@ -1,9 +1,10 @@
 import p5 from 'p5'
 // @ts-ignore
 import cursorImage from './images/cursor.png'
-import {AnimationOptions, KeyMode, Keys, SceneName, Scenes, Vector2D} from '../interfaces'
+// @ts-ignore
+import fontUrl from './fonts/Baloo2-Regular.ttf'
+import {KeyMode, Keys, SceneName, Scenes, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
-import {fade} from '../utils'
 import {keyModes} from '../config';
 import Party from './Entities/Scenes/Party';
 import Manual from './Entities/Scenes/Manual';
@@ -11,7 +12,6 @@ import Scene from './Entities/Scene';
 import API from './API';
 import Profile from './Entities/Scenes/Profile';
 import Scores from './Entities/Scenes/Scores';
-import Animation from './Entities/Animation';
 
 export default class App {
 
@@ -19,14 +19,14 @@ export default class App {
     private readonly baseCursorFadeOut = 1000
 
     public _sceneName:SceneName
-    private readonly scenes:Scenes = {
+    public readonly scenes:Scenes = {
         party: new Party(this),
         manual: new Manual(this),
         profile: new Profile(this),
         scores: new Scores(this)
     }
 
-    public readonly version = '0.1.4'
+    public readonly version = '0.1.5'
     public readonly debug = false
 
     private fullscreen:boolean
@@ -49,8 +49,10 @@ export default class App {
 
         this.darkModeTransition = this.darkMode ? 0 : 255
         this.cursorImage = p.loadImage(cursorImage)
+        const font = p.loadFont(fontUrl)
         this.p.smooth()
         this.p.angleMode(this.p.DEGREES)
+        this.p.textFont(font)
         this.reset()
     }
 
@@ -70,6 +72,8 @@ export default class App {
             }
         }
         if(this.scene.rate.canTrigger(true)){
+            this.scene.animations = this.scene.animations.filter( a => !a.finish )
+            this.scene.animations.forEach( a => a.step() )
             this.scene.time += this.scene.rate.interval
             this.scene.step()
         }

@@ -1,5 +1,5 @@
 import p5 from 'p5';
-import { KeyMode, Keys, SceneName, Vector2D } from '../interfaces';
+import { KeyMode, Keys, SceneName, Scenes, Vector2D } from '../interfaces';
 import Rate from './Entities/Rate';
 import Scene from './Entities/Scene';
 import API from './API';
@@ -9,8 +9,8 @@ export default class App {
     private readonly cursorImage;
     private readonly baseCursorFadeOut;
     _sceneName: SceneName;
-    private readonly scenes;
-    readonly version = "0.1.4";
+    readonly scenes: Scenes;
+    readonly version = "0.1.5";
     readonly debug = false;
     private fullscreen;
     private cursorFadeOut;

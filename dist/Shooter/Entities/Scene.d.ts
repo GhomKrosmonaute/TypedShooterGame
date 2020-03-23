@@ -15,7 +15,7 @@ export default abstract class Scene {
     abstract mousePressed(): any;
     p: p5;
     protected constructor(app: App);
-    protected drawAnimations(): void;
+    protected drawAnimations(className?: string): void;
     setAnimation(options: AnimationOptions): void;
     setPopup(text: string): void;
 }

@@ -23,7 +23,7 @@ export default abstract class Bonus extends Positionable {
 
     public draw(): void {
         this.p.noFill()
-        this.p.stroke(255,0,50)
+        this.p.stroke(255,140,0)
         this.p.strokeWeight(3)
         this.showIfNotOnScreen()
         this.p.ellipse(
@@ -51,6 +51,6 @@ export default abstract class Bonus extends Positionable {
         this.used = true
         this.applyEffect()
         const value = (this as any).value
-        this.party.setPopup(`${this.displayName} : ${this.description.replace('{value}',value)}`)
+        this.party.setPopup(`${this.displayName} : ${this.description.replace('{value}',String(Math.round((value + Number.EPSILON) * 100) / 100))}`)
     }
 }

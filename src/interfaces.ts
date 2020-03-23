@@ -24,7 +24,6 @@ export interface Passive extends BonusExtender {
 }
 
 export interface Combo {
-    score:number
     hits:number
     time:number
     multiplicator:number
@@ -42,11 +41,13 @@ export interface TemporaryEffect {
 
 export interface AnimationOptions {
     id?:string
-    class?:string
+    className?:string
     position?:Vector2D
+    attach?:boolean
     value:any
     duration:number
     draw: ( animation:Animation ) => void
+    callback?:( animation:Animation ) => void
 }
 
 export type Vector2D = Positionable | {x:number,y:number}

@@ -52,7 +52,7 @@ export default class Tesla extends Enemy {
             for(const tesla of this.connections)
                 if(this.isOnArc(tesla,this.party.player)){
                     this.arcTime = this.party.time + this.arcInterval
-                    this.party.player.life --
+                    this.party.player.inflictDamages(1)
                 }
 
         let target:Vector2D = [
@@ -71,7 +71,7 @@ export default class Tesla extends Enemy {
     }
 
     onPlayerContact(): void {
-        this.party.player.life -= this.damage
+        this.party.player.inflictDamages(this.damage)
         this.kill()
     }
 

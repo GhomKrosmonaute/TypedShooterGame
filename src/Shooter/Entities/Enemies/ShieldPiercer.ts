@@ -25,7 +25,7 @@ export default class ShieldPiercer extends Enemy {
     }
 
     onPlayerContact(): void {
-        this.party.player.life -= this.damage
+        this.party.player.inflictDamages(this.damage)
         this.kill()
     }
 

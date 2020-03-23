@@ -21,6 +21,7 @@ import Party from './Shooter/Entities/Scenes/Party';
 import Rocket from './Shooter/Entities/Enemies/Rocket';
 import Animation from './Shooter/Entities/Animation';
 import SpeedUp from './Shooter/Entities/Bonus/SpeedUp';
+import Positionable from './Shooter/Entities/Positionable';
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -63,6 +64,15 @@ export function explosion( a:Animation ): void {
     a.p.stroke(255, opacity)
     a.p.strokeWeight(a.p.map(a.time,0,a.duration,1,10))
     a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,a.duration,1,a.value))
+}
+
+export function ellipseColorFadeOut( a:Animation ): void {
+    const color = a.value as p5.Color
+    const entity = a.position as any
+    color.setAlpha(a.p.map(a.time,0,a.duration,150,0))
+    a.p.noStroke()
+    a.p.fill(color)
+    a.p.ellipse( a.position.x, a.position.y,entity.currentRadius || entity.radius)
 }
 
 export function seconds( nbr:number ): number {

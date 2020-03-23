@@ -78,8 +78,12 @@ export default class Shot extends Positionable {
     }
 
     public draw(): void {
-        this.p.noStroke()
-        this.p.fill(this.player.app.light)
+        if(this.player.party.app.darkMode) this.p.noStroke()
+        else {
+            this.p.stroke(0)
+            this.p.strokeWeight(1)
+        }
+        this.p.fill(200,200,255)
         this.p.ellipse(
             this.x,
             this.y,

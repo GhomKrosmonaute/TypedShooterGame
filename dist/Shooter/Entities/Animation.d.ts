@@ -9,11 +9,15 @@ export default class Animation {
     readonly duration: number;
     position: Vector2D;
     value: any;
-    class?: string;
+    className?: string;
     id?: string;
+    attach: boolean;
+    finish: boolean;
     private readonly onDraw;
+    private readonly callback?;
     constructor(scene: Scene, options: AnimationOptions);
     draw(): void;
+    step(): void;
     readonly time: number;
     readonly timeIsOut: boolean;
     move(x: number, y: number): void;

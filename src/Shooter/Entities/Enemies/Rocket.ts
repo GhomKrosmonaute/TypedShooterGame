@@ -46,9 +46,10 @@ export default class Rocket extends Enemy {
                         enemy.inflictDamages(this.damage)
 
                 if(this.dist(this.party.player) < this.damageZone)
-                    this.party.player.life -= this.damage
+                    this.party.player.inflictDamages(this.damage)
 
                 this.party.setAnimation({
+                    className: 'low',
                     value: this.damageZone * 2,
                     position: { x:this.x, y:this.y },
                     duration: 100,

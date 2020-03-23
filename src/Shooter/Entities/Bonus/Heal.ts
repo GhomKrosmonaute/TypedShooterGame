@@ -1,6 +1,7 @@
 import Bonus from '../Bonus';
 import {Consumable} from '../../../interfaces';
 import p5 from 'p5';
+import {ellipseColorFadeOut} from '../../../utils';
 
 export default class Heal extends Bonus implements Consumable {
 
@@ -11,6 +12,14 @@ export default class Heal extends Bonus implements Consumable {
 
     public exec(): void {
         this.party.player.life = this.party.player.baseLife
+        this.party.setAnimation({
+            attach: true,
+            className: 'high',
+            duration: 100,
+            value: this.p.color(0,255,0),
+            draw: ellipseColorFadeOut,
+            position: this.party.player
+        })
     }
 
     public shape(p:p5, x:number,y:number,w:number,h:number): void {

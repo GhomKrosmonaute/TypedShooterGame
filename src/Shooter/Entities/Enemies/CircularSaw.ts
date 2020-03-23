@@ -20,7 +20,7 @@ export default class CircularSaw extends Enemy {
     constructor( party:Party ) {
         super( party )
         this.lastDamage = party.time
-        this.radius = this.p.random(60,200)
+        this.radius = this.p.random(60,500)
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
@@ -39,7 +39,7 @@ export default class CircularSaw extends Enemy {
     onPlayerContact(): void {
         if(this.party.time > this.lastDamage + this.damageInterval){
             this.lastDamage = this.party.time
-            this.party.player.life -= this.damage
+            this.party.player.inflictDamages(this.damage)
         }
     }
 
@@ -59,8 +59,8 @@ export default class CircularSaw extends Enemy {
             this.p,
             0,
             0,
-            this.radius * .4,
-            this.radius,
+            this.radius * .2,
+            this.radius * .5,
             12
         )
         this.p.strokeWeight(3)
@@ -69,7 +69,7 @@ export default class CircularSaw extends Enemy {
         this.p.ellipse(
             0,
             0,
-            this.radius * .7
+            this.radius * .5
         )
     }
 

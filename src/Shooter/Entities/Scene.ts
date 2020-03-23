@@ -23,8 +23,15 @@ export default abstract class Scene {
         this.p = app.p
     }
 
-    protected drawAnimations(): void {
-        this.animations.forEach( a => a.draw() )
+    protected drawAnimations( className?:string ): void {
+        if(className === 'all') this.animations.forEach( a => a.draw() )
+        else if(!className)
+            this.animations
+                .filter( a => !a.className )
+                .forEach( a => a.draw() )
+        else this.animations
+            .filter( a => a.className === className )
+            .forEach( a => a.draw() )
     }
 
     public setAnimation( options:AnimationOptions ): void {
@@ -34,8 +41,9 @@ export default abstract class Scene {
 
     public setPopup( text:string ): void {
         this.setAnimation({
-            class: 'popup',
-            value: this.animations.filter( a => a.class === 'popup' ).length - 1,
+            attach: true,
+            className: 'popup',
+            value: this.animations.filter( a => a.className === 'popup' ).length - 1,
             duration: 3000,
             draw: (a:Animation) => {
                 const shift = a.value * a.p.height * .10

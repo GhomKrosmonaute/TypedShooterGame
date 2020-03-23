@@ -51,7 +51,7 @@ export default class BlobMob extends Enemy {
         const shield = this.party.player.getPassive('shield')
         if(!shield || shield.level < this.damage){
             this.party.player.removePassive('shield')
-            this.party.player.life -= this.damage
+            this.party.player.inflictDamages(this.damage)
         }
         this.kill(!!shield)
     }

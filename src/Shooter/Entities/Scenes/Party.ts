@@ -49,8 +49,9 @@ export default class Party extends Scene {
         this.background.draw()
         this.enemies.forEach( enemy => enemy.draw() )
         this.bonus.forEach( bonus => bonus.draw() )
-        this.drawAnimations()
+        this.drawAnimations('low')
         this.player.draw()
+        this.drawAnimations('high')
         this.foreground.draw()
         const isHigh = this.player.score > this.player.highScore
         this.p.fill(0,90)
@@ -102,12 +103,12 @@ export default class Party extends Scene {
         this.p.textSize(25)
         if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
+        this.drawAnimations('popup')
     }
 
     async step() {
         this.background.step()
         this.foreground.step()
-        this.animations = this.animations.filter( a => this.time < a.endTime )
         this.bonus.forEach( bonus => bonus.step() )
         this.bonus = this.bonus.filter( bonus => !bonus.used )
         this.enemies = this.enemies.sort(( a:any, b:any ) => {
@@ -132,7 +133,7 @@ export default class Party extends Scene {
 
     public move( x:number, y:number ) {
         this.animations
-            .filter( a => a.class !== 'popup' )
+            .filter( a => !a.attach )
             .forEach( a => a.move( x, y ) )
         this.background.move( x, y )
         this.foreground.move( x, y )

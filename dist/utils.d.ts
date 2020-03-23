@@ -16,6 +16,7 @@ export declare function fade(p: p5, fadeMax: number, fadeIn: {
 }): number;
 export declare function star(p: p5, x: number, y: number, radiusIn: number, radiusOut: number, points: number): void;
 export declare function explosion(a: Animation): void;
+export declare function ellipseColorFadeOut(a: Animation): void;
 export declare function seconds(nbr: number): number;
 export declare function minutes(nbr: number): number;
 export declare function pick<T>(list: T[]): T;
