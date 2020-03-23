@@ -22,6 +22,8 @@ import Rocket from './Shooter/Entities/Enemies/Rocket';
 import Animation from './Shooter/Entities/Animation';
 import SpeedUp from './Shooter/Entities/Bonus/SpeedUp';
 import Positionable from './Shooter/Entities/Positionable';
+import ExplosiveShots from './Shooter/Entities/Bonus/ExplosiveShots';
+import {AnimationMinimalOptions, AnimationOptions} from './interfaces';
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -36,43 +38,6 @@ export function fade( p:p5, fadeMax:number,
             p.map(fadeIn.value,0,fadeIn.valueMax,0,fadeIn.fadeMax || fadeMax * fadeIn.overflow)
         )
     )
-}
-
-export function star( p:p5, x:number, y:number, radiusIn:number, radiusOut:number, points:number): void {
-    p.angleMode(p.RADIANS)
-    let angle = p.TWO_PI / points
-    let halfAngle = angle / 2.0
-    p.beginShape()
-    for (let a = 0; a < p.TWO_PI; a += angle) {
-        let sx = x + p.cos(a) * radiusOut
-        let sy = y + p.sin(a) * radiusOut
-        p.vertex(sx, sy)
-        sx = x + p.cos(a + halfAngle) * radiusIn
-        sy = y + p.sin(a + halfAngle) * radiusIn
-        p.vertex(sx, sy)
-    }
-    p.endShape(p.CLOSE)
-    p.angleMode(p.DEGREES)
-}
-
-export function explosion( a:Animation ): void {
-    const opacity = a.p.map(a.time,0,a.duration,255,0)
-    a.p.noStroke()
-    a.p.fill(255,0,0, opacity)
-    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,a.duration,a.value,1))
-    a.p.noFill()
-    a.p.stroke(255, opacity)
-    a.p.strokeWeight(a.p.map(a.time,0,a.duration,1,10))
-    a.p.ellipse(a.position.x,a.position.y,a.p.map(a.time,0,a.duration,1,a.value))
-}
-
-export function ellipseColorFadeOut( a:Animation ): void {
-    const color = a.value as p5.Color
-    const entity = a.position as any
-    color.setAlpha(a.p.map(a.time,0,a.duration,150,0))
-    a.p.noStroke()
-    a.p.fill(color)
-    a.p.ellipse( a.position.x, a.position.y,entity.currentRadius || entity.radius)
 }
 
 export function seconds( nbr:number ): number {
@@ -99,7 +64,7 @@ export function pickEnemy( party:Party ): Enemy {
 }
 
 export function pickBonus( party:Party ): Bonus {
-    const rdm = Math.floor(Math.random() * 12)
+    const rdm = Math.floor(Math.random() * 13)
     switch (rdm) {
         case 0: return new Heal(party)
         case 1: return new StarBalls(party)
@@ -113,6 +78,7 @@ export function pickBonus( party:Party ): Bonus {
         case 9: return new RangeUp(party)
         case 10: return new DeadChain(party)
         case 11: return new SpeedUp(party)
+        case 12: return new ExplosiveShots(party)
     }
 }
 

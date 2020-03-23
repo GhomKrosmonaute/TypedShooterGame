@@ -46,9 +46,21 @@ export interface AnimationOptions {
     attach?:boolean
     value:any
     duration:number
-    draw: ( animation:Animation ) => void
-    callback?:( animation:Animation ) => void
+    draw: AnimationCallback
+    callback?: AnimationCallback
 }
+
+export interface AnimationMinimalOptions {
+    value:any
+    className?:string
+    position?:Vector2D
+    attach?:boolean
+    id?:string
+    duration:number
+    callback?:AnimationCallback
+}
+
+export type AnimationCallback = ( animation:Animation ) => void
 
 export type Vector2D = Positionable | {x:number,y:number}
 

@@ -2,7 +2,7 @@ import Enemy from '../Enemy';
 import Shot from "../Shot";
 import Party from '../Scenes/Party';
 import p5 from 'p5';
-import {explosion} from '../../../utils';
+import explosion from '../../Animations/explosion';
 
 export default class Rocket extends Enemy {
 
@@ -48,13 +48,11 @@ export default class Rocket extends Enemy {
                 if(this.dist(this.party.player) < this.damageZone)
                     this.party.player.inflictDamages(this.damage)
 
-                this.party.setAnimation({
-                    className: 'low',
+                this.party.setAnimation(explosion({
                     value: this.damageZone * 2,
                     position: { x:this.x, y:this.y },
-                    duration: 100,
-                    draw: explosion
-                })
+                    duration: 100
+                }))
                 this.kill()
             }
         }

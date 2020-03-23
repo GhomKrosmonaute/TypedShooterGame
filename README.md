@@ -20,7 +20,8 @@ Les specs c'est en dessous.
 | ✅ | Shots Size Up | les tirs sont `LEVEL * 25%` plus volumineux | passif |
 | ✅ | Fire Rate Up | la cadence de tir est `LEVEL` fois plus rapide | passif |
 | ✅ | Range Up | le joueur peut tirer `LEVEL * 50%` plus loin | passif |
-| ✅ | Dead Chain | en mourant, les ennemis infligent `enemy.baseLife / 2` dégâts à une distance de `LEVEL * 100` autour d'eux | passif |
+| ✅ | Dead Chain | en mourant, les ennemis infligent `enemy.baseLife / 2` dégâts à une distance de `LEVEL * 100` pixels autour d'eux | passif |
+| ✅ | Explosive Shots | vos tirs explosent sur une zone de `LEVEL * 100` pixels autour d'eux | passif |
 
 ## Enemy list
 

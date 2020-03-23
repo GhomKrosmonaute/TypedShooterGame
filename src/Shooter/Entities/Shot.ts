@@ -1,7 +1,8 @@
 import Positionable from './Positionable';
 import Enemy from './Enemy';
 import Player from './Player';
-import {fade} from "../../utils";
+import {fade} from '../../utils';
+import explosion from '../Animations/explosion';
 
 export default class Shot extends Positionable {
 
@@ -37,15 +38,30 @@ export default class Shot extends Positionable {
             this.piercingShots --
             this.toIgnore.push(enemy)
             if(this.piercingShots === 0)
-                this.placeOutOfLimits()
+                this.terminate()
             return true
         }
         return false
     }
 
+    public terminate(): void {
+        const explosiveShots = this.player.getPassive('explosiveShots')
+        if(explosiveShots){
+            this.player.party.setAnimation(explosion({
+                duration: 100,
+                position: { x: this.x, y: this.y },
+                value: explosiveShots.value * 2
+            }))
+            for(const enemy of this.player.party.enemies)
+                if(this.dist(enemy) < explosiveShots.value)
+                    enemy.inflictDamages(this.damage,true)
+        }
+        this.placeOutOfLimits()
+    }
+
     public step(): void {
         if(this.dist(this.basePosition) > this.player.shotRange){
-            this.placeOutOfLimits()
+            this.terminate()
         }else{
             const autoFireGuidance = this.player.getPassive('autoFireGuidance')
             let target:Enemy = null

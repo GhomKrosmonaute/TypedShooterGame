@@ -1,10 +1,9 @@
-import Positionable from './Positionable';
-import App from '../App';
+import Positionable from './Positionable'
+import App from '../App'
 import Shot from './Shot'
-import p5 from "p5";
-import {Vector2D} from "../../interfaces";
-import Party from './Scenes/Party';
-import {explosion} from '../../utils';
+import {Vector2D} from "../../interfaces"
+import Party from './Scenes/Party'
+import explosion from '../Animations/explosion';
 
 export default abstract class Enemy extends Positionable {
 
@@ -79,13 +78,11 @@ export default abstract class Enemy extends Positionable {
             },200)
         }
 
-        this.party.setAnimation({
-            className: 'low',
+        this.party.setAnimation(explosion({
             position,
             duration: 200,
-            value: addToScore && deadChain ? deadChain.value : this.radius,
-            draw: explosion
-        })
+            value: addToScore && deadChain ? deadChain.value : this.radius
+        }))
 
         if(addToScore) this.party.player.addScore(this.gain)
         this.reset()

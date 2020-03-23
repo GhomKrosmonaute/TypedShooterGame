@@ -1,7 +1,7 @@
 import Enemy from '../Enemy';
 import Shot from "../Shot";
-import {star} from "../../../utils";
 import Party from '../Scenes/Party';
+import star from '../../Shapes/star';
 
 export default class CircularSaw extends Enemy {
 

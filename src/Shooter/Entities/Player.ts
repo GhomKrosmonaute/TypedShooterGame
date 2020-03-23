@@ -6,7 +6,8 @@ import Rate from './Rate';
 import Party from './Scenes/Party';
 import App from '../App';
 import API from '../API';
-import {ellipseColorFadeOut, explosion} from '../../utils';
+import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
+import explosion from '../Animations/explosion';
 
 export default class Player extends Positionable {
 
@@ -162,16 +163,14 @@ export default class Player extends Positionable {
     }
 
     public inflictDamages( damages:number ): void {
-        this.party.setAnimation({
+        this.party.setAnimation(ellipseColorFadeOut({
             attach: true,
-            className: 'high',
             duration: 150,
+            position: this,
             value: this.party.time > this.immune ?
-                 this.p.color(255,0,0) :
-                 this.p.color(0,0,255),
-            draw: ellipseColorFadeOut,
-            position: this
-        })
+                this.p.color(255,0,0) :
+                this.p.color(0,0,255)
+        }))
         if(this.party.time > this.immune){
             this.immune = this.party.time + this.immuneTime
             this.life -= damages
@@ -193,16 +192,14 @@ export default class Player extends Positionable {
             if(this.score > await this.getHighScore())
                 await this.setHighScore(this.score)
             this.killed = true
-            this.party.setAnimation({
-                className: 'low',
+            this.party.setAnimation(explosion({
                 value: this.radius * 1.5,
                 duration: 700,
-                draw: explosion,
                 callback: a => {
                     a.scene.app.sceneName = 'manual'
                     a.scene.app.scenes.party.reset()
                 }
-            })
+            }))
             return
         }
 
@@ -345,12 +342,12 @@ export default class Player extends Positionable {
                 this.combo.time + this.comboTimeout,
                 1, 0
             )
-            const stateBar = this.p.map(
+            const stateBar = Math.min(1,this.p.map(
                 this.combo.hits,
                 (this.combo.multiplicator - 1) * this.comboStateSize,
                 this.combo.multiplicator * this.comboStateSize,
                 0, 1
-            )
+            ))
             this.p.noStroke()
             this.p.fill(
                 this.p.map( timeBar, 0, 1, 255, 50 ),50,

@@ -11,6 +11,7 @@ export default class Shot extends Positionable {
     private toIgnore;
     constructor(player: Player, directionX: number, directionY: number);
     handleShoot(enemy: Enemy): boolean;
+    terminate(): void;
     step(): void;
     draw(): void;
 }
