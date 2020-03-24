@@ -79,6 +79,14 @@ export interface KeyMode {
     shoot: DirectionalKeys
     move: DirectionalKeys
     numeric: string[][]
+    shortcuts: {
+        lightMode: string[]
+        keyMode: string[]
+        profile: string[]
+        scores: string[]
+        party: string[]
+        manual: string[]
+    }
 }
 
 export interface DirectionalKeys {
@@ -99,4 +107,11 @@ export interface InputOptions {
     value?:string
     hide?:boolean
     focus?:boolean
+}
+
+export interface LinkOptions {
+    targetName:SceneName
+    resetNew?:boolean
+    resetOld?:boolean
+    text?:string
 }

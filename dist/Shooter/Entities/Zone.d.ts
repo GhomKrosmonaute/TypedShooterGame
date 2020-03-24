@@ -17,7 +17,10 @@ export default class Zone {
     readonly width: number;
     readonly height: number;
     readonly center: Vector2D;
-    fraction(proportionX: number, proportionY: number): Vector2D;
+    move(x: number, y: number): void;
+    fraction(proportionX: number, proportionY: number, size?: boolean): Vector2D;
+    fractionX(proportion: number, size?: boolean): number;
+    fractionY(proportion: number, size?: boolean): number;
     touchVector(point: Vector2D): boolean;
     touchZone(zone: Zone): boolean;
 }

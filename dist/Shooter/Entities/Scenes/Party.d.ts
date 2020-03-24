@@ -4,8 +4,6 @@ import Bonus from '../Bonus';
 import Particles from '../Particles';
 import Player from '../Player';
 import App from '../../App';
-import Rate from '../Rate';
-import Animation from '../Animation';
 export default class Party extends Scene {
     private readonly maxEnemyCount;
     private readonly minEnemyCount;
@@ -16,9 +14,6 @@ export default class Party extends Scene {
     enemies: Enemy[];
     bonus: Bonus[];
     player: Player;
-    time: number;
-    animations: Animation[];
-    rate: Rate;
     constructor(app: App);
     reset(): void;
     draw(): void;

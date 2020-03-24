@@ -296,7 +296,7 @@ export default class Player extends Positionable {
     public draw(): void {
         this.shots.forEach(shoot => shoot.draw() )
         if(this.killed) return
-        if(this.app.darkMode) this.p.noStroke()
+        if(this.app.lightMode) this.p.noStroke()
         else {
             this.p.stroke(0)
             this.p.strokeWeight(1)

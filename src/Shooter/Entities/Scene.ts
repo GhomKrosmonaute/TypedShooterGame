@@ -5,18 +5,21 @@ import Animation from './Animation';
 import {AnimationOptions} from '../../interfaces';
 import {fade} from '../../utils';
 import popup from '../Animations/popup';
+import Link from './Link';
+import Form from './Form';
 
 export default abstract class Scene {
 
-    public abstract rate:Rate
-    public abstract time:number
-    public abstract animations:Animation[]
+    public rate:Rate = new Rate(25)
+    public time:number = 0
+    public animations:Animation[] = []
+    public links:Link[] = []
+    public form?:Form
 
     public abstract reset(): any
     public abstract draw(): any
     public abstract step(): any
     public abstract keyPressed( key:string ): any
-    public abstract mousePressed(): any
 
     public p:p5
 

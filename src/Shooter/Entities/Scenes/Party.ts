@@ -6,7 +6,6 @@ import Player from '../Player';
 import {pickBonus, pickEnemy} from '../../../utils';
 import App from '../../App';
 import Rate from '../Rate';
-import Animation from '../Animation';
 
 export default class Party extends Scene {
 
@@ -20,9 +19,6 @@ export default class Party extends Scene {
     public enemies:Enemy[]
     public bonus:Bonus[]
     public player:Player
-    public time:number
-    public animations:Animation[]
-    public rate:Rate
 
     constructor( app:App ) {
         super(app)

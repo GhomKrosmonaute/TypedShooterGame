@@ -22,7 +22,7 @@ export default class FireRateUp extends Bonus implements Passive {
     }
 
     get value(): number {
-        return this.party.player.baseFireRate / this.p.map(this.level,1,3,1.5,2)
+        return this.p.map(this.level,1,5,this.party.player.baseFireRate,100)
     }
 
 }

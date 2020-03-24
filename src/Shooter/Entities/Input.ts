@@ -22,17 +22,19 @@ export default class Input extends Zone {
     ) {
         super(x1,y1,x2,y2,toCenter)
         this.p = app.p
-        this.value = options.value || ''
+        this.value = options.value ? options.value : ''
         this.placeholder = options.placeholder
         this.hide = !!options.hide
         this.focus = !!options.focus
     }
 
     draw(){
-        const hover = this.touchVector(this.app.mouse)
+        if(this.value === undefined) return
+        const hover = this.touchVector(this.app.mouseFromCenter)
+        const color = this.focus ? this.p.color(this.app.light) : this.p.color(255,0,200)
         // rect
         this.p.strokeWeight(hover ? 4 : 2)
-        this.p.stroke(255,0,200)
+        this.p.stroke(color)
         this.p.noFill()
         this.p.rect(
             this.start.x,
@@ -43,9 +45,10 @@ export default class Input extends Zone {
         )
         // text
         this.p.noStroke()
-        this.p.fill(255,0,200)
+        color.setAlpha(this.value.length === 0 ? 100 : 255)
+        this.p.fill(color)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
-        this.p.textSize(this.height * .7)
+        this.p.textSize(this.height * .5)
         this.p.text(
             this.value.length === 0 ? this.placeholder : (
                 this.hide ? '*'.repeat(this.value.length) : this.value
@@ -54,11 +57,10 @@ export default class Input extends Zone {
     }
 
     keyPressed( key:string ){
-        if(key.length === 1){
-            this.value += key
-        }else if(key === 'Backspace' && this.value.length > 0){
-            this.value = this.value.slice(0,this.value.length-2)
-        }
+        if(!this.focus) return
+        if(key.length === 1) this.value += key
+        else if(key === 'Backspace' && this.value.length > 0)
+            this.value = this.value.slice(0,this.value.length-1)
     }
 
 }

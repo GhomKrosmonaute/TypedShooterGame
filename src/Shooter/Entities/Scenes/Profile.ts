@@ -1,41 +1,58 @@
 
 import Scene from '../Scene';
 import App from '../../App';
-import Input from '../Input';
 import Form from '../Form';
-import Rate from '../Rate';
-import Animation from '../Animation';
+import Link from '../Link';
 
 export default class Profile extends Scene {
-
-    public animations:Animation[] = []
-    public rate = new Rate(25)
-    public time = 0
-    private form:Form
 
     constructor( app:App ) {
         super(app)
         this.form = new Form( app,
             0, 0, this.p.width * .4, this.p.height * .4,
             [
-                { placeholder: 'New username' },
-                { placeholder: 'New password', hide: true },
-                { placeholder: 'Current password', hide: true }
+                { value:'', placeholder: 'New username' },
+                { value:'', placeholder: 'New password', hide: true },
+                { value:'', placeholder: 'Current password', hide: true }
             ], true
+        )
+        const appZone = this.app.zone
+        this.links.push(
+            new Link( this,
+                appZone.fractionX(1/6),
+                appZone.fractionY(5/6), {
+                    targetName: 'party'
+                }
+            ),
+            new Link( this,
+                appZone.fractionX(.5),
+                appZone.fractionY(5/6), {
+                    targetName: 'scores',
+                    resetNew: true
+                }
+            ),
+            new Link( this,
+                appZone.fractionX(5/6),
+                appZone.fractionY(5/6), {
+                    targetName: 'manual'
+                }
+            )
         )
         this.reset()
     }
 
     reset(){
+        this.form.inputs[0].value = ''
         this.form.inputs[1].value = ''
         this.form.inputs[2].value = ''
-        this.app.api.get('profile').then( profile => {
-            this.form.inputs[0].value = profile.username
-        })
+        this.app.api.get('leaderboard')
+            .then( leaderBoard => {
+                this.form.inputs[0].value = leaderBoard.player.username
+            })
     }
 
     draw() {
-        this.form.draw()
+        this.drawAnimations('all')
     }
 
     step() {
@@ -44,10 +61,6 @@ export default class Profile extends Scene {
 
     keyPressed( key:string ) {
         this.form.keyPressed(key)
-    }
-
-    mousePressed(){
-        this.form.mousePressed()
     }
 
 }

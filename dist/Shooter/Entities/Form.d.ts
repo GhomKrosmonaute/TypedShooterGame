@@ -11,4 +11,6 @@ export default class Form extends Zone {
     draw(): void;
     keyPressed(key: string): void;
     mousePressed(): void;
+    readonly focused: Input;
+    readonly focus: boolean;
 }

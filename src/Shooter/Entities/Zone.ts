@@ -28,16 +28,28 @@ export default class Zone {
     public get height(): number { return this.stopY - this.startY }
     public get center(): Vector2D { return this.fraction(.5,.5) }
 
+    public move( x:number, y:number ): void {
+        this.startX += x
+        this.startY += y
+        this.stopX += x
+        this.stopY += y
+    }
+
     public fraction(
         proportionX:number,
-        proportionY:number
+        proportionY:number,
+        size:boolean = false
     ): Vector2D {
-        if(proportionX > 1) proportionX /= 100
-        if(proportionY > 1) proportionY /= 100
         return {
-            x: this.startX + this.width * proportionX,
-            y: this.startY + this.height * proportionY
+            x: this.fractionX(proportionX,size),
+            y: this.fractionY(proportionY,size)
         }
+    }
+    public fractionX( proportion:number, size:boolean = false ): number {
+        return (size ? 0 : this.startX) + this.width * proportion
+    }
+    public fractionY( proportion:number, size:boolean = false ): number {
+        return (size ? 0 : this.startY) + this.height * proportion
     }
 
     public touchVector( point:Vector2D ): boolean {

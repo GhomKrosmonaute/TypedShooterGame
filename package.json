@@ -1,6 +1,6 @@
 {
   "name": "ghom-shooter-game",
-  "version": "0.0.1",
+  "version": "0.1.6",
   "description": "A Shooter Game make with p5",
   "main": "index.js",
   "scripts": {

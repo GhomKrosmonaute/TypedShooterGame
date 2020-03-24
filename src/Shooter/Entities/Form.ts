@@ -21,8 +21,8 @@ export default class Form extends Zone {
         super(x1,y1,x2,y2,toCenter)
         this.p = app.p
         inputs.forEach( (input, index) => {
-            const position = this.fraction(.1, ((1/inputs.length))*index + 1/(inputs.length*2))
-            const size = this.fraction(.8, (1/inputs.length) * .7)
+            const position = this.fraction(.5, ((1/inputs.length))*index + 1/(inputs.length*2))
+            const size = this.fraction(.8, (1/inputs.length) * .7, true)
             this.inputs.push( new Input( app,
                 position.x, position.y,
                 size.x, size.y,
@@ -36,15 +36,33 @@ export default class Form extends Zone {
     }
 
     keyPressed( key:string ){
-        this.inputs.forEach( input => input.keyPressed(key) )
+        if(key === 'Tab' && this.focus){
+            const focused = this.focused
+            for(let i=0; i<this.inputs.length; i++)
+                if(this.inputs[i] === focused){
+                    if(i+1 >= this.inputs.length)
+                        this.inputs[0].focus = true
+                    else this.inputs[i+1].focus = true
+                }
+            focused.focus = false
+        }
+        else this.inputs.forEach( input => input.keyPressed(key) )
     }
 
     mousePressed(){
         for(const input of this.inputs){
-            if(input.touchVector(this.app.mouse))
+            if(input.touchVector(this.app.mouseFromCenter))
                 input.focus = true
             else input.focus = false
         }
+    }
+
+    public get focused(): Input {
+        return this.inputs.find( input => input.focus )
+    }
+
+    public get focus(): boolean {
+        return this.inputs.some( input => input.focus )
     }
 
 }

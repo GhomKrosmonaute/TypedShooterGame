@@ -26,11 +26,19 @@ function sketch( p:p5, apiToken:string ){
     p.keyPressed = () => {
         if(!app) return
         app.keyPressed(p.key)
+        if(
+            p.key === 'Backspace' ||
+            p.key === 'Tab'
+        ) return false
     }
 
     p.keyReleased = () => {
         if(!app) return
         app.keyReleased(p.key)
+        if(
+            p.key === 'Backspace' ||
+            p.key === 'Tab'
+        ) return false
     }
 
     p.mousePressed = () => {
