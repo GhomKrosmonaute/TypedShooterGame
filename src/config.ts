@@ -5,6 +5,7 @@ export const LIMITS = 3000
 export const VIEWPORT = 1000
 export const SECURITY = 1000
 export const baseURL = 'https://shooter-api.tk'
+export const siteKey = '6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN'
 export const keyModes:KeyMode[] = [
     {
         name: 'Right handed AZERTY',

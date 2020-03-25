@@ -4,4 +4,5 @@ export declare const LIMITS = 3000;
 export declare const VIEWPORT = 1000;
 export declare const SECURITY = 1000;
 export declare const baseURL = "https://shooter-api.tk";
+export declare const siteKey = "6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN";
 export declare const keyModes: KeyMode[];

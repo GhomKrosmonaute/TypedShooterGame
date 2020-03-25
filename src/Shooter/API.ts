@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import {baseURL} from '../config';
+import {baseURL, siteKey} from '../config';
 import qs from "querystring";
 
 export default class API {
@@ -8,7 +8,7 @@ export default class API {
     constructor( private apiToken:string ) {}
 
     get( route:string ): Promise<any> {
-        return new Promise((resolve,reject) => {
+        return new Promise(async (resolve,reject) => {
             axios.get('/'+route,{
                 baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
             })
@@ -18,7 +18,8 @@ export default class API {
     }
 
     patch(route:string, data:{[key:string]:string|boolean|number} ): Promise<void> {
-        return new Promise((resolve,reject) => {
+        return new Promise(async (resolve,reject) => {
+            data.token = await grecaptcha.execute(siteKey, { action: 'homepage' })
             axios.patch('/'+route, qs.stringify(data),{
                 baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
             })

@@ -5,7 +5,7 @@ import axios from 'axios'
 import qs from 'querystring'
 import App from './Shooter/App'
 import { getInput } from './utils'
-import { baseURL } from './config'
+import {baseURL, siteKey} from './config'
 import API from './Shooter/API';
 
 function sketch( p:p5, apiToken:string ){
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const username = getInput('username').value
             const password = getInput('password').value
 
-            grecaptcha.execute('6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN', { action: 'login' }).then(async function(token) {
+            grecaptcha.execute(siteKey, { action: 'login' }).then(async function(token) {
                 try {
                     const res = await axios.post('login', qs.stringify({ token, username, password }),{ baseURL })
                     if( res.status === 200 ){
@@ -79,6 +79,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }catch(error){
                     if(error.message.includes(401)) document.getElementById('alert').innerText = 'Incorrect password, please retry !'
+                    if(error.message.includes(501)) document.getElementById('alert').innerText = 'You may already have an account using this ip address.'
+                    if(error.message.includes(500)) document.getElementById('alert').innerText = 'reCAPTCHA token denied.'
                     else throw error
                 }
             })

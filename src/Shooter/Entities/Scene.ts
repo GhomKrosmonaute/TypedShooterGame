@@ -3,7 +3,6 @@ import p5 from 'p5';
 import Rate from './Rate';
 import Animation from './Animation';
 import {AnimationOptions} from '../../interfaces';
-import {fade} from '../../utils';
 import popup from '../Animations/popup';
 import Link from './Link';
 import Form from './Form';
