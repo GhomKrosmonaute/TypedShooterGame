@@ -3,7 +3,7 @@ import p5 from 'p5'
 import cursorImage from './images/cursor.png'
 // @ts-ignore
 import fontUrl from './fonts/Baloo2-Regular.ttf'
-import {KeyMode, Keys, SceneName, Scenes, Vector2D} from '../interfaces'
+import {KeyMode, Keys, SceneName, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {keyModes, VERSION} from '../config';
 import Party from './Entities/Scenes/Party';
@@ -13,6 +13,7 @@ import API from './API';
 import Profile from './Entities/Scenes/Profile';
 import Scores from './Entities/Scenes/Scores';
 import Zone from './Entities/Zone';
+import Variation from './Entities/Variation';
 
 export default class App {
 
@@ -20,7 +21,7 @@ export default class App {
     private readonly baseCursorFadeOut = 1000
 
     public _sceneName:SceneName
-    public readonly scenes:Scenes = {
+    public readonly scenes = {
         party: new Party(this),
         manual: new Manual(this),
         profile: new Profile(this),
@@ -31,6 +32,7 @@ export default class App {
     public readonly debug = false
 
     private cursorFadeOut:number
+    private hardcoreVariator:Variation
 
     public keys:Keys = {}
     public rate:Rate
@@ -47,6 +49,7 @@ export default class App {
                 version: this.version
             }))
 
+        this.hardcoreVariator = new Variation(-10,10,1)
         this.lightModeTransition = this.lightMode ? 0 : 255
         this.cursorImage = p.loadImage(cursorImage)
         const font = p.loadFont(fontUrl)
@@ -77,6 +80,8 @@ export default class App {
             this.scene.time += this.scene.rate.interval
             this.scene.step()
         }
+        if(this.hardcore)
+            this.hardcoreVariator.step()
     }
 
     public async draw(){
@@ -93,6 +98,11 @@ export default class App {
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(15)
         this.p.text(`Shooter Game v${this.version} © Ghom`,0,this.p.height * .5 - 15)
+        if(this.hardcore){
+            this.p.fill(255,0,0,50)
+            this.p.textSize(20)
+            this.p.text('HARDCORE MODE',0,this.p.height * .5 - (35 + this.hardcoreVariator.value))
+        }
         this.p.translate(
             this.p.width * -.5,
             this.p.height * -.5
@@ -110,6 +120,11 @@ export default class App {
             )
             this.p.image(this.cursorImage,this.mouse.x,this.mouse.y)
         }
+    }
+
+    public get hardcore(): boolean {
+        if(!this.scenes) return false
+        return this.scenes.party.player.score > 1000
     }
 
     public get scene(): Scene {

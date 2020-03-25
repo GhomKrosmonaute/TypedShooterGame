@@ -2,6 +2,7 @@ import Positionable from './Positionable';
 import App from '../App';
 import Variation from './Variation';
 import Party from './Scenes/Party';
+import textFadeOut from '../Animations/textFadeOut';
 
 export default abstract class Bonus extends Positionable {
 
@@ -51,6 +52,15 @@ export default abstract class Bonus extends Positionable {
         this.used = true
         this.applyEffect()
         const value = (this as any).value
+        this.party.setAnimation(textFadeOut({
+            position: this,
+            attach: true,
+            duration: 500,
+            value: {
+                text: `+ 1 pts`,
+                color: this.p.color(this.app.light)
+            }
+        }))
         this.party.setPopup(`${this.displayName} : ${this.description.replace('{value}',String(Math.round((value + Number.EPSILON) * 100) / 100))}`)
     }
 }

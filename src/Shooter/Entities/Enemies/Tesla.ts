@@ -23,6 +23,11 @@ export default class Tesla extends Enemy {
         super( party )
         const factor = this.p.random(30,50)
         this.radius = factor
+        if(this.app.hardcore){
+            this.life += 2
+            this.speed ++
+            this.arcInterval = 250
+        }
         this.arcTime = party.time
         this.arcSize = factor * 10
         this.arcWeight = 15

@@ -1,8 +1,12 @@
 import p5 from 'p5';
-import { KeyMode, Keys, SceneName, Scenes, Vector2D } from '../interfaces';
+import { KeyMode, Keys, SceneName, Vector2D } from '../interfaces';
 import Rate from './Entities/Rate';
+import Party from './Entities/Scenes/Party';
+import Manual from './Entities/Scenes/Manual';
 import Scene from './Entities/Scene';
 import API from './API';
+import Profile from './Entities/Scenes/Profile';
+import Scores from './Entities/Scenes/Scores';
 import Zone from './Entities/Zone';
 export default class App {
     p: p5;
@@ -10,10 +14,16 @@ export default class App {
     private readonly cursorImage;
     private readonly baseCursorFadeOut;
     _sceneName: SceneName;
-    readonly scenes: Scenes;
+    readonly scenes: {
+        party: Party;
+        manual: Manual;
+        profile: Profile;
+        scores: Scores;
+    };
     readonly version: any;
     readonly debug = false;
     private cursorFadeOut;
+    private hardcoreVariator;
     keys: Keys;
     rate: Rate;
     lightModeTransition: number;
@@ -22,6 +32,7 @@ export default class App {
     reset(): void;
     step(): Promise<void>;
     draw(): Promise<void>;
+    readonly hardcore: boolean;
     readonly scene: Scene;
     sceneName: SceneName;
     readonly mouse: Vector2D;

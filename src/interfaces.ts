@@ -96,10 +96,6 @@ export interface DirectionalKeys {
     right: string[]
 }
 
-export interface Scenes {
-    [key:string]: Scene
-}
-
 export type SceneName = 'party' | 'manual' | 'scores' | 'profile'
 
 export interface InputOptions {

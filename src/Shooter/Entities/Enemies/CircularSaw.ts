@@ -34,6 +34,9 @@ export default class CircularSaw extends Enemy {
         for(const enemy of this.party.enemies)
             if(!enemy.immune && this.party.app.areOnContact(this,enemy))
                 enemy.kill()
+        for(const bonus of this.party.bonus)
+            while(this.app.areOnContact(bonus,this))
+                bonus.placeOutOfViewport(true)
     }
 
     onPlayerContact(): void {

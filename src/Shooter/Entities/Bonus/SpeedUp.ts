@@ -22,7 +22,7 @@ export default class SpeedUp extends Bonus implements Passive {
     }
 
     get value(): number {
-        return this.party.player.baseSpeedMax + this.level * (this.party.player.baseSpeedMax * .5)
+        return this.party.player.baseSpeedMax + this.level * (this.party.player.baseSpeedMax * (1/8))
     }
 
 }

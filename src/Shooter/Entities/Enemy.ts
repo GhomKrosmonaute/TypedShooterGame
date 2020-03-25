@@ -4,6 +4,7 @@ import Shot from './Shot'
 import {Vector2D} from "../../interfaces"
 import Party from './Scenes/Party'
 import explosion from '../Animations/explosion';
+import textFadeOut from '../Animations/textFadeOut';
 
 export default abstract class Enemy extends Positionable {
 
@@ -83,6 +84,16 @@ export default abstract class Enemy extends Positionable {
             duration: 200,
             value: addToScore && deadChain ? deadChain.value : this.radius
         }))
+        if(addToScore)
+            this.party.setAnimation(textFadeOut({
+                position,
+                attach: true,
+                duration: 500,
+                value: {
+                    text: `+ ${this.gain} pts`,
+                    color: this.p.color(this.app.light)
+                }
+            }))
 
         if(addToScore) this.party.player.addScore(this.gain)
         this.reset()
@@ -90,6 +101,15 @@ export default abstract class Enemy extends Positionable {
 
     public inflictDamages( damages:number, addToScore:boolean = false ): void {
         if(this.immune) return
+        this.party.setAnimation(textFadeOut({
+            attach: true,
+            position: this,
+            duration: 300,
+            value: {
+                text: `- ${this.gain}`,
+                color: this.p.color(255,20,20)
+            }
+        }))
         this.life -= damages
         if(this.life <= 0) {
             this.kill(addToScore)

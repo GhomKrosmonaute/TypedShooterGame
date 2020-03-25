@@ -15,6 +15,11 @@ export default class BlobMob extends Enemy {
     constructor( party:Party ) {
         super( party )
         this.radius = 50
+        if(this.app.hardcore){
+            this.damage ++
+            this.life += 2
+            this.speed ++
+        }
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life

@@ -8,6 +8,7 @@ import App from '../App';
 import API from '../API';
 import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
+import textFadeOut from '../Animations/textFadeOut';
 
 export default class Player extends Positionable {
 
@@ -160,6 +161,18 @@ export default class Player extends Positionable {
             )
             this.score += score * this.combo.multiplicator
         }
+        this.party.setAnimation(textFadeOut({
+            position: {
+                x: 0,
+                y: this.radius * -1.8
+            },
+            attach: true,
+            duration: 500,
+            value: {
+                text: `+ ${this.combo ? score * this.combo.multiplicator : score} pts`,
+                color: this.p.color(this.app.light)
+            }
+        }))
     }
 
     public inflictDamages( damages:number ): void {
@@ -170,6 +183,18 @@ export default class Player extends Positionable {
             value: this.party.time > this.immune ?
                 this.p.color(255,0,0) :
                 this.p.color(0,0,255)
+        }))
+        this.party.setAnimation(textFadeOut({
+            attach: true,
+            duration: 250,
+            position: {
+                x: 0,
+                y: this.radius * -1.8
+            },
+            value: {
+                text: `- ${damages}`,
+                color: this.p.color(255,0,0)
+            }
         }))
         if(this.party.time > this.immune){
             this.immune = this.party.time + this.immuneTime
@@ -189,9 +214,9 @@ export default class Player extends Positionable {
         // DEATH ?
 
         if(this.life <= 0){
-            if(this.score > await this.getHighScore())
-                await this.setHighScore(this.score)
             this.killed = true
+            if(this.score > await this.getHighScore())
+                this.setHighScore(this.score).catch()
             this.party.setAnimation(explosion({
                 value: this.radius * 1.5,
                 duration: 700,
@@ -434,10 +459,11 @@ export default class Player extends Positionable {
                 this.y + 36,
                 width, 14, 5
             )
-            this.p.noStroke()
             const bonus:any[] = [ ...this.consumables, ...this.passives ]
             bonus.forEach( (bonus, index) => {
-                bonus.level && bonus.level >= bonus.levelMax ? this.p.fill(200, 200, 0,100) : this.p.fill(200,100)
+                const max = bonus.level && bonus.level >= bonus.levelMax
+                this.p.fill(200,100)
+                max ? this.p.stroke(200, 200, 0,200) : this.p.noStroke()
                 this.p.rect(
                     this.x - width * .5 + index * 14,
                     this.y + 36, 14, 14, 5
@@ -449,6 +475,8 @@ export default class Player extends Positionable {
                     this.y + 36, 14, 14
                 )
                 for(let i=0; i<(bonus.quantity||bonus.level); i++){
+                    if(max) this.p.fill(200, 200, 0,200)
+                    else bonus.quantity ? this.p.fill(255,0,190) : this.p.fill(190,0,255)
                     this.p.ellipse(
                         this.x - width * .5 + 7 + index * 14,
                         this.y + 57 + i * 14,5

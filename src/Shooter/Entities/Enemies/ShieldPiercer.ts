@@ -14,6 +14,11 @@ export default class ShieldPiercer extends Enemy {
     constructor( party:Party ) {
         super( party )
         this.radius = 30
+        if(this.app.hardcore){
+            this.life += 2
+            this.speed ++
+            this.damage ++
+        }
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
