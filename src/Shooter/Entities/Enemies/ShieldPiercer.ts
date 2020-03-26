@@ -13,7 +13,7 @@ export default class ShieldPiercer extends Enemy {
 
     constructor( party:Party ) {
         super( party )
-        this.radius = 30
+        this.diameter = 30
         if(this.app.hardcore){
             this.life += 2
             this.speed ++
@@ -34,7 +34,7 @@ export default class ShieldPiercer extends Enemy {
         this.kill()
     }
 
-    onShoot(shoot: Shot): boolean {
+    shotFilter(shoot: Shot): boolean {
         return true
     }
 
@@ -44,12 +44,12 @@ export default class ShieldPiercer extends Enemy {
         this.p.ellipse(
             this.x,
             this.y,
-            this.currentRadius
+            this.currentDiameter
         )
     }
 
-    public get currentRadius(){
-        return this.lifeBasedRadius
+    public get currentDiameter(){
+        return this.lifeBasedDiameter
     }
 
 }

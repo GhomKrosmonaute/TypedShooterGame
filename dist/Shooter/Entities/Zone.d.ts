@@ -1,4 +1,5 @@
 import { Vector2D } from '../../interfaces';
+import p5 from 'p5';
 export default class Zone {
     x1: number;
     y1: number;
@@ -21,6 +22,9 @@ export default class Zone {
     fraction(proportionX: number, proportionY: number, size?: boolean): Vector2D;
     fractionX(proportion: number, size?: boolean): number;
     fractionY(proportion: number, size?: boolean): number;
+    fractionWidth(proportion: number): number;
+    fractionHeight(proportion: number): number;
     touchVector(point: Vector2D): boolean;
     touchZone(zone: Zone): boolean;
+    debug(p: p5): void;
 }

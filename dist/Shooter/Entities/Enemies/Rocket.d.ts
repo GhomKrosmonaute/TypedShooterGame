@@ -17,6 +17,6 @@ export default class Rocket extends Enemy {
     constructor(party: Party);
     pattern(): void;
     onPlayerContact(): void;
-    onShoot(shoot: Shot): boolean;
+    shotFilter(shoot: Shot): boolean;
     onDraw(): void;
 }

@@ -14,7 +14,7 @@ export default class BlobMob extends Enemy {
 
     constructor( party:Party ) {
         super( party )
-        this.radius = 50
+        this.diameter = 50
         if(this.app.hardcore){
             this.damage ++
             this.life += 2
@@ -38,7 +38,7 @@ export default class BlobMob extends Enemy {
                 !enemy.isOutOfLimits() &&
                 this.life >= enemy.life &&
                 this.life + enemy.life < this.maxLife &&
-                this.app.areOnContact( this, enemy )
+                this.touch(enemy)
             ){
                 this.absorb(enemy)
                 enemy.kill()
@@ -61,7 +61,7 @@ export default class BlobMob extends Enemy {
         this.kill(!!shield)
     }
 
-    onShoot(shoot: Shot): boolean {
+    shotFilter(shoot: Shot): boolean {
         return true
     }
 
@@ -76,25 +76,25 @@ export default class BlobMob extends Enemy {
         this.p.ellipse(
             this.x,
             this.y,
-            this.currentRadius
+            this.currentDiameter
         )
     }
 
-    public get currentRadius(){
+    public get currentDiameter(): number {
         return Math.max(
-            this.MIN_RADIUS,
+            this.MIN_DIAMETER,
             this.p.map(
                 Math.min(this.life,this.baseLife),
                 0,
                 this.baseLife,
                 0,
-                this.radius
+                this.z
             ) + this.p.map(
                 Math.max(this.baseLife,this.life),
                 this.baseLife,
                 this.maxLife,
                 0,
-                this.radius
+                this.z
             )
         )
     }

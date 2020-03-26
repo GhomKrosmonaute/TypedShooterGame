@@ -1,4 +1,5 @@
 import {Vector2D} from '../../interfaces';
+import p5 from 'p5';
 
 export default class Zone {
 
@@ -51,6 +52,12 @@ export default class Zone {
     public fractionY( proportion:number, size:boolean = false ): number {
         return (size ? 0 : this.startY) + this.height * proportion
     }
+    public fractionWidth( proportion:number ): number {
+        return this.fractionX(proportion,true)
+    }
+    public fractionHeight( proportion:number ): number {
+        return this.fractionY(proportion,true)
+    }
 
     public touchVector( point:Vector2D ): boolean {
         return (
@@ -69,6 +76,18 @@ export default class Zone {
             zone.touchVector(this.stop) ||
             zone.touchVector(this.leftBottom) ||
             zone.touchVector(this.rightUp)
+        )
+    }
+
+    public debug( p:p5 ): void {
+        p.noFill()
+        p.stroke(255,0,0)
+        p.strokeWeight(1)
+        p.rect(
+            this.start.x,
+            this.start.y,
+            this.width,
+            this.height
         )
     }
 

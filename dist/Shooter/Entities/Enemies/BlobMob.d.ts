@@ -13,7 +13,7 @@ export default class BlobMob extends Enemy {
     pattern(): void;
     absorb(enemy: Enemy): void;
     onPlayerContact(): void;
-    onShoot(shoot: Shot): boolean;
+    shotFilter(shoot: Shot): boolean;
     onDraw(): void;
-    readonly currentRadius: number;
+    readonly currentDiameter: number;
 }

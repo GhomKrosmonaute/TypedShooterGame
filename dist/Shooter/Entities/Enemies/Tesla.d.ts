@@ -19,9 +19,9 @@ export default class Tesla extends Enemy {
     pattern(): void;
     onPlayerContact(): void;
     kill(addToScore?: boolean): void;
-    onShoot(shoot: Shot): boolean;
+    shotFilter(shoot: Shot): boolean;
     onDraw(): void;
     arc(tesla: Tesla): void;
     isOnArc(tesla: Tesla, target: Vector2D | false): boolean;
-    readonly currentRadius: number;
+    readonly currentDiameter: number;
 }

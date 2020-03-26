@@ -4,7 +4,7 @@ import Shot from './Shot';
 import Party from './Scenes/Party';
 export default abstract class Enemy extends Positionable {
     party: Party;
-    protected readonly MIN_RADIUS = 15;
+    protected readonly MIN_DIAMETER = 15;
     protected baseGain: number;
     protected baseLife: number;
     protected baseSpeed: number;
@@ -17,7 +17,7 @@ export default abstract class Enemy extends Positionable {
     abstract id: string;
     abstract pattern(): void;
     abstract onDraw(): void;
-    abstract onShoot(shoot: Shot): boolean;
+    abstract shotFilter(shoot: Shot): boolean;
     abstract onPlayerContact(): void;
     app: App;
     private lastDeadChain;
@@ -27,5 +27,5 @@ export default abstract class Enemy extends Positionable {
     kill(addToScore?: boolean): void;
     inflictDamages(damages: number, addToScore?: boolean): void;
     reset(): void;
-    readonly lifeBasedRadius: number;
+    readonly lifeBasedDiameter: number;
 }

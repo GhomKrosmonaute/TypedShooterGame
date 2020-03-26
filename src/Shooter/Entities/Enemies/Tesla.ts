@@ -22,7 +22,7 @@ export default class Tesla extends Enemy {
     constructor( party:Party ) {
         super( party )
         const factor = this.p.random(30,50)
-        this.radius = factor
+        this.diameter = factor
         if(this.app.hardcore){
             this.life += 2
             this.speed ++
@@ -41,13 +41,13 @@ export default class Tesla extends Enemy {
     public pattern(): void {
 
         this.connections = this.connections.filter( tesla => {
-            return this.dist(tesla) > this.arcSize && !this.app.areOnContact(this,tesla)
+            return this.distVector(tesla) > this.arcSize && !this.touch(tesla)
         })
 
         for(const enemy of this.party.enemies){
             if(
                 enemy.id === 'tesla' &&
-                this.dist(enemy) < this.arcSize &&
+                this.distVector(enemy) < this.arcSize &&
                 !(enemy as Tesla).connections.includes(this) &&
                 !this.connections.includes(enemy as Tesla)
             ) this.connections.push(enemy as Tesla)
@@ -89,7 +89,7 @@ export default class Tesla extends Enemy {
         super.kill(addToScore)
     }
 
-    onShoot(shoot: Shot): boolean {
+    shotFilter(shoot: Shot): boolean {
         return true
     }
 
@@ -107,14 +107,14 @@ export default class Tesla extends Enemy {
         this.p.ellipse(
             this.x,
             this.y,
-            this.currentRadius
+            this.currentDiameter
         )
     }
 
     arc( tesla:Tesla ): void {
-        if(this.app.areOnContact(this,tesla)) return
+        if(this.touch(tesla)) return
         const points:Vector2D[] = []
-        const pointCount = Math.ceil((this.dist(tesla) + 1) / 50)
+        const pointCount = Math.ceil((this.distVector(tesla) + 1) / 50)
         points.push(this)
         while(points.length < pointCount){
             const lastPoint = points[points.length-1]
@@ -138,11 +138,11 @@ export default class Tesla extends Enemy {
     }
 
     isOnArc(tesla:Tesla, target:Vector2D|false ): boolean { if(!target) return false
-        return this.dist(target) + tesla.dist(target) < this.dist(tesla) + (this.arcWeight + tesla.arcWeight) * .5
+        return this.distVector(target) + tesla.distVector(target) < this.distVector(tesla) + (this.arcWeight + tesla.arcWeight) * .5
     }
 
-    public get currentRadius(){
-        return this.lifeBasedRadius
+    public get currentDiameter(){
+        return this.lifeBasedDiameter
     }
 
 }

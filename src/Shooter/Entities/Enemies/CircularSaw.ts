@@ -20,7 +20,7 @@ export default class CircularSaw extends Enemy {
     constructor( party:Party ) {
         super( party )
         this.lastDamage = party.time
-        this.radius = this.p.random(60,500)
+        this.diameter = this.p.random(60,500)
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
@@ -32,10 +32,10 @@ export default class CircularSaw extends Enemy {
         if(this.rotation > 360)
             this.rotation -= 360
         for(const enemy of this.party.enemies)
-            if(!enemy.immune && this.party.app.areOnContact(this,enemy))
+            if(!enemy.immune && this.touch(enemy))
                 enemy.kill()
         for(const bonus of this.party.bonus)
-            while(this.app.areOnContact(bonus,this))
+            while(this.touch(bonus))
                 bonus.placeOutOfViewport(true)
     }
 
@@ -46,7 +46,7 @@ export default class CircularSaw extends Enemy {
         }
     }
 
-    onShoot(shoot: Shot): boolean {
+    shotFilter(shoot: Shot): boolean {
         return false
     }
 
@@ -62,8 +62,8 @@ export default class CircularSaw extends Enemy {
             this.p,
             0,
             0,
-            this.radius * .2,
-            this.radius * .5,
+            this.diameter * .2,
+            this.diameter * .5,
             12
         )
         this.p.strokeWeight(3)
@@ -72,7 +72,7 @@ export default class CircularSaw extends Enemy {
         this.p.ellipse(
             0,
             0,
-            this.radius * .5
+            this.diameter * .5
         )
     }
 

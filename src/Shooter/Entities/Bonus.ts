@@ -30,19 +30,19 @@ export default abstract class Bonus extends Positionable {
         this.p.ellipse(
             this.x,
             this.y,
-            this.radius
+            this.diameter
         )
         this.p.noStroke()
     }
 
     public step(): void {
 
-        this.radius += this.radiusVariation.step()
+        this.diameter += this.radiusVariation.step()
 
         if(this.isOutOfLimits())
             this.placeOutOfViewport(true)
 
-        if(this.app.areOnContact(this,this.party.player))
+        if(this.touch(this.party.player))
             this.use()
 
     }

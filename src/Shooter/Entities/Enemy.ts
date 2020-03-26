@@ -8,7 +8,7 @@ import textFadeOut from '../Animations/textFadeOut';
 
 export default abstract class Enemy extends Positionable {
 
-    protected readonly MIN_RADIUS = 15
+    protected readonly MIN_DIAMETER = 15
     protected baseGain:number
     protected baseLife:number
     protected baseSpeed:number
@@ -21,7 +21,7 @@ export default abstract class Enemy extends Positionable {
     public abstract id:string
     public abstract pattern():void
     public abstract onDraw():void
-    public abstract onShoot(shoot:Shot):boolean
+    public abstract shotFilter(shoot:Shot):boolean
     public abstract onPlayerContact():void
     public app:App
 
@@ -38,13 +38,13 @@ export default abstract class Enemy extends Positionable {
     public step(){
 
         if(!this.immune)
-            for(const shoot of this.party.player.shots)
-                if(this.app.areOnContact(shoot,this))
-                    if(this.onShoot(shoot))
-                        if(shoot.handleShoot(this))
-                            this.inflictDamages(shoot.damage,true)
+            for(const shot of this.party.player.shots)
+                if(this.touch(shot))
+                    if(this.shotFilter(shot))
+                        if(shot.handleShoot(this))
+                            this.inflictDamages(shot.damage,true)
 
-        if(this.app.areOnContact(this,this.party.player))
+        if(this.touch(this.party.player))
             this.onPlayerContact()
 
         if(!this.isOutOfLimits())
@@ -71,7 +71,7 @@ export default abstract class Enemy extends Positionable {
                         this.party.time > enemy.lastDeadChain + 2000 &&
                         enemy.life > 0 &&
                         !enemy.immune &&
-                        enemy.dist(position) < deadChain.value / 2
+                        enemy.distVector(position) < deadChain.value / 2
                     ) {
                         enemy.inflictDamages(this.baseLife * .5, true)
                         enemy.lastDeadChain = this.party.time
@@ -82,7 +82,7 @@ export default abstract class Enemy extends Positionable {
         this.party.setAnimation(explosion({
             position,
             duration: 200,
-            value: addToScore && deadChain ? deadChain.value : this.radius
+            value: addToScore && deadChain ? deadChain.value : this.diameter
         }))
         if(addToScore)
             this.party.setAnimation(textFadeOut({
@@ -131,16 +131,16 @@ export default abstract class Enemy extends Positionable {
         this.placeOutOfViewport()
     }
 
-    public get lifeBasedRadius(): number {
+    public get lifeBasedDiameter(): number {
         return Math.max(
-            this.MIN_RADIUS,
+            this.MIN_DIAMETER,
             Math.min(
                 this.p.map(
                     this.life,
                     0,
                     this.baseLife,
                     0,
-                    this.radius
+                    this.z
                 )
             )
         )

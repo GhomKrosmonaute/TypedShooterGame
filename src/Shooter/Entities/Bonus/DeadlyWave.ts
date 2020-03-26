@@ -21,7 +21,7 @@ export default class DeadlyWave extends Bonus implements Consumable {
             duration: 200
         }))
         this.party.enemies.forEach( enemy => {
-            if(!enemy.immune && this.party.player.dist(enemy) < VIEWPORT)
+            if(!enemy.immune && this.party.player.distVector(enemy) < VIEWPORT)
                 enemy.kill(true)
         })
     }

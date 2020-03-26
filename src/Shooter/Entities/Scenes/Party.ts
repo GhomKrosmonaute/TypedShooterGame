@@ -22,6 +22,7 @@ export default class Party extends Scene {
 
     constructor( app:App ) {
         super(app)
+        this.showParticles = false
         this.background = new Particles(this.app,30,0,1)
         this.foreground = new Particles(this.app,10,1,2)
         this.reset()
@@ -108,7 +109,7 @@ export default class Party extends Scene {
         this.bonus.forEach( bonus => bonus.step() )
         this.bonus = this.bonus.filter( bonus => !bonus.used )
         this.enemies = this.enemies.sort(( a:any, b:any ) => {
-            return (b.currentRadius || b.radius) - (a.currentRadius || a.radius)
+            return (b.currentDiameter || b.diameter) - (a.currentDiameter || a.diameter)
         }).filter( enemy => !enemy.isOutOfLimits() )
         while(this.enemies.length < this.enemyCount)
             this.enemies.push(pickEnemy(this))

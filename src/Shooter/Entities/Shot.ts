@@ -53,14 +53,14 @@ export default class Shot extends Positionable {
                 value: explosiveShots.value * 2
             }))
             for(const enemy of this.player.party.enemies)
-                if(this.dist(enemy) < explosiveShots.value)
+                if(this.distVector(enemy) < explosiveShots.value)
                     enemy.inflictDamages(this.damage,true)
         }
         this.placeOutOfLimits()
     }
 
     public step(): void {
-        if(this.dist(this.basePosition) > this.player.shotRange){
+        if(this.distVector(this.basePosition) > this.player.shotRange){
             this.terminate()
         }else{
             const autoFireGuidance = this.player.getPassive('autoFireGuidance')
@@ -75,7 +75,7 @@ export default class Shot extends Positionable {
                 }
                 for(const enemy of this.player.party.enemies){
                     if(!this.toIgnore.includes(enemy) && !enemy.immune){
-                        const dist = enemy.dist(this)
+                        const dist = enemy.distVector(this)
                         if(dist < autoFireGuidance.value && temp.dist > dist){
                             temp.enemy = enemy
                             temp.dist = dist
@@ -103,14 +103,14 @@ export default class Shot extends Positionable {
         this.p.ellipse(
             this.x,
             this.y,
-            fade( this.p, this.radius,
+            fade( this.p, this.diameter,
                 {
-                    value: this.dist(this.player),
+                    value: this.distVector(this.player),
                     valueMax: this.player.shotRange,
                     overflow: 5
                 },
                 {
-                    value: this.dist(this.basePosition),
+                    value: this.distVector(this.basePosition),
                     valueMax: this.player.shotRange,
                     overflow: 5
                 }

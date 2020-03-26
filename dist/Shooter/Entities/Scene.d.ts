@@ -12,6 +12,7 @@ export default abstract class Scene {
     animations: Animation[];
     links: Link[];
     form?: Form;
+    showParticles: boolean;
     abstract reset(): any;
     abstract draw(): any;
     abstract step(): any;

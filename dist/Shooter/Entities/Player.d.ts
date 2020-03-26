@@ -20,6 +20,7 @@ export default class Player extends Positionable {
     speedY: number;
     acc: number;
     desc: number;
+    angleMaxSpeedFraction: number;
     consumables: Consumable[];
     passives: Passive[];
     shots: Shot[];

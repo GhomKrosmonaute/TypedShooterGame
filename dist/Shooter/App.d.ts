@@ -8,11 +8,11 @@ import API from './API';
 import Profile from './Entities/Scenes/Profile';
 import Scores from './Entities/Scenes/Scores';
 import Zone from './Entities/Zone';
+import Particles from './Entities/Particles';
 export default class App {
     p: p5;
     api: API;
-    private readonly cursorImage;
-    private readonly baseCursorFadeOut;
+    private readonly cursor;
     _sceneName: SceneName;
     readonly scenes: {
         party: Party;
@@ -22,10 +22,10 @@ export default class App {
     };
     readonly version: any;
     readonly debug = false;
-    private cursorFadeOut;
     private hardcoreVariator;
     keys: Keys;
     rate: Rate;
+    particles: Particles;
     lightModeTransition: number;
     keyModes: KeyMode[];
     constructor(p: p5, api: API);
@@ -37,6 +37,7 @@ export default class App {
     sceneName: SceneName;
     readonly mouse: Vector2D;
     readonly mouseFromCenter: Vector2D;
+    mouseShift(shift: number): Vector2D;
     readonly zone: Zone;
     switchLightMode(): void;
     switchKeyMode(): void;
@@ -54,5 +55,4 @@ export default class App {
     moveKeyIsPressed(): boolean;
     shootKeyIsPressed(): boolean;
     private directionalKeyIsPressed;
-    areOnContact(positionable1: any, positionable2: any): boolean;
 }

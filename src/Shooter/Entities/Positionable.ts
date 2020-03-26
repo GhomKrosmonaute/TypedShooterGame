@@ -4,6 +4,8 @@ import {LIMITS,SECURITY,VIEWPORT} from '../../config'
 
 export default class Positionable {
 
+    public currentDiameter?:number
+
     constructor(
         public p:p5,
         public x:number = 0,
@@ -11,8 +13,12 @@ export default class Positionable {
         public z:number = 0
     ){}
 
-    public get radius(): number { return this.z }
-    public set radius( z ){ this.z = z }
+    public get diameter(): number { return this.currentDiameter || this.z }
+    public set diameter(z ){ this.z = z }
+
+    public get radius(): number {
+        return (this.currentDiameter || this.diameter) * .5
+    }
 
     public move( x:number, y:number, z:number = 0 ): void {
         this.x += x
@@ -27,7 +33,7 @@ export default class Positionable {
     }
 
     public follow( target:Vector2D, speed:number ): void {
-        if(this.dist(target) <= speed * 2) return
+        if(this.distVector(target) <= speed * 2) return
         this.p.angleMode(this.p.RADIANS)
         const angle = this.p.degrees(
             this.p.atan2(
@@ -45,7 +51,7 @@ export default class Positionable {
     }
 
     public target( target:Vector2D, speedFraction:number ): void {
-        if(this.dist(target) > 5)
+        if(this.distVector(target) > 5)
             this.move(
                 (target.x - this.x) * speedFraction,
                 (target.y - this.y) * speedFraction
@@ -74,35 +80,47 @@ export default class Positionable {
             this.p.ellipse(
                 this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
                 this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
-                15
+                this.diameter
             )
         }
     }
 
     public isOutOfLimits(): boolean {
-        return this.dist({ x:0, y:0}) > LIMITS
+        return this.distVector({ x:0, y:0 }) > LIMITS
     }
 
     public isOutOfViewPort(): boolean {
-        return this.dist({ x:0, y:0}) > VIEWPORT
+        return this.distVector({ x:0, y:0 }) > VIEWPORT
     }
 
-    public isOnScreen( ignoreRadius:boolean = false ): boolean {
-        const radius = ignoreRadius ? 0 : this.radius
+    public isOnScreen( ignoreDiameter:boolean = false ): boolean {
+        const diameter = ignoreDiameter ? 0 : this.diameter
         return (
-            this.x + radius > this.p.width * -.5 &&
-            this.x - radius < this.p.width * .5 &&
-            this.y + radius > this.p.height * -.5 &&
-            this.y - radius < this.p.height * .5
+            this.x + diameter > this.p.width * -.5 &&
+            this.x - diameter < this.p.width * .5 &&
+            this.y + diameter > this.p.height * -.5 &&
+            this.y - diameter < this.p.height * .5
         )
     }
 
-    public dist( positionable:Vector2D ): number {
+    public dist( positionable:Positionable ): number {
+        return this.distVector(positionable) - (this.radius + positionable.radius)
+    }
+
+    public touch( positionable:Positionable ): boolean {
+        return this.dist(positionable) <= 0
+    }
+
+    public distVector( vector:Vector2D ): number {
         return this.p.dist(
-            positionable.x,
-            positionable.y,
+            vector.x,
+            vector.y,
             this.x, this.y
         )
+    }
+
+    public touchVector( vector:Vector2D ): boolean {
+        return this.distVector(vector) <= this.radius
     }
 
 }

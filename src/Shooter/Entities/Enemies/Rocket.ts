@@ -24,7 +24,7 @@ export default class Rocket extends Enemy {
         super( party )
         this.lockTime = party.time + 1000
         this.damageTime = party.time + (this.app.hardcore ? 1400 : 2000)
-        this.radius = 50
+        this.diameter = 50
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
@@ -42,10 +42,10 @@ export default class Rocket extends Enemy {
                 this.damageOccured = true
 
                 for(const enemy of this.party.enemies)
-                    if(this.dist(enemy) < this.damageZone)
+                    if(this.distVector(enemy) < this.damageZone)
                         enemy.inflictDamages(this.damage)
 
-                if(this.dist(this.party.player) < this.damageZone)
+                if(this.distVector(this.party.player) < this.damageZone)
                     this.party.player.inflictDamages(this.damage)
 
                 this.party.setAnimation(explosion({
@@ -60,7 +60,7 @@ export default class Rocket extends Enemy {
 
     onPlayerContact(): void {}
 
-    onShoot(shoot: Shot): boolean {
+    shotFilter(shoot: Shot): boolean {
         return false
     }
 
@@ -88,18 +88,18 @@ export default class Rocket extends Enemy {
         }
         this.p.noFill()
         this.p.stroke(color)
-        this.p.strokeWeight(this.radius * .2)
-        this.p.ellipse(0,0,this.radius)
+        this.p.strokeWeight(this.diameter * .2)
+        this.p.ellipse(0,0,this.diameter)
         this.p.fill(color)
         this.p.noStroke()
         this.p.angleMode(this.p.DEGREES);
         [90,90,90,90].forEach( angle => {
             this.p.rotate(angle)
             this.p.rect(
-                this.radius * -.7,
-                this.radius * -.1,
-                this.radius * .4,
-                this.radius * .2
+                this.diameter * -.7,
+                this.diameter * -.1,
+                this.diameter * .4,
+                this.diameter * .2
             )
         })
         if(this.party.time > this.lockTime){

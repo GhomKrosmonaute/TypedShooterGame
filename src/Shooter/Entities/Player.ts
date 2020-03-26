@@ -25,6 +25,7 @@ export default class Player extends Positionable {
     public speedY = 0
     public acc = 3
     public desc = .7
+    public angleMaxSpeedFraction = .68
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shots:Shot[] = []
@@ -164,7 +165,7 @@ export default class Player extends Positionable {
         this.party.setAnimation(textFadeOut({
             position: {
                 x: 0,
-                y: this.radius * -1.8
+                y: this.diameter * -1.8
             },
             attach: true,
             duration: 500,
@@ -189,7 +190,7 @@ export default class Player extends Positionable {
             duration: 250,
             position: {
                 x: 0,
-                y: this.radius * -1.8
+                y: this.diameter * -1.8
             },
             value: {
                 text: `- ${damages}`,
@@ -216,9 +217,10 @@ export default class Player extends Positionable {
         if(this.life <= 0){
             this.killed = true
             if(this.score > await this.getHighScore())
-                this.setHighScore(this.score).catch()
+                this.setHighScore(this.score)
+                    .catch(() => alert(`Error while saving your score :(`))
             this.party.setAnimation(explosion({
-                value: this.radius * 1.5,
+                value: this.diameter * 1.5,
                 duration: 700,
                 callback: a => {
                     a.scene.app.sceneName = 'manual'
@@ -247,10 +249,34 @@ export default class Player extends Positionable {
                 !this.app.keyIsPressed('move','down')
             ) this.speedY *= this.desc
 
-            if(this.app.keyIsPressed('move','left')) this.speedX -= this.acc
-            if(this.app.keyIsPressed('move','right')) this.speedX += this.acc
-            if(this.app.keyIsPressed('move','up')) this.speedY -= this.acc
-            if(this.app.keyIsPressed('move','down')) this.speedY += this.acc
+            if(this.app.keyIsPressed('move','left')) {
+                this.speedX -= this.acc
+                if(
+                    this.app.keyIsPressed('move','up') ||
+                    this.app.keyIsPressed('move','down')
+                ) this.speedX = Math.max(this.speedMax * this.angleMaxSpeedFraction * -1, this.speedX)
+            }
+            if(this.app.keyIsPressed('move','right')){
+                this.speedX += this.acc
+                if(
+                    this.app.keyIsPressed('move','up') ||
+                    this.app.keyIsPressed('move','down')
+                ) this.speedX = Math.min(this.speedMax * this.angleMaxSpeedFraction, this.speedX)
+            }
+            if(this.app.keyIsPressed('move','up')){
+                this.speedY -= this.acc
+                if(
+                    this.app.keyIsPressed('move','left') ||
+                    this.app.keyIsPressed('move','right')
+                ) this.speedY = Math.max(this.speedMax * this.angleMaxSpeedFraction * -1, this.speedY)
+            }
+            if(this.app.keyIsPressed('move','down')){
+                this.speedY += this.acc
+                if(
+                    this.app.keyIsPressed('move','left') ||
+                    this.app.keyIsPressed('move','right')
+                ) this.speedY = Math.min(this.speedMax * this.angleMaxSpeedFraction, this.speedY)
+            }
 
             if(this.speedX < this.speedMax * -1) this.speedX = this.speedMax * -1
             if(this.speedY < this.speedMax * -1) this.speedY = this.speedMax * -1
@@ -327,7 +353,7 @@ export default class Player extends Positionable {
             this.p.strokeWeight(1)
         }
         this.p.fill(200,200,255)
-        this.p.ellipse(this.x,this.y,this.radius)
+        this.p.ellipse(this.x,this.y,this.diameter)
         this.p.fill(0,100)
         this.p.stroke(this.app.light)
         this.p.strokeWeight(1)
@@ -354,10 +380,10 @@ export default class Player extends Positionable {
                 )))
                 this.p.noStroke()
                 this.p.textAlign(this.p.LEFT,this.p.CENTER)
-                this.p.textSize(this.radius * .6)
+                this.p.textSize(this.diameter * .6)
                 this.p.text(
                     `x${this.combo.multiplicator}`,
-                    this.x + this.radius * 1.6,
+                    this.x + this.diameter * 1.6,
                     this.y
                 )
             }
@@ -379,18 +405,18 @@ export default class Player extends Positionable {
                 this.p.map( timeBar, 0, 1, 50, 255 ),200
             )
             this.p.rect(
-                this.x + this.radius,
-                this.y + this.radius * -.5 + this.p.map( timeBar, 0, 1, this.radius, 0 ),
-                this.radius * .3,
-                this.radius - this.p.map( timeBar, 0, 1, this.radius, 0 ),
+                this.x + this.diameter,
+                this.y + this.diameter * -.5 + this.p.map( timeBar, 0, 1, this.diameter, 0 ),
+                this.diameter * .3,
+                this.diameter - this.p.map( timeBar, 0, 1, this.diameter, 0 ),
                 5
             )
             this.p.fill(200,50,200,200)
             this.p.rect(
-                this.x + this.radius * .7,
-                this.y + this.radius * -.5 + this.p.map( stateBar, 0, 1, this.radius, 0 ),
-                this.radius * .3,
-                this.radius - this.p.map( stateBar, 0, 1, this.radius, 0 ),
+                this.x + this.diameter * .7,
+                this.y + this.diameter * -.5 + this.p.map( stateBar, 0, 1, this.diameter, 0 ),
+                this.diameter * .3,
+                this.diameter - this.p.map( stateBar, 0, 1, this.diameter, 0 ),
                 5
             )
 
@@ -398,17 +424,17 @@ export default class Player extends Positionable {
             this.p.stroke(this.app.light,200)
             this.p.strokeWeight(1)
             this.p.rect(
-                this.x + this.radius * .7,
-                this.y + this.radius * -.5,
-                this.radius * .3,
-                this.radius,
+                this.x + this.diameter * .7,
+                this.y + this.diameter * -.5,
+                this.diameter * .3,
+                this.diameter,
                 5
             )
             this.p.rect(
-                this.x + this.radius,
-                this.y + this.radius * -.5,
-                this.radius * .3,
-                this.radius,
+                this.x + this.diameter,
+                this.y + this.diameter * -.5,
+                this.diameter * .3,
+                this.diameter,
                 5
             )
         }

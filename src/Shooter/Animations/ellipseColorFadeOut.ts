@@ -11,7 +11,7 @@ export default function ellipseColorFadeOut( options:AnimationMinimalOptions ): 
             color.setAlpha(a.p.map(a.time,0,a.duration,150,0))
             a.p.noStroke()
             a.p.fill(color)
-            a.p.ellipse( a.position.x, a.position.y,entity.currentRadius || entity.radius)
+            a.p.ellipse( a.position.x, a.position.y,entity.diameter)
         }
     }
 }

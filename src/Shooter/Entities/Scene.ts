@@ -14,6 +14,7 @@ export default abstract class Scene {
     public animations:Animation[] = []
     public links:Link[] = []
     public form?:Form
+    public showParticles = true
 
     public abstract reset(): any
     public abstract draw(): any

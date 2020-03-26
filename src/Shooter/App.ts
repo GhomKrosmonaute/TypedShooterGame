@@ -1,7 +1,5 @@
 import p5 from 'p5'
 // @ts-ignore
-import cursorImage from './images/cursor.png'
-// @ts-ignore
 import fontUrl from './fonts/Baloo2-Regular.ttf'
 import {KeyMode, Keys, SceneName, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
@@ -14,11 +12,12 @@ import Profile from './Entities/Scenes/Profile';
 import Scores from './Entities/Scenes/Scores';
 import Zone from './Entities/Zone';
 import Variation from './Entities/Variation';
+import Cursor from './Entities/Cursor';
+import Particles from './Entities/Particles';
 
 export default class App {
 
-    private readonly cursorImage:p5.Image
-    private readonly baseCursorFadeOut = 1000
+    private readonly cursor:Cursor
 
     public _sceneName:SceneName
     public readonly scenes = {
@@ -31,11 +30,11 @@ export default class App {
     public readonly version = VERSION
     public readonly debug = false
 
-    private cursorFadeOut:number
     private hardcoreVariator:Variation
 
     public keys:Keys = {}
     public rate:Rate
+    public particles:Particles
     public lightModeTransition:number
     public keyModes:KeyMode[] = keyModes
 
@@ -49,9 +48,10 @@ export default class App {
                 version: this.version
             }))
 
+        this.particles = new Particles(this,50,0,5)
         this.hardcoreVariator = new Variation(-10,10,1)
         this.lightModeTransition = this.lightMode ? 0 : 255
-        this.cursorImage = p.loadImage(cursorImage)
+        this.cursor = new Cursor(this)
         const font = p.loadFont(fontUrl)
         this.p.smooth()
         this.p.angleMode(this.p.DEGREES)
@@ -66,6 +66,7 @@ export default class App {
 
     public async step(){
         if(this.rate.canTrigger(true)){
+            this.cursor.step()
             if(this.lightMode){
                 if(this.lightModeTransition > 0)
                     this.lightModeTransition -= 25.5
@@ -79,6 +80,13 @@ export default class App {
             this.scene.animations.forEach( a => a.step() )
             this.scene.time += this.scene.rate.interval
             this.scene.step()
+            if(this.scene.showParticles){
+                this.particles.step()
+                this.particles.move(
+                    this.p.map(this.p.mouseX, 0, this.p.width, -2,2) * -1,
+                    this.p.map(this.p.mouseY, 0, this.p.height, -2,2) * -1
+                )
+            }
         }
         if(this.hardcore)
             this.hardcoreVariator.step()
@@ -90,9 +98,12 @@ export default class App {
             this.p.width * .5,
             this.p.height * .5
         )
+        if(this.scene.showParticles)
+            this.particles.draw()
         this.scene.draw()
         this.scene.links.forEach( link => link.draw() )
-        if(this.scene.form) this.scene.form.draw()
+        if(this.scene.form)
+            this.scene.form.draw()
         this.p.fill(this.light,40)
         this.p.noStroke()
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
@@ -103,23 +114,7 @@ export default class App {
             this.p.textSize(20)
             this.p.text('HARDCORE MODE',0,this.p.height * .5 - (35 + this.hardcoreVariator.value))
         }
-        this.p.translate(
-            this.p.width * -.5,
-            this.p.height * -.5
-        )
-        if(this.scene.time < this.cursorFadeOut){
-            this.p.tint(
-                255,
-                this.p.map(
-                    this.cursorFadeOut - this.scene.time,
-                    0,
-                    this.baseCursorFadeOut,
-                    0,
-                    255
-                )
-            )
-            this.p.image(this.cursorImage,this.mouse.x,this.mouse.y)
-        }
+        this.cursor.draw()
     }
 
     public get hardcore(): boolean {
@@ -147,6 +142,12 @@ export default class App {
         return {
             x: this.p.mouseX - this.p.width * .5,
             y: this.p.mouseY - this.p.height * .5
+        }
+    }
+    public mouseShift( shift:number ): Vector2D {
+        return {
+            x: this.p.map(this.mouse.x,0,this.p.width,shift * -1, shift),
+            y: this.p.map(this.mouse.y,0,this.p.height,shift * -1, shift)
         }
     }
 
@@ -191,7 +192,7 @@ export default class App {
     }
 
     public mouseMoved(): void {
-        this.cursorFadeOut = this.scene.time + this.baseCursorFadeOut
+        this.cursor.mouseMoved()
     }
 
     public keyReleased(key:string): void { this.keys[key] = false }
@@ -222,18 +223,6 @@ export default class App {
                     this.keyMode[type].right.includes(key)
                 ) return true
         return false
-    }
-
-    public areOnContact( positionable1:any, positionable2:any ): boolean {
-        return (
-            this.p.dist(
-                positionable1.x, positionable1.y,
-                positionable2.x, positionable2.y
-            ) < (
-                (positionable1.currentRadius || positionable1.radius) +
-                (positionable2.currentRadius || positionable2.radius)
-            ) / 2
-        )
     }
 
 }
