@@ -23,8 +23,10 @@ export default class App {
     readonly version: any;
     readonly debug = false;
     private hardcoreVariator;
+    gamepad?: Gamepad;
     keys: Keys;
     rate: Rate;
+    useGamepad: boolean;
     particles: Particles;
     lightModeTransition: number;
     keyModes: KeyMode[];
@@ -55,4 +57,7 @@ export default class App {
     moveKeyIsPressed(): boolean;
     shootKeyIsPressed(): boolean;
     private directionalKeyIsPressed;
+    switchGamepad(): void;
+    setGamepad(gamepad: Gamepad): void;
+    unsetGamepad(): void;
 }

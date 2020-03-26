@@ -32,8 +32,10 @@ export default class App {
 
     private hardcoreVariator:Variation
 
+    public gamepad?:Gamepad
     public keys:Keys = {}
     public rate:Rate
+    public useGamepad = false
     public particles:Particles
     public lightModeTransition:number
     public keyModes:KeyMode[] = keyModes
@@ -49,7 +51,7 @@ export default class App {
             }))
 
         this.particles = new Particles(this,50,0,5)
-        this.hardcoreVariator = new Variation(-10,10,1)
+        this.hardcoreVariator = new Variation(-10,10,2)
         this.lightModeTransition = this.lightMode ? 0 : 255
         this.cursor = new Cursor(this)
         const font = p.loadFont(fontUrl)
@@ -110,9 +112,9 @@ export default class App {
         this.p.textSize(15)
         this.p.text(`Shooter Game v${this.version} © Ghom`,0,this.p.height * .5 - 15)
         if(this.hardcore){
-            this.p.fill(255,0,0,50)
-            this.p.textSize(20)
-            this.p.text('HARDCORE MODE',0,this.p.height * .5 - (35 + this.hardcoreVariator.value))
+            this.p.fill(255,0,0,this.p.random(100,255))
+            this.p.textSize(25)
+            this.p.text('HARDCORE MODE',0,this.p.height * .5 - (40 + this.hardcoreVariator.value))
         }
         this.cursor.draw()
     }
@@ -200,6 +202,7 @@ export default class App {
         if(!this.scene.form || !this.scene.form.focus){
             if(this.keyMode.shortcuts.lightMode.includes(key)) this.switchLightMode()
             else if(this.keyMode.shortcuts.keyMode.includes(key)) this.switchKeyMode()
+            else if(this.keyMode.shortcuts.gamepad.includes(key)) this.switchGamepad()
             else for(const sceneName in this.scenes)
                 if(this.keyMode.shortcuts[sceneName as SceneName].includes(key))
                     this.sceneName = sceneName as SceneName
@@ -223,6 +226,21 @@ export default class App {
                     this.keyMode[type].right.includes(key)
                 ) return true
         return false
+    }
+
+    public switchGamepad(): void {
+        if(!this.gamepad) this.useGamepad = false
+        else this.useGamepad = !this.useGamepad
+        if(this.useGamepad) this.scene.setPopup(`Using "${this.gamepad.id}" gamepad`)
+        else this.scene.setPopup('Using keyboard')
+    }
+    public setGamepad( gamepad:Gamepad ): void {
+        this.scene.setPopup(`Gamepad detected (${gamepad.id})`)
+        this.gamepad = gamepad
+    }
+    public unsetGamepad(): void {
+        this.scene.setPopup(`Gamepad disconnected`)
+        this.gamepad = null
     }
 
 }

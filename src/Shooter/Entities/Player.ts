@@ -25,7 +25,7 @@ export default class Player extends Positionable {
     public speedY = 0
     public acc = 3
     public desc = .7
-    public angleMaxSpeedFraction = .68
+    public angleMaxSpeedFraction = .7071067811865476
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shots:Shot[] = []

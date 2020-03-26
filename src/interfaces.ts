@@ -86,6 +86,7 @@ export interface KeyMode {
         scores: string[]
         party: string[]
         manual: string[]
+        gamepad: string[]
     }
 }
 

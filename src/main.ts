@@ -49,6 +49,16 @@ function sketch( p:p5, apiToken:string ){
         p.resizeCanvas(p.windowWidth,p.windowHeight)
     }
 
+    window.addEventListener("gamepadconnected", (event) => {
+        // @ts-ignore
+        app.setGamepad(event.gamepad)
+    });
+
+    window.addEventListener("gamepaddisconnected", (event) => {
+        //@ts-ignore
+        app.unsetGamepad()
+    });
+
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

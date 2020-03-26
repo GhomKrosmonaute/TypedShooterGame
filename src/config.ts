@@ -15,7 +15,8 @@ export const keyModes:KeyMode[] = [
         shortcuts: {
             lightMode: ['l','L'], keyMode: ['k','K'],
             profile: ['p','P'], party: [' '],
-            scores: ['o','O'], manual: ['m','M']
+            scores: ['o','O'], manual: ['m','M'],
+            gamepad: ['g','G']
         }
     },
     {
@@ -26,7 +27,8 @@ export const keyModes:KeyMode[] = [
         shortcuts: {
             lightMode: ['l','L'], keyMode: ['k','K'],
             profile: ['p','P'], party: [' '],
-            scores: ['o','O'], manual: ['m','M']
+            scores: ['o','O'], manual: ['m','M'],
+            gamepad: ['g','G']
         }
     },
     {
@@ -37,7 +39,8 @@ export const keyModes:KeyMode[] = [
         shortcuts: {
             lightMode: ['l','L'], keyMode: ['k','K'],
             profile: ['p','P'], party: [' '],
-            scores: ['o','O'], manual: ['m','M']
+            scores: ['o','O'], manual: ['m','M'],
+            gamepad: ['g','G']
         }
     },
     {
@@ -48,7 +51,8 @@ export const keyModes:KeyMode[] = [
         shortcuts: {
             lightMode: ['l','L'], keyMode: ['k','K'],
             profile: ['p','P'], party: [' '],
-            scores: ['o','O'], manual: ['m','M']
+            scores: ['o','O'], manual: ['m','M'],
+            gamepad: ['g','G']
         }
     }
 ]

@@ -45,18 +45,28 @@ export default class Manual extends Scene {
 
     draw() {
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
-        const appZone = this.app.zone
-        const keyZone = new Zone(
-            appZone.fractionX(.1),
-            appZone.fractionY(.1),
-            appZone.fractionX(.8),
-            appZone.fractionY(.8)
-        )
-        const size = keyZone.fractionHeight(1/6)
-        this.drawShortcuts(keyZone,size)
-        this.drawDirectionKeys(keyZone,'move', .5, .80,size)
-        this.drawDirectionKeys(keyZone,'shoot', .85, .80,size)
-        this.drawAnimations('all')
+        if(this.app.useGamepad){
+            this.p.noStroke()
+            this.p.fill(255,0,255)
+            this.p.textSize(20)
+            this.p.text(
+                JSON.stringify(this.app.gamepad,null,2),
+                0,0
+            )
+        }else{
+            const appZone = this.app.zone
+            const keyZone = new Zone(
+                appZone.fractionX(.1),
+                appZone.fractionY(.1),
+                appZone.fractionX(.8),
+                appZone.fractionY(.8)
+            )
+            const size = keyZone.fractionHeight(1/Object.keys(this.app.keyMode.shortcuts).length)
+            this.drawShortcuts(keyZone,size)
+            this.drawDirectionKeys(keyZone,'move', .5, .80,size)
+            this.drawDirectionKeys(keyZone,'shoot', .85, .80,size)
+            this.drawAnimations('all')
+        }
     }
 
     step() {
