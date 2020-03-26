@@ -103,6 +103,7 @@ export interface InputOptions {
     value?:string
     hide?:boolean
     focus?:boolean
+    required?:boolean
 }
 
 export interface LinkOptions {

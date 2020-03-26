@@ -16,7 +16,8 @@ export default class Form extends Zone {
         x2:number,
         y2:number,
         inputs:InputOptions[],
-        toCenter:boolean = false
+        toCenter:boolean = false,
+        private sent:(form:Form)=>void
     ) {
         super(x1,y1,x2,y2,toCenter)
         this.p = app.p
@@ -36,17 +37,21 @@ export default class Form extends Zone {
     }
 
     keyPressed( key:string ){
-        if(key === 'Tab' && this.focus){
-            const focused = this.focused
-            for(let i=0; i<this.inputs.length; i++)
-                if(this.inputs[i] === focused){
-                    if(i+1 >= this.inputs.length)
-                        this.inputs[0].focus = true
-                    else this.inputs[i+1].focus = true
-                }
-            focused.focus = false
+        if(this.focus){
+            if(key === 'Enter'){
+                if(this.inputs.every( input => !input.required || input.value.length > 0 ))
+                    this.sent(this)
+            } else if(key === 'Tab'){
+                const focused = this.focused
+                for(let i=0; i<this.inputs.length; i++)
+                    if(this.inputs[i] === focused){
+                        if(i+1 >= this.inputs.length)
+                            this.inputs[0].focus = true
+                        else this.inputs[i+1].focus = true
+                    }
+                focused.focus = false
+            } else this.inputs.forEach( input => input.keyPressed(key) )
         }
-        else this.inputs.forEach( input => input.keyPressed(key) )
     }
 
     mousePressed(){

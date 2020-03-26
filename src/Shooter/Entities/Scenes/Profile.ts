@@ -6,15 +6,23 @@ import Link from '../Link';
 
 export default class Profile extends Scene {
 
+    private title:string
+
     constructor( app:App ) {
         super(app)
         this.form = new Form( app,
             0, 0, this.p.width * .4, this.p.height * .4,
             [
-                { value:'', placeholder: 'New username' },
-                { value:'', placeholder: 'New password', hide: true },
-                { value:'', placeholder: 'Current password', hide: true }
-            ], true
+                { value:'', placeholder: 'New username', required: true },
+                { value:'', placeholder: 'New password', required: true, hide: true },
+                { value:'', placeholder: 'Current password', required: true, hide: true }
+            ], true, form => {
+                form.app.api.patch('profile', {
+                    newUsername: form.inputs[0].value,
+                    newPassword: form.inputs[1].value,
+                    password: form.inputs[2].value
+                }).catch(console.error)
+            }
         )
         const appZone = this.app.zone
         this.links.push(
@@ -42,6 +50,7 @@ export default class Profile extends Scene {
     }
 
     reset(){
+        this.title = 'Profile customization'
         this.form.inputs[0].value = ''
         this.form.inputs[1].value = ''
         this.form.inputs[2].value = ''
@@ -52,6 +61,11 @@ export default class Profile extends Scene {
     }
 
     draw() {
+        this.p.noStroke()
+        this.p.fill(255,0,255)
+        this.p.textAlign(this.p.CENTER,this.p.CENTER)
+        this.p.textSize(35)
+        this.p.text( this.title,0,this.p.height * -.35)
         this.drawAnimations('all')
     }
 

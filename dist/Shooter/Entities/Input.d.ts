@@ -8,6 +8,7 @@ export default class Input extends Zone {
     placeholder: string;
     value: string;
     focus: boolean;
+    required: boolean;
     p: p5;
     constructor(app: App, x1: number, y1: number, x2: number, y2: number, toCenter: boolean, options: InputOptions);
     draw(): void;

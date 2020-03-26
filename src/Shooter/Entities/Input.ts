@@ -9,6 +9,7 @@ export default class Input extends Zone {
     public placeholder:string
     public value:string
     public focus:boolean
+    public required:boolean
     public p:p5
 
     constructor(
@@ -26,6 +27,7 @@ export default class Input extends Zone {
         this.placeholder = options.placeholder
         this.hide = !!options.hide
         this.focus = !!options.focus
+        this.required = !!options.required
     }
 
     draw(){

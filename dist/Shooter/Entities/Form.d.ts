@@ -5,9 +5,10 @@ import p5 from 'p5';
 import App from '../App';
 export default class Form extends Zone {
     app: App;
+    private sent;
     inputs: Input[];
     p: p5;
-    constructor(app: App, x1: number, y1: number, x2: number, y2: number, inputs: InputOptions[], toCenter?: boolean);
+    constructor(app: App, x1: number, y1: number, x2: number, y2: number, inputs: InputOptions[], toCenter: boolean, sent: (form: Form) => void);
     draw(): void;
     keyPressed(key: string): void;
     mousePressed(): void;
