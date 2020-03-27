@@ -26,9 +26,9 @@ export default class Positionable {
         this.y += y
     }
 
-    public place( x:number, y:number ): void {
-        this.x = x
-        this.y = y
+    public place( vector:Vector2D ): void {
+        this.x = vector.x
+        this.y = vector.y
     }
 
     public follow( target:Vector2D, speed:number ): void {
@@ -63,7 +63,8 @@ export default class Positionable {
     }
 
     public placeOutOfViewport( withSecurity:boolean = false ): void {
-        this.placeOutOfLimits()
+        this.x = 0
+        this.y = 0
         while(!this.isOutOfViewPort()){
             if(withSecurity){
                 this.x = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )

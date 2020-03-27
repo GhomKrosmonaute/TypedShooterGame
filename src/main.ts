@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const res = await axios.post('login', qs.stringify({ token, username, password }),{ baseURL })
                     if( res.status === 200 ){
                         document.getElementById('login').remove()
-                        return new p5(p => sketch(p,res.data.token), document.getElementById('p5') )
+                        new p5(p => sketch(p,res.data.token), document.getElementById('p5') )
+                        document.getElementById('p5').focus()
                     }
                 }catch(error){
                     if(error.message.includes(401)) document.getElementById('alert').innerText = 'Incorrect password, please retry !'

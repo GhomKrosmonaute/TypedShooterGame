@@ -9,6 +9,7 @@ import API from '../API';
 import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
+import {constrain, map} from '../../utils';
 
 export default class Player extends Positionable {
 
@@ -291,10 +292,10 @@ export default class Player extends Positionable {
         if(this.speedY < .1 && this.speedY > -.1)
             this.speedY = 0
 
-        this.place(
-            this.speedX * .5,
-            this.speedY * .5
-        )
+        this.place({
+            x: this.speedX * .5,
+            y: this.speedY * .5
+        })
         this.party.move(
             this.speedX * -1,
             this.speedY * -1
@@ -380,7 +381,15 @@ export default class Player extends Positionable {
                 )))
                 this.p.noStroke()
                 this.p.textAlign(this.p.LEFT,this.p.CENTER)
-                this.p.textSize(this.diameter * .6)
+                this.p.textSize(
+                    this.diameter * .6 +
+                    constrain( map( Date.now(),
+                        this.combo.time,
+                        this.combo.time + 500,
+                        50,
+                        0
+                    ),0,this.diameter * .3)
+                )
                 this.p.text(
                     `x${this.combo.multiplicator}`,
                     this.x + this.diameter * 1.6,

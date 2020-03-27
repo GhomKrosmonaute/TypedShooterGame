@@ -3,15 +3,18 @@ import Enemy from './Enemy';
 import Player from './Player';
 import {fade} from '../../utils';
 import explosion from '../Animations/explosion';
+import {Vector2D} from '../../interfaces';
 
 export default class Shot extends Positionable {
 
     public readonly basePosition:Positionable
     public readonly direction:Positionable
+    private readonly scapegoat:Positionable
     private readonly speed:number
     public readonly damage:number
     private piercingShots:number = 1
     private toIgnore:Enemy[] = []
+    private currentTarget:Positionable
 
     constructor(
         public player:Player,
@@ -19,6 +22,7 @@ export default class Shot extends Positionable {
         directionY:number
     ){
         super( player.p, player.x, player.y, player.shotSize )
+        this.scapegoat = new Positionable( this.p, this.x, this.y )
         this.direction = new Positionable( this.p,
             directionX * 5000,
             directionY * 5000
@@ -60,11 +64,11 @@ export default class Shot extends Positionable {
     }
 
     public step(): void {
+        this.currentTarget = null
         if(this.rawDist(this.basePosition) > this.player.shotRange){
             this.terminate()
         }else{
             const autoFireGuidance = this.player.getPassive('autoFireGuidance')
-            let target:Enemy = null
             if(autoFireGuidance){
                 const temp:{
                     enemy: Enemy
@@ -83,11 +87,13 @@ export default class Shot extends Positionable {
                     }
 
                 }
-                target = temp.enemy
+                this.currentTarget = temp.enemy
             }
-            if(target){
-                this.follow(target,this.speed)
+            if(this.currentTarget){
+                this.scapegoat.follow(this.currentTarget,this.speed * 1.5)
+                this.follow(this.scapegoat,this.speed)
             }else{
+                this.scapegoat.place(this)
                 this.follow(this.direction,this.speed)
             }
         }
@@ -134,9 +140,17 @@ export default class Shot extends Positionable {
                     this.y,
                     autoFireGuidance.value
                 )
+                this.p.line( this.x, this.y,
+                    this.scapegoat.x,
+                    this.scapegoat.y
+                )
+                this.p.line(
+                    this.scapegoat.x,
+                    this.scapegoat.y,
+                    this.currentTarget.x,
+                    this.currentTarget.y
+                )
             }
-            this.p.noStroke()
         }
     }
-
 }

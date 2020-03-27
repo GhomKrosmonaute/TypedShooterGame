@@ -23,7 +23,7 @@ export default class PiercingShots extends Bonus implements Passive {
     }
 
     get value(): number {
-        return this.level * 100
+        return 100 + this.level * 25
     }
 
 }

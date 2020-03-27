@@ -22,7 +22,7 @@ export default class AutoFireGuidance extends Bonus implements Passive {
     }
 
     get value(): number {
-        return this.level * 50
+        return 100 + this.level * 25
     }
 
 }
