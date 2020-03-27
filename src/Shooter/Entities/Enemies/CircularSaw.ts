@@ -50,6 +50,9 @@ export default class CircularSaw extends Enemy {
         return false
     }
 
+    overDraw(): void {
+    }
+
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(130)

@@ -195,3 +195,13 @@ export function rawDist(
         vector2.x, vector2.y
     )
 }
+
+export function isOnArc(
+    a:Vector2D,
+    b:Vector2D,
+    target:Vector2D,
+    arcWeight:number
+): boolean {
+    if(!target) return false
+    return rawDist(a,target) + rawDist(b,target) < rawDist(a,b) + arcWeight
+}

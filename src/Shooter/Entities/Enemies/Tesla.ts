@@ -3,6 +3,8 @@ import Enemy from '../Enemy';
 import Party from '../Scenes/Party'
 import Shot from "../Shot";
 import {Vector2D} from "../../../interfaces";
+import { arc } from '../../Shapes/arc';
+import { isOnArc } from '../../../utils';
 
 export default class Tesla extends Enemy {
 
@@ -56,7 +58,7 @@ export default class Tesla extends Enemy {
 
         if(this.party.time > this.arcTime)
             for(const tesla of this.connections)
-                if(this.isOnArc(tesla,this.party.player)){
+                if(isOnArc(this,tesla,this.party.player,(this.arcWeight + tesla.arcWeight) * .5)){
                     this.arcTime = this.party.time + this.arcInterval
                     this.party.player.inflictDamages(1)
                 }
@@ -94,14 +96,16 @@ export default class Tesla extends Enemy {
         return true
     }
 
-    onDraw(): void {
-
+    overDraw(): void {
         for(const tesla of this.connections){
-            this.arc(tesla)
-            // if(this.isOnArc(tesla,this.app.player))
-            //     this.arc(this.app.player)
+            if(isOnArc(this,tesla,this.party.player,(tesla.arcWeight + this.arcWeight) * .5)) {
+                arc( this.p, this.party.player, tesla, tesla.arcWeight)
+                arc( this.p, this.party.player, this, this.arcWeight )
+            } else this.arc(tesla)
         }
+    }
 
+    onDraw(): void {
         this.p.noStroke()
         this.p.fill(200,100,255)
         this.p.ellipse(
@@ -112,33 +116,7 @@ export default class Tesla extends Enemy {
     }
 
     arc( tesla:Tesla ): void {
-        if(this.calculatedTouch(tesla)) return
-        const points:Vector2D[] = []
-        const pointCount = Math.ceil((this.rawDist(tesla) + 1) / 50)
-        points.push(this)
-        while(points.length < pointCount){
-            const lastPoint = points[points.length-1]
-            let point:Vector2D|false = false
-            while(!this.isOnArc(tesla,point))
-                point = {
-                    x: this.p.random(lastPoint.x,tesla.x),
-                    y: this.p.random(lastPoint.y,tesla.y)
-                }
-            points.push(point as Vector2D)
-        }
-        points.push(tesla)
-        this.p.noFill()
-        this.p.stroke(this.p.random(100,255),100,this.p.random(100,255))
-        this.p.strokeWeight(this.p.random(3,6))
-        this.p.beginShape()
-        for(const point of points){
-            this.p.vertex(point.x,point.y)
-        }
-        this.p.endShape()
-    }
-
-    isOnArc(tesla:Tesla, target:Vector2D|false ): boolean { if(!target) return false
-        return this.rawDist(target) + tesla.rawDist(target) < this.rawDist(tesla) + (this.arcWeight + tesla.arcWeight) * .5
+        arc( this.p, this, tesla, (this.arcWeight + tesla.arcWeight) * .5)
     }
 
     public get currentDiameter(){

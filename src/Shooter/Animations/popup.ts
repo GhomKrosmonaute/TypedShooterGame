@@ -6,7 +6,7 @@ export default function popup( options:AnimationMinimalOptions ): AnimationOptio
         ...options,
         className: options.className || 'popup',
         draw: a => {
-            const shift = a.value.index * a.p.height * .10
+            const shift = a.value.index * a.p.height * .1
             const { x, y } = a.position
             a.p.noStroke()
             a.p.fill(a.scene.app.light, fade(a.p,30, {
@@ -25,6 +25,7 @@ export default function popup( options:AnimationMinimalOptions ): AnimationOptio
                 valueMax: 3000,
                 overflow: 4
             }))
+            a.p.textSize(30)
             a.p.textAlign(a.p.CENTER,a.p.CENTER)
             a.p.text(a.value.text, 0, a.p.height * -.2 + shift)
         }

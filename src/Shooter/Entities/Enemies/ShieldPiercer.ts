@@ -38,6 +38,9 @@ export default class ShieldPiercer extends Enemy {
         return true
     }
 
+    overDraw(): void {
+    }
+
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(255,0,255)

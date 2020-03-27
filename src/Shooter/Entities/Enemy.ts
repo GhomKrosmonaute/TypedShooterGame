@@ -22,6 +22,7 @@ export default abstract class Enemy extends Positionable {
     public abstract id:string
     public abstract pattern():void
     public abstract onDraw():void
+    public abstract overDraw():void
     public abstract shotFilter(shoot:Shot):boolean
     public abstract onPlayerContact():void
     public app:App
@@ -54,6 +55,7 @@ export default abstract class Enemy extends Positionable {
     }
 
     public draw(){
+        this.overDraw()
         if(this.isOnScreen()){
             this.p.push()
             this.onDraw()
@@ -113,7 +115,7 @@ export default abstract class Enemy extends Positionable {
             position: this,
             duration: 300,
             value: {
-                text: `- ${this.gain}`,
+                text: `- ${damages}`,
                 color: this.p.color(255,20,20)
             }
         }))

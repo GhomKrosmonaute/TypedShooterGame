@@ -64,6 +64,9 @@ export default class Rocket extends Enemy {
         return false
     }
 
+    overDraw(): void {
+    }
+
     onDraw(): void {
         let color:p5.Color
         this.p.translate(

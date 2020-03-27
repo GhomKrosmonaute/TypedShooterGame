@@ -65,6 +65,9 @@ export default class BlobMob extends Enemy {
         return true
     }
 
+    overDraw(): void {
+    }
+
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(
