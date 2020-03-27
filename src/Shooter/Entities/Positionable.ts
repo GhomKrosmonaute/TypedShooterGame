@@ -63,6 +63,7 @@ export default class Positionable {
     }
 
     public placeOutOfViewport( withSecurity:boolean = false ): void {
+        this.placeOutOfLimits()
         while(!this.isOutOfViewPort()){
             if(withSecurity){
                 this.x = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )
