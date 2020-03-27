@@ -53,14 +53,14 @@ export default class Shot extends Positionable {
                 value: explosiveShots.value * 2
             }))
             for(const enemy of this.player.party.enemies)
-                if(this.distVector(enemy) < explosiveShots.value)
+                if(this.rawDist(enemy) < explosiveShots.value)
                     enemy.inflictDamages(this.damage,true)
         }
         this.placeOutOfLimits()
     }
 
     public step(): void {
-        if(this.distVector(this.basePosition) > this.player.shotRange){
+        if(this.rawDist(this.basePosition) > this.player.shotRange){
             this.terminate()
         }else{
             const autoFireGuidance = this.player.getPassive('autoFireGuidance')
@@ -75,7 +75,7 @@ export default class Shot extends Positionable {
                 }
                 for(const enemy of this.player.party.enemies){
                     if(!this.toIgnore.includes(enemy) && !enemy.immune){
-                        const dist = enemy.distVector(this)
+                        const dist = enemy.rawDist(this)
                         if(dist < autoFireGuidance.value && temp.dist > dist){
                             temp.enemy = enemy
                             temp.dist = dist
@@ -94,28 +94,30 @@ export default class Shot extends Positionable {
     }
 
     public draw(): void {
-        if(this.player.party.app.lightMode) this.p.noStroke()
-        else {
-            this.p.stroke(0)
-            this.p.strokeWeight(1)
-        }
-        this.p.fill(200,200,255)
-        this.p.ellipse(
-            this.x,
-            this.y,
-            fade( this.p, this.diameter,
-                {
-                    value: this.distVector(this.player),
-                    valueMax: this.player.shotRange,
-                    overflow: 5
-                },
-                {
-                    value: this.distVector(this.basePosition),
-                    valueMax: this.player.shotRange,
-                    overflow: 5
-                }
+        if(this.isOnScreen()){
+            if(this.player.party.app.lightMode) this.p.noStroke()
+            else {
+                this.p.stroke(0)
+                this.p.strokeWeight(1)
+            }
+            this.p.fill(200,200,255)
+            this.p.ellipse(
+                this.x,
+                this.y,
+                fade( this.p, this.diameter,
+                    {
+                        value: this.rawDist(this.player),
+                        valueMax: this.player.shotRange,
+                        overflow: 5
+                    },
+                    {
+                        value: this.rawDist(this.basePosition),
+                        valueMax: this.player.shotRange,
+                        overflow: 5
+                    }
+                )
             )
-        )
+        }
         if(this.player.app.debug){
             this.p.strokeWeight(1)
             this.p.noFill()

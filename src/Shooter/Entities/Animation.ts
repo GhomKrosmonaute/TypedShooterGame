@@ -2,6 +2,8 @@
 import {AnimationOptions, Vector2D} from '../../interfaces';
 import p5 from 'p5';
 import Scene from './Scene';
+import Positionable from './Positionable';
+import { isOutOfViewPort } from '../../utils';
 
 export default class Animation {
 
@@ -41,7 +43,8 @@ export default class Animation {
     }
 
     public draw(): void {
-        this.onDraw(this)
+        if(!isOutOfViewPort(this.position))
+            this.onDraw(this)
     }
 
     public step(): void {

@@ -1,8 +1,8 @@
-import Positionable from './Positionable';
-import App from '../App';
-import Variation from './Variation';
-import Party from './Scenes/Party';
-import textFadeOut from '../Animations/textFadeOut';
+import App from '../App'
+import Variation from './Variation'
+import Party from './Scenes/Party'
+import Positionable from './Positionable'
+import textFadeOut from '../Animations/textFadeOut'
 
 export default abstract class Bonus extends Positionable {
 
@@ -26,13 +26,14 @@ export default abstract class Bonus extends Positionable {
         this.p.noFill()
         this.p.stroke(255,140,0)
         this.p.strokeWeight(3)
+        if(this.isOnScreen()){
+            this.p.ellipse(
+                this.x,
+                this.y,
+                this.diameter
+            )
+        }
         this.showIfNotOnScreen()
-        this.p.ellipse(
-            this.x,
-            this.y,
-            this.diameter
-        )
-        this.p.noStroke()
     }
 
     public step(): void {
@@ -42,7 +43,7 @@ export default abstract class Bonus extends Positionable {
         if(this.isOutOfLimits())
             this.placeOutOfViewport(true)
 
-        if(this.touch(this.party.player))
+        if(this.calculatedTouch(this.party.player))
             this.use()
 
     }
@@ -51,7 +52,8 @@ export default abstract class Bonus extends Positionable {
         if(this.used) return
         this.used = true
         this.applyEffect()
-        const value = (this as any).value
+        const value = String(Math.round((this as any).value * 100) / 100)
+        const description = this.description.replace('{value}', value)
         this.party.setAnimation(textFadeOut({
             position: this,
             attach: true,
@@ -61,6 +63,6 @@ export default abstract class Bonus extends Positionable {
                 color: this.p.color(this.app.light)
             }
         }))
-        this.party.setPopup(`${this.displayName} : ${this.description.replace('{value}',String(Math.round((value + Number.EPSILON) * 100) / 100))}`)
+        this.party.setPopup(`${this.displayName} : ${description}`)
     }
 }

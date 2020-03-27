@@ -1,6 +1,7 @@
-import p5 from 'p5';
-import {Vector2D} from "../../interfaces";
+import p5 from 'p5'
+import {Vector2D} from "../../interfaces"
 import {LIMITS,SECURITY,VIEWPORT} from '../../config'
+import { dist, map } from '../../utils'
 
 export default class Positionable {
 
@@ -10,30 +11,28 @@ export default class Positionable {
         public p:p5,
         public x:number = 0,
         public y:number = 0,
-        public z:number = 0
+        public _diameter:number = 0
     ){}
 
-    public get diameter(): number { return this.currentDiameter || this.z }
-    public set diameter(z ){ this.z = z }
+    public get diameter(): number { return this.currentDiameter || this._diameter }
+    public set diameter( diameter:number ){ this._diameter = diameter }
 
     public get radius(): number {
-        return (this.currentDiameter || this.diameter) * .5
+        return this.diameter * .5
     }
 
-    public move( x:number, y:number, z:number = 0 ): void {
+    public move( x:number, y:number ): void {
         this.x += x
         this.y += y
-        this.z += z
     }
 
-    public place( x:number, y:number, z:number = this.z ): void {
+    public place( x:number, y:number ): void {
         this.x = x
         this.y = y
-        this.z = z
     }
 
     public follow( target:Vector2D, speed:number ): void {
-        if(this.distVector(target) <= speed * 2) return
+        if(this.rawDist(target) <= speed * 2) return
         this.p.angleMode(this.p.RADIANS)
         const angle = this.p.degrees(
             this.p.atan2(
@@ -51,7 +50,7 @@ export default class Positionable {
     }
 
     public target( target:Vector2D, speedFraction:number ): void {
-        if(this.distVector(target) > 5)
+        if(this.rawDist(target) > 5)
             this.move(
                 (target.x - this.x) * speedFraction,
                 (target.y - this.y) * speedFraction
@@ -75,52 +74,48 @@ export default class Positionable {
         }
     }
 
-    public showIfNotOnScreen(){
+    public showIfNotOnScreen(): void {
         if(!this.isOnScreen()){
             this.p.ellipse(
                 this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
                 this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
-                this.diameter
+                map(this.rawDist(),0,LIMITS,30,0,true)
             )
         }
     }
 
     public isOutOfLimits(): boolean {
-        return this.distVector({ x:0, y:0 }) > LIMITS
+        return this.rawDist() > LIMITS
     }
 
     public isOutOfViewPort(): boolean {
-        return this.distVector({ x:0, y:0 }) > VIEWPORT
+        return this.rawDist() > VIEWPORT
     }
 
-    public isOnScreen( ignoreDiameter:boolean = false ): boolean {
-        const diameter = ignoreDiameter ? 0 : this.diameter
+    public isOnScreen( ignoreRadius:boolean = false ): boolean {
+        const radius = ignoreRadius ? 0 : this.radius
         return (
-            this.x + diameter > this.p.width * -.5 &&
-            this.x - diameter < this.p.width * .5 &&
-            this.y + diameter > this.p.height * -.5 &&
-            this.y - diameter < this.p.height * .5
+            this.x + radius > this.p.width * -.5 &&
+            this.x - radius < this.p.width * .5 &&
+            this.y + radius > this.p.height * -.5 &&
+            this.y - radius < this.p.height * .5
         )
     }
 
-    public dist( positionable:Positionable ): number {
-        return this.distVector(positionable) - (this.radius + positionable.radius)
+    public calculatedDist( positionable:Positionable ): number {
+        return this.rawDist(positionable) - (this.radius + positionable.radius)
     }
 
-    public touch( positionable:Positionable ): boolean {
-        return this.dist(positionable) <= 0
+    public calculatedTouch( positionable:Positionable ): boolean {
+        return this.calculatedDist(positionable) <= 0
     }
 
-    public distVector( vector:Vector2D ): number {
-        return this.p.dist(
-            vector.x,
-            vector.y,
-            this.x, this.y
-        )
+    public rawDist( vector:Vector2D = {x:0,y:0} ): number {
+        return dist(vector.x, vector.y, this.x, this.y)
     }
 
-    public touchVector( vector:Vector2D ): boolean {
-        return this.distVector(vector) <= this.radius
+    public rawTouch( vector:Vector2D = {x:0,y:0} ): boolean {
+        return this.rawDist(vector) <= this.radius
     }
 
 }

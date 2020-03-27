@@ -1,9 +1,9 @@
 import {KeyMode} from './interfaces';
 
 export const VERSION = require('../package.json').version
-export const LIMITS = 3000
+export const LIMITS = 2000
 export const VIEWPORT = 1000
-export const SECURITY = 1000
+export const SECURITY = 500
 export const baseURL = 'https://shooter-api.tk'
 export const siteKey = '6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN'
 export const keyModes:KeyMode[] = [

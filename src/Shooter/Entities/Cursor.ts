@@ -17,7 +17,7 @@ export default class Cursor extends Positionable {
     }
 
     private get auraDiameter(): number {
-        return 15 + Math.min(30,this.distVector(this.app.mouseFromCenter) * .5)
+        return 15 + Math.min(30,this.rawDist(this.app.mouseFromCenter) * .5)
     }
 
     public step(): void {

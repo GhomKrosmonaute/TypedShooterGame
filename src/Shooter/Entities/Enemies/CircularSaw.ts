@@ -32,10 +32,10 @@ export default class CircularSaw extends Enemy {
         if(this.rotation > 360)
             this.rotation -= 360
         for(const enemy of this.party.enemies)
-            if(!enemy.immune && this.touch(enemy))
+            if(!enemy.immune && this.calculatedTouch(enemy))
                 enemy.kill()
         for(const bonus of this.party.bonus)
-            while(this.touch(bonus))
+            while(this.calculatedTouch(bonus))
                 bonus.placeOutOfViewport(true)
     }
 

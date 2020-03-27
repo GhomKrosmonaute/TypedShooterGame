@@ -18,7 +18,7 @@ export default class FireRateUp extends Bonus implements Passive {
         // TODO: looking for a good shape
         this.p.textSize(h * .5)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
-        this.p.text('M',x + w * .5,y + h * .5)
+        this.p.text('FR',x + w * .5,y + h * .5)
     }
 
     get value(): number {

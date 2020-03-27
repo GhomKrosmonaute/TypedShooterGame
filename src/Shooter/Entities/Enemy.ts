@@ -5,6 +5,7 @@ import {Vector2D} from "../../interfaces"
 import Party from './Scenes/Party'
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
+import {constrain} from '../../utils';
 
 export default abstract class Enemy extends Positionable {
 
@@ -39,12 +40,12 @@ export default abstract class Enemy extends Positionable {
 
         if(!this.immune)
             for(const shot of this.party.player.shots)
-                if(this.touch(shot))
+                if(this.calculatedTouch(shot))
                     if(this.shotFilter(shot))
                         if(shot.handleShoot(this))
                             this.inflictDamages(shot.damage,true)
 
-        if(this.touch(this.party.player))
+        if(this.calculatedTouch(this.party.player))
             this.onPlayerContact()
 
         if(!this.isOutOfLimits())
@@ -53,9 +54,15 @@ export default abstract class Enemy extends Positionable {
     }
 
     public draw(){
-        this.p.push()
-        this.onDraw()
-        this.p.pop()
+        if(this.isOnScreen()){
+            this.p.push()
+            this.onDraw()
+            this.p.pop()
+        }else{
+            this.p.fill(200,0,100,200)
+            this.p.noStroke()
+        }
+        this.showIfNotOnScreen()
     }
 
     public kill( addToScore:boolean = false ): void {
@@ -71,7 +78,7 @@ export default abstract class Enemy extends Positionable {
                         this.party.time > enemy.lastDeadChain + 2000 &&
                         enemy.life > 0 &&
                         !enemy.immune &&
-                        enemy.distVector(position) < deadChain.value / 2
+                        enemy.rawDist(position) < deadChain.value / 2
                     ) {
                         enemy.inflictDamages(this.baseLife * .5, true)
                         enemy.lastDeadChain = this.party.time
@@ -132,17 +139,16 @@ export default abstract class Enemy extends Positionable {
     }
 
     public get lifeBasedDiameter(): number {
-        return Math.max(
+        return constrain(
+            this.p.map(
+                this.life,
+                0,
+                this.baseLife,
+                0,
+                this._diameter
+            ),
             this.MIN_DIAMETER,
-            Math.min(
-                this.p.map(
-                    this.life,
-                    0,
-                    this.baseLife,
-                    0,
-                    this.z
-                )
-            )
+            this._diameter
         )
     }
 

@@ -14,7 +14,7 @@ export default class AutoFireGuidance extends Bonus implements Passive {
         // TODO: psy eye
         this.p.textSize(h * .5)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
-        this.p.text('F',x + w * .5,y + h * .5)
+        this.p.text('A',x + w * .5,y + h * .5)
     }
 
     applyEffect(): void {

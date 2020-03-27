@@ -23,7 +23,90 @@ import Animation from './Shooter/Entities/Animation';
 import SpeedUp from './Shooter/Entities/Bonus/SpeedUp';
 import Positionable from './Shooter/Entities/Positionable';
 import ExplosiveShots from './Shooter/Entities/Bonus/ExplosiveShots';
-import {AnimationMinimalOptions, AnimationOptions} from './interfaces';
+import {AnimationMinimalOptions, AnimationOptions, Vector2D} from './interfaces';
+import {LIMITS, VIEWPORT} from './config';
+
+export function constrain( n:number, low:number, high:number ): number {
+    return Math.max(Math.min(n, high), low);
+}
+
+export function dist( x1:number, y1:number, x2:number, y2:number ): number {
+    return hypot(x2 - x1, y2 - y1)
+}
+
+export function map( n:number,
+    start1:number, stop1:number,
+    start2:number, stop2:number,
+    withinBounds:boolean = false
+): number {
+    const output = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2
+    if(!withinBounds) return output
+    return start2 < stop2 ?
+        constrain(output, start2, stop2) :
+        constrain(output, stop2, start2)
+}
+
+export function norm( n:number, start:number, stop:number ): number {
+    return map(n, start, stop, 0, 1)
+}
+
+export function random( min?:number[]|number, max?:number ): number {
+    let rand = Math.random()
+    if (typeof min === 'undefined') {
+        return rand
+    } else if (typeof max === 'undefined') {
+        if (min instanceof Array) {
+            return min[Math.floor(rand * min.length)]
+        } else {
+            return rand * min
+        }
+    } else {
+        if (min > max) {
+            const tmp = min as number
+            min = max
+            max = tmp
+        }
+        //@ts-ignore
+        return rand * (max - min) + min
+    }
+}
+
+export function hypot( x:number, y:number, z?:number ) {
+
+    if (typeof Math.hypot === 'function') {
+        return Math.hypot.apply(null, arguments);
+    }
+
+    const length = arguments.length;
+    const args = [];
+    let max = 0;
+    for (let i = 0; i < length; i++) {
+        let n = arguments[i];
+        n = +n;
+        if (n === Infinity || n === -Infinity) {
+            return Infinity;
+        }
+        n = Math.abs(n);
+        if (n > max) {
+            max = n;
+        }
+        args[i] = n;
+    }
+
+    if (max === 0) {
+        max = 1;
+    }
+    let sum = 0;
+    let compensation = 0;
+    for (let j = 0; j < length; j++) {
+        const m = args[j] / max;
+        const summand = m * m - compensation;
+        const preliminary = sum + summand;
+        compensation = preliminary - sum - summand;
+        sum = preliminary;
+    }
+    return Math.sqrt(sum) * max;
+}
 
 export function fade( p:p5, fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
@@ -84,4 +167,31 @@ export function pickBonus( party:Party ): Bonus {
 
 export function getInput( id:string ): HTMLInputElement {
     return document.getElementById(id) as HTMLInputElement
+}
+
+export function isOnScreen( p:p5, vector:Vector2D ): boolean {
+    return (
+        vector.x > p.width * -.5 &&
+        vector.x < p.width * .5 &&
+        vector.y > p.height * -.5 &&
+        vector.y < p.height * .5
+    )
+}
+
+export function isOutOfLimits( vector:Vector2D ): boolean {
+    return rawDist({ x:0, y:0 }, vector) > LIMITS
+}
+
+export function isOutOfViewPort( vector:Vector2D ): boolean {
+    return rawDist({ x:0, y:0 }, vector) > VIEWPORT
+}
+
+export function rawDist(
+    vector1:Vector2D,
+    vector2:Vector2D
+): number {
+    return dist(
+        vector1.x, vector1.y,
+        vector2.x, vector2.y
+    )
 }

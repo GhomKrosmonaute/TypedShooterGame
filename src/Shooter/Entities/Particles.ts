@@ -43,21 +43,21 @@ class Particle extends Positionable {
     }
 
     private get opacity(){
-        return this.p.map( this.z, 0, 1, 20, 80 ) * this.intensity
+        return this.p.map( this._diameter, 0, 1, 20, 80 ) * this.intensity
     }
 
     private reset(){
         this.color = this.p.color(this.p.random(100,255),0,this.p.random(100,255))
         this.intensity = 0
-        this.z = this.p.random( this.parent.min, this.parent.max )
+        this._diameter = this.p.random( this.parent.min, this.parent.max )
         this.x = this.p.random( this.p.width * -.5, this.p.width * .5 )
         this.y = this.p.random( this.p.height * -.5, this.p.height * .5 )
     }
 
     public move( x:number, y:number ){
         super.move(
-            x * (this.z / 2),
-            y * (this.z / 2)
+            x * (this._diameter / 2),
+            y * (this._diameter / 2)
         )
     }
 
@@ -75,7 +75,7 @@ class Particle extends Positionable {
         this.p.ellipse(
             this.x,
             this.y,
-            5 + this.z * 5
+            5 + this._diameter * 5
         )
     }
 

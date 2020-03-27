@@ -38,7 +38,7 @@ export default class BlobMob extends Enemy {
                 !enemy.isOutOfLimits() &&
                 this.life >= enemy.life &&
                 this.life + enemy.life < this.maxLife &&
-                this.touch(enemy)
+                this.calculatedTouch(enemy)
             ){
                 this.absorb(enemy)
                 enemy.kill()
@@ -72,7 +72,6 @@ export default class BlobMob extends Enemy {
             80,
             Math.max(this.p.map(this.gain, 1, 10, 255, 100),100)
         )
-        this.showIfNotOnScreen()
         this.p.ellipse(
             this.x,
             this.y,
@@ -88,13 +87,13 @@ export default class BlobMob extends Enemy {
                 0,
                 this.baseLife,
                 0,
-                this.z
+                this._diameter
             ) + this.p.map(
                 Math.max(this.baseLife,this.life),
                 this.baseLife,
                 this.maxLife,
                 0,
-                this.z
+                this._diameter
             )
         )
     }

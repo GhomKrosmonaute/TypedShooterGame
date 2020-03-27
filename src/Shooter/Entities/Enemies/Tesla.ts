@@ -41,13 +41,14 @@ export default class Tesla extends Enemy {
     public pattern(): void {
 
         this.connections = this.connections.filter( tesla => {
-            return this.distVector(tesla) > this.arcSize && !this.touch(tesla)
+            return this.rawDist(tesla) > this.arcSize && !this.calculatedTouch(tesla)
         })
 
         for(const enemy of this.party.enemies){
             if(
                 enemy.id === 'tesla' &&
-                this.distVector(enemy) < this.arcSize &&
+                (enemy.isOnScreen() || this.isOnScreen()) &&
+                this.rawDist(enemy) < this.arcSize &&
                 !(enemy as Tesla).connections.includes(this) &&
                 !this.connections.includes(enemy as Tesla)
             ) this.connections.push(enemy as Tesla)
@@ -103,7 +104,6 @@ export default class Tesla extends Enemy {
 
         this.p.noStroke()
         this.p.fill(200,100,255)
-        this.showIfNotOnScreen()
         this.p.ellipse(
             this.x,
             this.y,
@@ -112,9 +112,9 @@ export default class Tesla extends Enemy {
     }
 
     arc( tesla:Tesla ): void {
-        if(this.touch(tesla)) return
+        if(this.calculatedTouch(tesla)) return
         const points:Vector2D[] = []
-        const pointCount = Math.ceil((this.distVector(tesla) + 1) / 50)
+        const pointCount = Math.ceil((this.rawDist(tesla) + 1) / 50)
         points.push(this)
         while(points.length < pointCount){
             const lastPoint = points[points.length-1]
@@ -138,7 +138,7 @@ export default class Tesla extends Enemy {
     }
 
     isOnArc(tesla:Tesla, target:Vector2D|false ): boolean { if(!target) return false
-        return this.distVector(target) + tesla.distVector(target) < this.distVector(tesla) + (this.arcWeight + tesla.arcWeight) * .5
+        return this.rawDist(target) + tesla.rawDist(target) < this.rawDist(tesla) + (this.arcWeight + tesla.arcWeight) * .5
     }
 
     public get currentDiameter(){

@@ -6,6 +6,8 @@ import {AnimationOptions} from '../../interfaces';
 import popup from '../Animations/popup';
 import Link from './Link';
 import Form from './Form';
+import Positionable from './Positionable';
+import { isOutOfViewPort } from '../../utils';
 
 export default abstract class Scene {
 
@@ -39,8 +41,10 @@ export default abstract class Scene {
     }
 
     public setAnimation( options:AnimationOptions ): void {
-        const animation = new Animation( this, options )
-        this.animations.push(animation)
+        if(!options.position || !isOutOfViewPort(options.position)){
+            const animation = new Animation( this, options )
+            this.animations.push(animation)
+        }
     }
 
     public setPopup( text:string ): void {

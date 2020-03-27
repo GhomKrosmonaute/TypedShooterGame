@@ -42,10 +42,10 @@ export default class Rocket extends Enemy {
                 this.damageOccured = true
 
                 for(const enemy of this.party.enemies)
-                    if(this.distVector(enemy) < this.damageZone)
+                    if(this.rawDist(enemy) < this.damageZone)
                         enemy.inflictDamages(this.damage)
 
-                if(this.distVector(this.party.player) < this.damageZone)
+                if(this.rawDist(this.party.player) < this.damageZone)
                     this.party.player.inflictDamages(this.damage)
 
                 this.party.setAnimation(explosion({

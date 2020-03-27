@@ -18,7 +18,7 @@ export default class DamageUp extends Bonus implements Passive {
         // TODO: look for a good shape
         this.p.textSize(h * .5)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
-        this.p.text('SG',x + w * .5,y + h * .5)
+        this.p.text('D',x + w * .5,y + h * .5)
     }
 
     get value(): number {
