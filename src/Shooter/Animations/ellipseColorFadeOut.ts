@@ -4,7 +4,6 @@ import p5 from 'p5';
 export default function ellipseColorFadeOut( options:AnimationMinimalOptions ): AnimationOptions {
     return {
         ...options,
-        className: options.className || 'high',
         draw: a => {
             const color = a.value as p5.Color
             const entity = a.position as any

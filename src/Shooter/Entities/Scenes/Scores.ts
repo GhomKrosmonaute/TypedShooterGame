@@ -75,7 +75,7 @@ export default class Scores extends Scene {
             this.p.text(player.username, name.x, name.y)
             this.p.text(`Score: ${player.score} pts`,score.x,score.y)
         })
-        this.drawAnimations('all')
+        this.drawAnimations()
     }
 
     step() {

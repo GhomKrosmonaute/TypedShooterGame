@@ -78,8 +78,11 @@ export default class App {
             }
         }
         if(this.scene.rate.canTrigger(true)){
-            this.scene.animations = this.scene.animations.filter( a => !a.finish )
-            this.scene.animations.forEach( a => a.step() )
+            for(const className in this.scene.animations)
+                if(this.scene.animations[className]){
+                    this.scene.animations[className] = this.scene.animations[className].filter( a => !a.finish )
+                    this.scene.animations[className].forEach( a => a.step() )
+                }
             this.scene.time += this.scene.rate.interval
             this.scene.step()
             if(this.scene.showParticles){

@@ -65,8 +65,8 @@ export default class Manual extends Scene {
             this.drawShortcuts(keyZone,size)
             this.drawDirectionKeys(keyZone,'move', .5, .80,size)
             this.drawDirectionKeys(keyZone,'shoot', .85, .80,size)
-            this.drawAnimations('all')
         }
+        this.drawAnimations()
     }
 
     step() {

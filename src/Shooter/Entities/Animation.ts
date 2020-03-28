@@ -1,9 +1,8 @@
 
-import {AnimationOptions, Vector2D} from '../../interfaces';
-import p5 from 'p5';
-import Scene from './Scene';
-import Positionable from './Positionable';
-import { isOutOfViewPort } from '../../utils';
+import {AnimationOptions, Vector2D} from '../../interfaces'
+import p5 from 'p5'
+import Scene from './Scene'
+import {isOutOfViewPort, map} from '../../utils'
 
 export default class Animation {
 
@@ -33,13 +32,13 @@ export default class Animation {
         this.attach = !!options.attach
         this.position = options.position || {x:0,y:0}
         this.callback = options.callback || ((a)=>{})
+        this.className = options.className
         if(options.id){
             this.id = options.id
-            scene.animations = scene.animations.filter( a => {
+            scene.animations[this.className] = scene.animations[this.className].filter( a => {
                 return a === this || a.id !== options.id
             })
         }
-        if(options.className) this.className = options.className
     }
 
     public draw(): void {
@@ -65,6 +64,10 @@ export default class Animation {
     public move( x:number, y:number ): void {
         this.position.x += x
         this.position.y += y
+    }
+
+    public map( start:number, stop:number ): number {
+        return map(this.time,0,this.duration,start,stop)
     }
 
 }

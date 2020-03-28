@@ -36,7 +36,7 @@ export default class Party extends Scene {
         this.player = new Player(this)
         this.enemies = []
         this.bonus = []
-        this.animations = []
+        this.animations = {}
         for(let i=0; i<this.enemyCount; i++){
             this.enemies.push(pickEnemy(this))
         }
@@ -129,9 +129,10 @@ export default class Party extends Scene {
     }
 
     public move( x:number, y:number ) {
-        this.animations
-            .filter( a => !a.attach )
-            .forEach( a => a.move( x, y ) )
+        for(const className in this.animations)
+            this.animations[className]
+                .filter( a => !a.attach )
+                .forEach( a => a.move( x, y ) )
         this.background.move( x, y )
         this.foreground.move( x, y )
         this.enemies.forEach( enemy => enemy.move( x, y ) )

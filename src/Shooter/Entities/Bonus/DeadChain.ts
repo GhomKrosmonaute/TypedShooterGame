@@ -22,7 +22,7 @@ export default class DeadChain extends Bonus implements Passive {
     }
 
     get value(): number {
-        return 150 + this.level * 25
+        return 100 + this.level * 25
     }
 
 }

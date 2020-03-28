@@ -39,26 +39,24 @@ export interface TemporaryEffect {
     timeout: number
 }
 
-export interface AnimationOptions {
-    id?:string
-    className?:string
-    position?:Vector2D
-    attach?:boolean
+export interface PopupOptions {
     value:any
-    duration:number
-    draw: AnimationCallback
-    callback?: AnimationCallback
-}
-
-export interface AnimationMinimalOptions {
-    value:any
-    className?:string
     position?:Vector2D
     attach?:boolean
     id?:string
-    duration:number
     callback?:AnimationCallback
 }
+
+export interface AnimationMinimalOptions extends PopupOptions {
+    className:AnimationClass
+    duration:number
+}
+
+export interface AnimationOptions extends AnimationMinimalOptions {
+    draw: AnimationCallback
+}
+
+export type AnimationClass = 'popup' | 'high' | 'low'
 
 export type AnimationCallback = ( animation:Animation ) => void
 

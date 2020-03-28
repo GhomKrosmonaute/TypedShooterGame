@@ -17,6 +17,7 @@ export default class DeadlyWave extends Bonus implements Consumable {
 
     public exec(): void {
         this.party.setAnimation(explosion({
+            className: 'low',
             value: VIEWPORT * 2,
             duration: 200
         }))

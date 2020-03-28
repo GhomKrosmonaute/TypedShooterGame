@@ -77,10 +77,10 @@ export default abstract class Enemy extends Positionable {
                 for(const enemy of this.party.enemies)
                     if (
                         enemy !== this &&
-                        this.party.time > enemy.lastDeadChain + 2000 &&
+                        this.party.time > enemy.lastDeadChain + 1000 &&
                         enemy.life > 0 &&
                         !enemy.immune &&
-                        enemy.rawDist(position) < deadChain.value / 2
+                        enemy.rawDist(position) < deadChain.value
                     ) {
                         enemy.inflictDamages(this.baseLife * .5, true)
                         enemy.lastDeadChain = this.party.time
@@ -90,12 +90,14 @@ export default abstract class Enemy extends Positionable {
 
         this.party.setAnimation(explosion({
             position,
+            className: 'low',
             duration: 200,
-            value: addToScore && deadChain ? deadChain.value : this.diameter
+            value: addToScore && deadChain ? deadChain.value * 2 : this.diameter
         }))
         if(addToScore)
             this.party.setAnimation(textFadeOut({
                 position,
+                className: 'high',
                 attach: true,
                 duration: 500,
                 value: {
@@ -111,6 +113,7 @@ export default abstract class Enemy extends Positionable {
     public inflictDamages( damages:number, addToScore:boolean = false ): void {
         if(this.immune) return
         this.party.setAnimation(textFadeOut({
+            className: 'high',
             attach: true,
             position: this,
             duration: 300,

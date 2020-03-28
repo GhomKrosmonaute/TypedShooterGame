@@ -1,28 +1,28 @@
-import {AnimationMinimalOptions, AnimationOptions} from '../../interfaces';
-import { fade } from '../../utils';
+import { AnimationOptions, PopupOptions} from '../../interfaces';
+import {fade, seconds} from '../../utils';
 
-export default function popup( options:AnimationMinimalOptions ): AnimationOptions {
+export default function popup( options:PopupOptions ): AnimationOptions {
     return {
         ...options,
-        className: options.className || 'popup',
+        className: 'popup',
+        duration: seconds(1),
         draw: a => {
-            const shift = a.value.index * a.p.height * .1
-            const { x, y } = a.position
+            const shift = a.value.index * (a.p.height * .1)
             a.p.noStroke()
-            a.p.fill(a.scene.app.light, fade(a.p,30, {
+            a.p.fill(a.scene.app.light, fade(30, {
                 value: a.time,
-                valueMax: 3000,
+                valueMax: a.duration,
                 overflow: 7
             }))
             a.p.rect(
-                x + a.p.width * -.5,
-                y + a.p.height * -.25 + shift,
+                a.position.x + a.p.width * -.5,
+                a.position.y + a.p.height * -.25 + shift,
                 a.p.width,
                 a.p.height * .1
             )
-            a.p.fill(a.scene.app.light, fade(a.p,255, {
+            a.p.fill(a.scene.app.light, fade(255, {
                 value: a.time,
-                valueMax: 3000,
+                valueMax: a.duration,
                 overflow: 4
             }))
             a.p.textSize(30)

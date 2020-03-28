@@ -13,6 +13,7 @@ export default class Heal extends Bonus implements Consumable {
     public exec(): void {
         this.party.player.life = this.party.player.baseLife
         this.party.setAnimation(ellipseColorFadeOut({
+            className: 'high',
             attach: true,
             duration: 100,
             value: this.p.color(0,255,0),

@@ -10,7 +10,7 @@ export default class Rocket extends Enemy {
     public life: number = 1
     public speed: number = 0
     public immune: boolean = true
-    public damage: number = 3
+    public damage: number = 2
     public id: string = 'rocket'
 
     private rotation = 0
@@ -25,6 +25,7 @@ export default class Rocket extends Enemy {
         this.lockTime = party.time + 1000
         this.damageTime = party.time + (this.app.hardcore ? 1400 : 2000)
         this.diameter = 50
+        if(this.app.hardcore) this.damage ++
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
@@ -49,6 +50,7 @@ export default class Rocket extends Enemy {
                     this.party.player.inflictDamages(this.damage)
 
                 this.party.setAnimation(explosion({
+                    className: 'low',
                     value: this.damageZone * 2,
                     position: { x:this.x, y:this.y },
                     duration: 100

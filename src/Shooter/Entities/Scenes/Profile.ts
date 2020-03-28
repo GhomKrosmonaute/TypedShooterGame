@@ -66,7 +66,7 @@ export default class Profile extends Scene {
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(35)
         this.p.text( this.title,0,this.p.height * -.35)
-        this.drawAnimations('all')
+        this.drawAnimations()
     }
 
     step() {

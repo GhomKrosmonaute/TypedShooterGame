@@ -108,18 +108,18 @@ export function hypot( x:number, y:number, z?:number ) {
     return Math.sqrt(sum) * max;
 }
 
-export function fade( p:p5, fadeMax:number,
+export function fade( fadeMax:number,
     fadeIn: { value:number, valueMax:number, fadeMax?:number, overflow:number },
     fadeOut?: { value:number, valueMax:number, fadeMax?:number, overflow:number }
 ): number {
     if(!fadeOut) fadeOut = fadeIn
-    return Math.max(
-        0,
+    return constrain(
         Math.min(
-            fadeMax,
-            p.map(fadeOut.value,0,fadeOut.valueMax, fadeOut.fadeMax || fadeMax * fadeOut.overflow, 0),
-            p.map(fadeIn.value,0,fadeIn.valueMax,0,fadeIn.fadeMax || fadeMax * fadeIn.overflow)
-        )
+            map(fadeOut.value,0,fadeOut.valueMax, fadeOut.fadeMax || fadeMax * fadeOut.overflow, 0),
+            map(fadeIn.value,0,fadeIn.valueMax,0,fadeIn.fadeMax || fadeMax * fadeIn.overflow)
+        ),
+        0,
+        fadeMax
     )
 }
 

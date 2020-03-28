@@ -2,7 +2,7 @@ import App from '../App';
 import p5 from 'p5';
 import Rate from './Rate';
 import Animation from './Animation';
-import {AnimationOptions} from '../../interfaces';
+import {AnimationClass, AnimationOptions} from '../../interfaces';
 import popup from '../Animations/popup';
 import Link from './Link';
 import Form from './Form';
@@ -13,7 +13,7 @@ export default abstract class Scene {
 
     public rate:Rate = new Rate(25)
     public time:number = 0
-    public animations:Animation[] = []
+    public animations:{[key:string]:Animation[]} = {}
     public links:Link[] = []
     public form?:Form
     public showParticles = true
@@ -29,32 +29,41 @@ export default abstract class Scene {
         this.p = app.p
     }
 
-    protected drawAnimations( className?:string ): void {
-        if(className === 'all') this.animations.forEach( a => a.draw() )
-        else if(!className)
-            this.animations
-                .filter( a => !a.className )
+    protected drawAnimations( className?:AnimationClass ): void {
+        if(!className){
+            for(const key in this.animations)
+                this.animations[key]
+                    .forEach( a => a.draw() )
+        }else if(this.animations[className])
+            this.animations[className]
                 .forEach( a => a.draw() )
-        else this.animations
-            .filter( a => a.className === className )
-            .forEach( a => a.draw() )
     }
 
     public setAnimation( options:AnimationOptions ): void {
         if(!options.position || !isOutOfViewPort(options.position)){
             const animation = new Animation( this, options )
-            this.animations.push(animation)
+            if(!this.animations[animation.className])
+                this.animations[animation.className] = []
+            this.animations[animation.className].push(animation)
         }
     }
 
     public setPopup( text:string ): void {
-        this.setAnimation(popup({
+        if(!this.animations.popup)
+            this.animations.popup = []
+        let index = -1
+        for(const popupAnimation of this.animations.popup)
+            if(popupAnimation.timeIsOut){
+                index = this.animations.popup.indexOf(popupAnimation)
+                break
+            }
+        const animation = new Animation( this, popup({
             attach: true,
             value: { text,
-                index: this.animations.filter( a => a.className === 'popup' ).length - 1
-            },
-            duration: 3000
+                index: index === -1 ? this.animations.popup.length : index
+            }
         }))
+        this.animations.popup[animation.value.index] = animation
     }
 
 }

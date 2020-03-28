@@ -164,6 +164,7 @@ export default class Player extends Positionable {
             this.score += score * this.combo.multiplicator
         }
         this.party.setAnimation(textFadeOut({
+            className: 'high',
             position: {
                 x: 0,
                 y: this.diameter * -1.8
@@ -179,6 +180,7 @@ export default class Player extends Positionable {
 
     public inflictDamages( damages:number ): void {
         this.party.setAnimation(ellipseColorFadeOut({
+            className:'high',
             attach: true,
             duration: 150,
             position: this,
@@ -188,6 +190,7 @@ export default class Player extends Positionable {
         }))
         this.party.setAnimation(textFadeOut({
             attach: true,
+            className: 'high',
             duration: 250,
             position: {
                 x: 0,
@@ -205,16 +208,47 @@ export default class Player extends Positionable {
     }
 
     public async step(): Promise<void> {
-
         if(this.killed) return
+        this.comboStep()
+        if(await this.deathStep()) return
+        this.moveStep()
+        this.shotsStep()
+    }
 
-        // COMBO
+    public draw(): void {
+        this.shots.forEach(shoot => shoot.draw() )
+        if(this.killed) return
+        this.drawPlayer()
+        this.drawLifeBar()
+        if(this.combo){
+            if(this.combo.multiplicator > 1){
+                this.drawMultiplicator()
+            }
+            this.drawComboBars()
+        }
+        this.drawTemporaries()
+        this.drawBonus()
+    }
 
+    public keyPressed(key:string): void {
+        this.app.keyMode.numeric.forEach( (keys, i) => {
+            if(keys.includes(key) && this.consumables[i]){
+                this.consumables[i].exec()
+                this.consumables[i].quantity --
+                if(this.consumables[i].quantity <= 0)
+                    this.consumables = this.consumables.filter( c => {
+                        return c.id !== this.consumables[i].id
+                    })
+            }
+        })
+    }
+
+    private comboStep(): void {
         if(this.combo && this.party.time > this.combo.time + this.comboTimeout)
             this.combo = null
+    }
 
-        // DEATH ?
-
+    private async deathStep(): Promise<boolean> {
         if(this.life <= 0){
             this.killed = true
             if(this.score > await this.getHighScore())
@@ -222,17 +256,18 @@ export default class Player extends Positionable {
                     .catch(() => alert(`Error while saving your score :(`))
             this.party.setAnimation(explosion({
                 value: this.diameter * 1.5,
+                className: 'low',
                 duration: 700,
                 callback: a => {
                     a.scene.app.sceneName = 'manual'
                     a.scene.app.scenes.party.reset()
                 }
             }))
-            return
-        }
+            return true
+        } return false
+    }
 
-        // MOVES
-
+    private moveStep(): void {
         if(!this.app.moveKeyIsPressed()){
 
             this.speedX *= this.desc
@@ -300,9 +335,9 @@ export default class Player extends Positionable {
             this.speedX * -1,
             this.speedY * -1
         )
+    }
 
-        // SHOOTS
-
+    private shotsStep(): void {
         this.shootRating.interval = this.fireRate
 
         if(this.shootRating.canTrigger()){
@@ -342,12 +377,9 @@ export default class Player extends Positionable {
 
         this.shots = this.shots.filter(shoot => !shoot.isOutOfLimits() )
         this.shots.forEach(shoot => shoot.step() )
-
     }
 
-    public draw(): void {
-        this.shots.forEach(shoot => shoot.draw() )
-        if(this.killed) return
+    private drawPlayer(): void {
         if(this.app.lightMode) this.p.noStroke()
         else {
             this.p.stroke(0)
@@ -355,6 +387,9 @@ export default class Player extends Positionable {
         }
         this.p.fill(200,200,255)
         this.p.ellipse(this.x,this.y,this.diameter)
+    }
+
+    private drawLifeBar(): void {
         this.p.fill(0,100)
         this.p.stroke(this.app.light)
         this.p.strokeWeight(1)
@@ -370,83 +405,88 @@ export default class Player extends Positionable {
             Math.max(0,this.p.map( this.life || this.baseLife, 0, this.baseLife, 0, 80 )),
             14, 5
         )
-        if(this.combo){
-            if(this.combo.multiplicator > 1){
-                this.p.fill(this.app.light,Math.min(255,this.p.map(
-                    this.party.time,
-                    this.combo.time,
-                    this.combo.time + this.comboTimeout,
-                    500,
-                    0
-                )))
-                this.p.noStroke()
-                this.p.textAlign(this.p.LEFT,this.p.CENTER)
-                this.p.textSize(
-                    this.diameter * .6 +
-                    constrain( map( Date.now(),
-                        this.combo.time,
-                        this.combo.time + 500,
-                        50,
-                        0
-                    ),0,this.diameter * .3)
-                )
-                this.p.text(
-                    `x${this.combo.multiplicator}`,
-                    this.x + this.diameter * 1.6,
-                    this.y
-                )
-            }
-            const timeBar = this.p.map(
-                this.party.time,
-                this.combo.time,
-                this.combo.time + this.comboTimeout,
-                1, 0
-            )
-            const stateBar = Math.min(1,this.p.map(
-                this.combo.hits,
-                (this.combo.multiplicator - 1) * this.comboStateSize,
-                this.combo.multiplicator * this.comboStateSize,
-                0, 1
-            ))
-            this.p.noStroke()
-            this.p.fill(
-                this.p.map( timeBar, 0, 1, 255, 50 ),50,
-                this.p.map( timeBar, 0, 1, 50, 255 ),200
-            )
-            this.p.rect(
-                this.x + this.diameter,
-                this.y + this.diameter * -.5 + this.p.map( timeBar, 0, 1, this.diameter, 0 ),
-                this.diameter * .3,
-                this.diameter - this.p.map( timeBar, 0, 1, this.diameter, 0 ),
-                5
-            )
-            this.p.fill(200,50,200,200)
-            this.p.rect(
-                this.x + this.diameter * .7,
-                this.y + this.diameter * -.5 + this.p.map( stateBar, 0, 1, this.diameter, 0 ),
-                this.diameter * .3,
-                this.diameter - this.p.map( stateBar, 0, 1, this.diameter, 0 ),
-                5
-            )
+    }
 
-            this.p.noFill()
-            this.p.stroke(this.app.light,200)
-            this.p.strokeWeight(1)
-            this.p.rect(
-                this.x + this.diameter * .7,
-                this.y + this.diameter * -.5,
-                this.diameter * .3,
-                this.diameter,
-                5
-            )
-            this.p.rect(
-                this.x + this.diameter,
-                this.y + this.diameter * -.5,
-                this.diameter * .3,
-                this.diameter,
-                5
-            )
-        }
+    private drawMultiplicator(): void {
+        this.p.fill(this.app.light,Math.min(255,this.p.map(
+            this.party.time,
+            this.combo.time,
+            this.combo.time + this.comboTimeout,
+            500,
+            0
+        )))
+        this.p.noStroke()
+        this.p.textAlign(this.p.LEFT,this.p.CENTER)
+        this.p.textSize(
+            this.diameter * .6 +
+            constrain( map( Date.now(),
+                this.combo.time,
+                this.combo.time + 500,
+                50,
+                0
+            ),0,this.diameter * .3)
+        )
+        this.p.text(
+            `x${this.combo.multiplicator}`,
+            this.x + this.diameter * 1.6,
+            this.y
+        )
+    }
+
+    private drawComboBars(): void {
+        const timeBar = this.p.map(
+            this.party.time,
+            this.combo.time,
+            this.combo.time + this.comboTimeout,
+            1, 0
+        )
+        const stateBar = Math.min(1,this.p.map(
+            this.combo.hits,
+            (this.combo.multiplicator - 1) * this.comboStateSize,
+            this.combo.multiplicator * this.comboStateSize,
+            0, 1
+        ))
+        this.p.noStroke()
+        this.p.fill(
+            this.p.map( timeBar, 0, 1, 255, 50 ),50,
+            this.p.map( timeBar, 0, 1, 50, 255 ),200
+        )
+        this.p.rect(
+            this.x + this.diameter,
+            this.y + this.diameter * -.5 + this.p.map( timeBar, 0, 1, this.diameter, 0 ),
+            this.diameter * .3,
+            this.diameter - this.p.map( timeBar, 0, 1, this.diameter, 0 ),
+            5
+        )
+        this.p.fill(200,50,200,200)
+        this.p.rect(
+            this.x + this.diameter * .7,
+            this.y + this.diameter * -.5 + this.p.map( stateBar, 0, 1, this.diameter, 0 ),
+            this.diameter * .3,
+            this.diameter - this.p.map( stateBar, 0, 1, this.diameter, 0 ),
+            5
+        )
+
+        this.p.noFill()
+        this.p.stroke(this.app.light,200)
+        this.p.strokeWeight(1)
+        this.p.rect(
+            this.x + this.diameter * .7,
+            this.y + this.diameter * -.5,
+            this.diameter * .3,
+            this.diameter,
+            5
+        )
+        this.p.rect(
+            this.x + this.diameter,
+            this.y + this.diameter * -.5,
+            this.diameter * .3,
+            this.diameter,
+            5
+        )
+    }
+
+    private drawTemporaries(): void {
         let flagIndex = 0
         for(const flag in this.temporary){
             if(this.getTemporary(flag)){
@@ -483,6 +523,9 @@ export default class Player extends Positionable {
                 flagIndex ++
             }
         }
+    }
+
+    private drawBonus(): void {
         const bonusLength = this.consumables.length + this.passives.length
         if(bonusLength > 0){
             this.p.fill(0,100)
@@ -519,24 +562,5 @@ export default class Player extends Positionable {
                 }
             })
         }
-
-        if(this.app.debug){
-
-        }
-
     }
-
-    public keyPressed(key:string): void {
-        this.app.keyMode.numeric.forEach( (keys, i) => {
-            if(keys.includes(key) && this.consumables[i]){
-                this.consumables[i].exec()
-                this.consumables[i].quantity --
-                if(this.consumables[i].quantity <= 0)
-                    this.consumables = this.consumables.filter( c => {
-                        return c.id !== this.consumables[i].id
-                    })
-            }
-        })
-    }
-
 }

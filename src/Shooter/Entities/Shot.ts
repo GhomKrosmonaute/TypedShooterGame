@@ -14,7 +14,6 @@ export default class Shot extends Positionable {
     public readonly damage:number
     private piercingShots:number = 1
     private toIgnore:Enemy[] = []
-    private currentTarget:Positionable
 
     constructor(
         public player:Player,
@@ -52,6 +51,7 @@ export default class Shot extends Positionable {
         const explosiveShots = this.player.getPassive('explosiveShots')
         if(explosiveShots){
             this.player.party.setAnimation(explosion({
+                className: 'low',
                 duration: 100,
                 position: { x: this.x, y: this.y },
                 value: explosiveShots.value * 2
@@ -64,11 +64,11 @@ export default class Shot extends Positionable {
     }
 
     public step(): void {
-        this.currentTarget = null
         if(this.rawDist(this.basePosition) > this.player.shotRange){
             this.terminate()
         }else{
             const autoFireGuidance = this.player.getPassive('autoFireGuidance')
+            let target:Vector2D
             if(autoFireGuidance){
                 const temp:{
                     enemy: Enemy
@@ -87,11 +87,10 @@ export default class Shot extends Positionable {
                     }
 
                 }
-                this.currentTarget = temp.enemy
+                target = temp.enemy
             }
-            if(this.currentTarget){
-                this.scapegoat.follow(this.currentTarget,this.speed * 1.5)
-                this.follow(this.scapegoat,this.speed)
+            if(target){
+                this.target(target,.05)
             }else{
                 this.scapegoat.place(this)
                 this.follow(this.direction,this.speed)
@@ -101,7 +100,8 @@ export default class Shot extends Positionable {
 
     public draw(): void {
         if(this.isOnScreen()){
-            if(this.player.party.app.lightMode) this.p.noStroke()
+            if(this.player.party.app.lightMode)
+                this.p.noStroke()
             else {
                 this.p.stroke(0)
                 this.p.strokeWeight(1)
@@ -110,7 +110,7 @@ export default class Shot extends Positionable {
             this.p.ellipse(
                 this.x,
                 this.y,
-                fade( this.p, this.diameter,
+                fade( this.diameter,
                     {
                         value: this.rawDist(this.player),
                         valueMax: this.player.shotRange,
@@ -123,34 +123,6 @@ export default class Shot extends Positionable {
                     }
                 )
             )
-        }
-        if(this.player.app.debug){
-            this.p.strokeWeight(1)
-            this.p.noFill()
-            this.p.stroke(255,0,0)
-            this.p.ellipse(
-                this.basePosition.x,
-                this.basePosition.y,
-                this.player.shotRange * 2
-            )
-            const autoFireGuidance = this.player.getPassive('autoFireGuidance')
-            if(autoFireGuidance){
-                this.p.ellipse(
-                    this.x,
-                    this.y,
-                    autoFireGuidance.value
-                )
-                this.p.line( this.x, this.y,
-                    this.scapegoat.x,
-                    this.scapegoat.y
-                )
-                this.p.line(
-                    this.scapegoat.x,
-                    this.scapegoat.y,
-                    this.currentTarget.x,
-                    this.currentTarget.y
-                )
-            }
         }
     }
 }

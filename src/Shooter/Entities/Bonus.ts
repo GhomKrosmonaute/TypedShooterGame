@@ -3,6 +3,7 @@ import Variation from './Variation'
 import Party from './Scenes/Party'
 import Positionable from './Positionable'
 import textFadeOut from '../Animations/textFadeOut'
+import { map } from '../../utils';
 
 export default abstract class Bonus extends Positionable {
 
@@ -58,6 +59,7 @@ export default abstract class Bonus extends Positionable {
         const description = this.description.replace('{value}', value)
         this.party.setAnimation(textFadeOut({
             position: this,
+            className: 'high',
             attach: true,
             duration: 500,
             value: {
@@ -65,6 +67,22 @@ export default abstract class Bonus extends Positionable {
                 color: this.p.color(this.app.light)
             }
         }))
+        this.party.setAnimation({
+            position: this,
+            className: 'low',
+            duration: 400,
+            value: null,
+            draw: a => {
+                a.p.noFill()
+                a.p.stroke(255,140,0,a.map(255,0))
+                a.p.strokeWeight(3)
+                a.p.ellipse(
+                    a.position.x,
+                    a.position.y,
+                    a.map(10,100)
+                )
+            }
+        })
         this.party.setPopup(`${this.displayName} : ${description}`)
     }
 }
