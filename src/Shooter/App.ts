@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
 import fontUrl from './fonts/Baloo2-Regular.ttf'
-import {KeyMode, Keys, SceneName, Vector2D} from '../interfaces'
+import {KeyMode, Keys, Palette, SceneName, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {keyModes, VERSION} from '../config';
 import Party from './Entities/Scenes/Party';
@@ -14,6 +14,7 @@ import Zone from './Entities/Zone';
 import Variation from './Entities/Variation';
 import Cursor from './Entities/Cursor';
 import Particles from './Entities/Particles';
+import Color from './Entities/Color';
 
 export default class App {
 
@@ -40,7 +41,11 @@ export default class App {
     public lightModeTransition:number
     public keyModes:KeyMode[] = keyModes
 
-    constructor( public p:p5, public api:API ){
+    constructor(
+        public p:p5,
+        public colors:Palette,
+        public api:API
+    ){
 
         const storage = localStorage.getItem('shooter')
         if( !storage || JSON.parse(storage).version !== this.version )
@@ -180,27 +185,42 @@ export default class App {
         return this.keyModes[this.keyModeIndex]
     }
 
-    public keyIsPressed( type:'move'|'shoot', direction:'up'|'down'|'left'|'right' ): boolean {
-        for(const key in this.keys) if(this.keys[key]) if(this.keyMode[type][direction].includes(key)) return true
-        return false
-    }
-
     public get keyModeIndex(): number { return this.api.load('keyModeIndex') }
     public set keyModeIndex( index:number ){ this.api.save('keyModeIndex',index) }
+
     public get lightMode(): boolean { return this.api.load('lightMode') }
     public set lightMode(isActivate:boolean ){ this.api.save('lightMode',isActivate) }
+
     public get dark(): number { return this.lightModeTransition  }
     public get light(): number { return 255 - this.lightModeTransition }
+
+    public get color(): p5.Color {
+        return this.red(.5)
+    }
+    public red( proportion:number = 1, alpha:number = 1 ): p5.Color {
+        const red = this.colors.blue.fusion(this.colors.red,proportion)
+        const color = this.p.color(...red.rgb)
+        color.setAlpha(255 * alpha)
+        return color
+    }
+    public blue( proportion:number = 1, alpha:number = 1 ): p5.Color {
+        return this.red(1-proportion,alpha)
+    }
+    public alpha( proportion:number = 1 ): p5.Color {
+        return this.red(.5,proportion)
+    }
 
     public lightAt( light:number ): number {
         return this.p.map(light,0,255,this.dark,this.light)
     }
 
-    public mouseMoved(): void {
-        this.cursor.mouseMoved()
+    public keyIsPressed( type:'move'|'shoot', direction:'up'|'down'|'left'|'right' ): boolean {
+        for(const key in this.keys) if(this.keys[key]) if(this.keyMode[type][direction].includes(key)) return true
+        return false
     }
 
     public keyReleased(key:string): void { this.keys[key] = false }
+
     public keyPressed(key:string): void { this.keys[key] = true
         if(!this.scene.form || !this.scene.form.focus){
             if(this.keyMode.shortcuts.lightMode.includes(key)) this.switchLightMode()
@@ -212,13 +232,10 @@ export default class App {
         } this.scene.keyPressed(key)
     }
 
-    mousePressed(){
-        if(this.scene.form) this.scene.form.mousePressed()
-        this.scene.links.forEach( link => link.mousePressed() )
-    }
-
     public moveKeyIsPressed(): boolean { return this.directionalKeyIsPressed('move') }
+
     public shootKeyIsPressed(): boolean { return this.directionalKeyIsPressed('shoot') }
+
     private directionalKeyIsPressed( type:'shoot'|'move' ): boolean {
         for(const key in this.keys)
             if(this.keys[key])
@@ -229,6 +246,13 @@ export default class App {
                     this.keyMode[type].right.includes(key)
                 ) return true
         return false
+    }
+    public mouseMoved(): void {
+        this.cursor.mouseMoved()
+    }
+    public mousePressed(){
+        if(this.scene.form) this.scene.form.mousePressed()
+        this.scene.links.forEach( link => link.mousePressed() )
     }
 
     public switchGamepad(): void {

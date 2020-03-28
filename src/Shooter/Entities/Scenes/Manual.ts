@@ -47,7 +47,7 @@ export default class Manual extends Scene {
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         if(this.app.useGamepad){
             this.p.noStroke()
-            this.p.fill(255,0,255)
+            this.p.fill(this.app.color)
             this.p.textSize(20)
             this.p.text(
                 JSON.stringify(this.app.gamepad,null,2),

@@ -107,7 +107,7 @@ export default class Tesla extends Enemy {
 
     onDraw(): void {
         this.p.noStroke()
-        this.p.fill(200,100,255)
+        this.p.fill(this.app.blue(.4))
         this.p.ellipse(
             this.x,
             this.y,

@@ -1,6 +1,7 @@
 import App from '../App'
 import p5 from 'p5'
 import Positionable from './Positionable';
+import { random } from '../../utils';
 
 export default class Particles extends Positionable {
 
@@ -47,7 +48,7 @@ class Particle extends Positionable {
     }
 
     private reset(){
-        this.color = this.p.color(this.p.random(100,255),0,this.p.random(100,255))
+        this.color = this.parent.app.red(random(.3,.7))
         this.intensity = 0
         this._diameter = this.p.random( this.parent.min, this.parent.max )
         this.x = this.p.random( this.p.width * -.5, this.p.width * .5 )

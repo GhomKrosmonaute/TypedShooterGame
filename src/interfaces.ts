@@ -7,6 +7,7 @@ import createSpyObj = jasmine.createSpyObj;
 import Scene from './Shooter/Entities/Scene';
 import Input from './Shooter/Entities/Input';
 import Animation from './Shooter/Entities/Animation';
+import Color from './Shooter/Entities/Color';
 
 interface BonusExtender extends Bonus {
     shape: ShapeFunction
@@ -111,3 +112,11 @@ export interface LinkOptions {
     resetOld?:boolean
     text?:string
 }
+
+export interface Palette {
+    blue:Color
+    red:Color
+}
+
+export type ColorResolvable = RGB | p5.Color | string | Color
+export type RGB = [number,number,number]

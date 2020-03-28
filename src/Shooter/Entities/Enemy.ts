@@ -61,7 +61,7 @@ export default abstract class Enemy extends Positionable {
             this.onDraw()
             this.p.pop()
         }else{
-            this.p.fill(200,0,100,200)
+            this.p.fill(this.app.alpha(.3))
             this.p.noStroke()
         }
         this.showIfNotOnScreen()

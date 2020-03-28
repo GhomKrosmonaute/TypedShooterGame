@@ -1,6 +1,7 @@
 import Enemy from '../Enemy';
 import Shot from "../Shot";
 import Party from '../Scenes/Party';
+import {constrain} from '../../../utils';
 
 export default class BlobMob extends Enemy {
 
@@ -70,11 +71,7 @@ export default class BlobMob extends Enemy {
 
     onDraw(): void {
         this.p.noStroke()
-        this.p.fill(
-            Math.min(this.p.map(this.gain, 1, 10, 100, 255),255),
-            80,
-            Math.max(this.p.map(this.gain, 1, 10, 255, 100),100)
-        )
+        this.p.fill(this.app.red(constrain(this.p.map(this.gain, 1, 10, .2, .8),.2,.8)))
         this.p.ellipse(
             this.x,
             this.y,

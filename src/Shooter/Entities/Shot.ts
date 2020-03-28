@@ -9,7 +9,6 @@ export default class Shot extends Positionable {
 
     public readonly basePosition:Positionable
     public readonly direction:Positionable
-    private readonly scapegoat:Positionable
     private readonly speed:number
     public readonly damage:number
     private piercingShots:number = 1
@@ -21,7 +20,6 @@ export default class Shot extends Positionable {
         directionY:number
     ){
         super( player.p, player.x, player.y, player.shotSize )
-        this.scapegoat = new Positionable( this.p, this.x, this.y )
         this.direction = new Positionable( this.p,
             directionX * 5000,
             directionY * 5000
@@ -90,9 +88,8 @@ export default class Shot extends Positionable {
                 target = temp.enemy
             }
             if(target){
-                this.target(target,.05)
+                this.follow(target,this.speed)
             }else{
-                this.scapegoat.place(this)
                 this.follow(this.direction,this.speed)
             }
         }

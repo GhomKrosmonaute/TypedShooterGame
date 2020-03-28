@@ -6,15 +6,23 @@ import qs from 'querystring'
 import App from './Shooter/App'
 import { getInput } from './utils'
 import {baseURL, siteKey} from './config'
-import API from './Shooter/API';
+import API from './Shooter/API'
+import Color from './Shooter/Entities/Color';
+import {Palette} from './interfaces';
 
-function sketch( p:p5, apiToken:string ){
+let started:boolean = false
+
+function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 
     let app:App = null
 
     p.setup = () => {
         p.createCanvas(p.windowWidth,p.windowHeight)
-        app = new App(p,new API(apiToken))
+        const colors:Palette = {
+            blue: new Color(p,hexColors[0]),
+            red: new Color(p,hexColors[1])
+        }
+        app = new App(p,colors,new API(apiToken))
     }
 
     p.draw = async () => {
@@ -69,23 +77,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         submit.onclick = async event => {
 
+            if(started) return false
+
             event.preventDefault()
 
             const username = getInput('username').value
             const password = getInput('password').value
+            const hexColors:[string,string] = [
+                getInput('red').value,
+                getInput('blue').value
+            ]
 
             grecaptcha.execute(siteKey, { action: 'login' }).then(async function(token) {
                 try {
                     const res = await axios.post('login', qs.stringify({ token, username, password }),{ baseURL })
                     if( res.status === 200 ){
+                        started = true
                         document.getElementById('login').remove()
-                        new p5(p => sketch(p,res.data.token), document.getElementById('p5') )
+                        new p5(p => sketch(p,hexColors,res.data.token), document.getElementById('p5') )
                         document.getElementById('p5').focus()
                     }
                 }catch(error){
-                    if(error.message.includes(401)) document.getElementById('alert').innerText = 'Incorrect password, please retry !'
-                    if(error.message.includes(501)) document.getElementById('alert').innerText = 'You may already have an account using this ip address.'
-                    if(error.message.includes(500)) document.getElementById('alert').innerText = 'reCAPTCHA token denied.'
+                    const alert = document.getElementById('alert')
+                    if(error.message.includes(401)) alert.innerText = 'Incorrect password, please retry !'
+                    else if(error.message.includes(501)) alert.innerText = 'You may already have an account using this ip address.'
+                    else if(error.message.includes(500)) alert.innerText = 'reCAPTCHA token denied.'
                     else throw error
                 }
             })
