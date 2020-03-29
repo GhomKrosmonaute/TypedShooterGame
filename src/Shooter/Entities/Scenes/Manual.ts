@@ -121,7 +121,7 @@ export default class Manual extends Scene {
             zone.fractionHeight((1/6) * 2),
             true
         )
-        this.p.fill(255,0,200)
+        this.p.fill(this.app.color)
         this.p.noStroke()
         this.p.textSize(30)
         this.p.text( type.toUpperCase(),
@@ -163,6 +163,7 @@ export default class Manual extends Scene {
             shift5.y + zone.start.y,
             size
         )
+        this.p.fill(this.app.color)
         this.p.textSize(20)
         this.p.text(
             name,
@@ -180,7 +181,7 @@ export default class Manual extends Scene {
         const shift5 = this.app.mouseShift(5)
         this.p.noFill()
         this.p.strokeWeight(1)
-        this.p.stroke(255,0,200)
+        this.p.stroke(this.app.color)
         this.p.rect(
             x + 5,
             y + 5,
@@ -188,7 +189,7 @@ export default class Manual extends Scene {
             size - 10
         )
         this.p.noStroke()
-        this.p.fill(255,0,200)
+        this.p.fill(this.app.color)
         this.p.textSize(key.length === 1 ? 30 : 20)
         this.p.text( key.length === 1 ? key.toUpperCase() : key,
             shift5.x + x + size * .5,

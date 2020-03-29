@@ -26,7 +26,7 @@ export default class ShieldPiercer extends Enemy {
     }
 
     public pattern(): void {
-        this.follow(this.party.player, this.speed)
+        this.follow(this.party.player, this.speed, 10)
     }
 
     onPlayerContact(): void {

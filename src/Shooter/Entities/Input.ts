@@ -33,7 +33,7 @@ export default class Input extends Zone {
     draw(){
         if(this.value === undefined) return
         const hover = this.touchVector(this.app.mouseFromCenter)
-        const color = this.focus ? this.p.color(this.app.light) : this.p.color(255,0,200)
+        const color = this.focus ? this.p.color(this.app.white) : this.app.color
         // rect
         this.p.strokeWeight(hover ? 4 : 2)
         this.p.stroke(color)

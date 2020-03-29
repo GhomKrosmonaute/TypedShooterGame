@@ -57,7 +57,7 @@ export default class Scores extends Scene {
             const color = (
                 this.leaderBoard.player.position === index + 1 ||
                 !!player.position
-            ) ? this.p.color(this.app.light) : this.p.color(255,0,200)
+            ) ? this.p.color(this.app.white) : this.app.color
             const {y} = leaderBoardZone.fraction(0,(1/30)*index)
             const size = leaderBoardZone.fraction(1,1/30,true)
             const rankZone = new Zone(

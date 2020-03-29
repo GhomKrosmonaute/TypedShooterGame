@@ -62,7 +62,7 @@ export default class Profile extends Scene {
 
     draw() {
         this.p.noStroke()
-        this.p.fill(255,0,255)
+        this.p.fill(this.app.color)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(35)
         this.p.text( this.title,0,this.p.height * -.35)

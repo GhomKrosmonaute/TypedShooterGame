@@ -9,7 +9,7 @@ export default function popup( options:PopupOptions ): AnimationOptions {
         draw: a => {
             const shift = a.value.index * (a.p.height * .1)
             a.p.noStroke()
-            a.p.fill(a.scene.app.light, fade(30, {
+            a.p.fill(a.scene.app.white, fade(30, {
                 value: a.time,
                 valueMax: a.duration,
                 overflow: 7
@@ -20,7 +20,7 @@ export default function popup( options:PopupOptions ): AnimationOptions {
                 a.p.width,
                 a.p.height * .1
             )
-            a.p.fill(a.scene.app.light, fade(255, {
+            a.p.fill(a.scene.app.white, fade(255, {
                 value: a.time,
                 valueMax: a.duration,
                 overflow: 4

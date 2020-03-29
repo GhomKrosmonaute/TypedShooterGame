@@ -6,7 +6,7 @@ import {constrain} from '../../../utils';
 export default class BlobMob extends Enemy {
 
     public immune: boolean = false
-    public speed: number = 2
+    public speed: number = 3
     public damage: number = 2
     public gain: number = 1
     public life: number = 2
@@ -30,7 +30,8 @@ export default class BlobMob extends Enemy {
     pattern(): void {
         this.follow(
             this.party.player,
-            this.speed
+            this.speed,
+            10
         )
         this.party.enemies.forEach( enemy => {
             if(

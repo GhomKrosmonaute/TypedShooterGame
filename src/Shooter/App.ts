@@ -103,7 +103,7 @@ export default class App {
     }
 
     public async draw(){
-        this.p.background(this.dark)
+        this.p.background(this.black)
         this.p.translate(
             this.p.width * .5,
             this.p.height * .5
@@ -114,7 +114,7 @@ export default class App {
         this.scene.links.forEach( link => link.draw() )
         if(this.scene.form)
             this.scene.form.draw()
-        this.p.fill(this.light,40)
+        this.p.fill(this.white,40)
         this.p.noStroke()
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(15)
@@ -191,8 +191,8 @@ export default class App {
     public get lightMode(): boolean { return this.api.load('lightMode') }
     public set lightMode(isActivate:boolean ){ this.api.save('lightMode',isActivate) }
 
-    public get dark(): number { return this.lightModeTransition  }
-    public get light(): number { return 255 - this.lightModeTransition }
+    public get black(): number { return this.lightModeTransition  }
+    public get white(): number { return 255 - this.lightModeTransition }
 
     public get color(): p5.Color {
         return this.red(.5)
@@ -209,9 +209,19 @@ export default class App {
     public alpha( proportion:number = 1 ): p5.Color {
         return this.red(.5,proportion)
     }
+    public light( proportion:number, alpha:number = 1 ): p5.Color {
+        const base = new Color(this.p,this.color)
+        const light = base.fusion([255,255,255],proportion)
+        const color = this.p.color(...light.rgb)
+        color.setAlpha(255 * alpha)
+        return color
+    }
+    public dark( proportion:number, alpha:number = 1 ): p5.Color {
+        return this.light(1-proportion,alpha)
+    }
 
     public lightAt( light:number ): number {
-        return this.p.map(light,0,255,this.dark,this.light)
+        return this.p.map(light,0,255,this.black,this.white)
     }
 
     public keyIsPressed( type:'move'|'shoot', direction:'up'|'down'|'left'|'right' ): boolean {

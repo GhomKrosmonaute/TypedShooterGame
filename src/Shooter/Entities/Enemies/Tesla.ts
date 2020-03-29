@@ -4,7 +4,7 @@ import Party from '../Scenes/Party'
 import Shot from "../Shot";
 import {Vector2D} from "../../../interfaces";
 import { arc } from '../../Shapes/arc';
-import { isOnArc } from '../../../utils';
+import {isOnArc, random} from '../../../utils';
 
 export default class Tesla extends Enemy {
 
@@ -74,7 +74,7 @@ export default class Tesla extends Enemy {
             { x: this.arcSize * .4, y: this.arcSize * .4 }
         ][this.cardinalIndex]
 
-        this.follow(target, this.speed)
+        this.follow(target, this.speed, 10)
 
     }
 
@@ -99,14 +99,15 @@ export default class Tesla extends Enemy {
     overDraw(): void {
         for(const tesla of this.connections){
             if(isOnArc(this,tesla,this.party.player,(tesla.arcWeight + this.arcWeight) * .5)) {
-                arc( this.p, this.party.player, tesla, tesla.arcWeight)
-                arc( this.p, this.party.player, this, this.arcWeight )
+                arc( this.app, this.party.player, tesla, tesla.arcWeight)
+                arc( this.app, this.party.player, this, this.arcWeight )
             } else this.arc(tesla)
         }
     }
 
     onDraw(): void {
-        this.p.noStroke()
+        this.p.strokeWeight(random(2,5))
+        this.p.stroke(this.app.red(random(.1,.5)))
         this.p.fill(this.app.blue(.4))
         this.p.ellipse(
             this.x,
@@ -116,7 +117,7 @@ export default class Tesla extends Enemy {
     }
 
     arc( tesla:Tesla ): void {
-        arc( this.p, this, tesla, (this.arcWeight + tesla.arcWeight) * .5)
+        arc( this.app, this, tesla, (this.arcWeight + tesla.arcWeight) * .5)
     }
 
     public get currentDiameter(){

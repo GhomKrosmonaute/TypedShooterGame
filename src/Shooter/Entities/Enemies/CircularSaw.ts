@@ -60,6 +60,7 @@ export default class CircularSaw extends Enemy {
             this.x,
             this.y
         )
+        this.p.angleMode(this.p.DEGREES)
         this.p.rotate(this.rotation)
         star(
             this.p,
@@ -69,9 +70,9 @@ export default class CircularSaw extends Enemy {
             this.diameter * .5,
             12
         )
-        this.p.strokeWeight(3)
         this.p.fill(80)
-        this.p.stroke(200,0,100)
+        this.p.strokeWeight(3)
+        this.p.stroke(this.app.red(.7))
         this.p.ellipse(
             0,
             0,

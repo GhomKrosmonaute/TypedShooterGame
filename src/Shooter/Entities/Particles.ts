@@ -48,7 +48,7 @@ class Particle extends Positionable {
     }
 
     private reset(){
-        this.color = this.parent.app.red(random(.3,.7))
+        this.color = this.parent.app.red(Math.random())
         this.intensity = 0
         this._diameter = this.p.random( this.parent.min, this.parent.max )
         this.x = this.p.random( this.p.width * -.5, this.p.width * .5 )

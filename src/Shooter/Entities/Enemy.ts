@@ -6,8 +6,9 @@ import Party from './Scenes/Party'
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
 import {constrain} from '../../utils';
+import Dirigible from './Dirigible';
 
-export default abstract class Enemy extends Positionable {
+export default abstract class Enemy extends Dirigible {
 
     protected readonly MIN_DIAMETER = 15
     protected baseGain:number
@@ -102,7 +103,7 @@ export default abstract class Enemy extends Positionable {
                 duration: 500,
                 value: {
                     text: `+ ${this.gain} pts`,
-                    color: this.p.color(this.app.light)
+                    color: this.p.color(this.app.white)
                 }
             }))
 

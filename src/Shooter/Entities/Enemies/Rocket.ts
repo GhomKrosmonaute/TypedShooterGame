@@ -75,6 +75,7 @@ export default class Rocket extends Enemy {
             this.x,
             this.y
         )
+        this.p.angleMode(this.p.DEGREES)
         this.p.rotate(this.rotation)
         if(this.party.time < this.lockTime){
             color = this.p.color(255,0,0,100)
@@ -96,8 +97,7 @@ export default class Rocket extends Enemy {
         this.p.strokeWeight(this.diameter * .2)
         this.p.ellipse(0,0,this.diameter)
         this.p.fill(color)
-        this.p.noStroke()
-        this.p.angleMode(this.p.DEGREES);
+        this.p.noStroke();
         [90,90,90,90].forEach( angle => {
             this.p.rotate(angle)
             this.p.rect(

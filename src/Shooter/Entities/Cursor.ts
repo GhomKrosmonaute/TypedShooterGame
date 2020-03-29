@@ -1,7 +1,8 @@
-import Positionable from './Positionable';
-import App from '../App';
 
-export default class Cursor extends Positionable {
+import App from '../App';
+import Dirigible from './Dirigible';
+
+export default class Cursor extends Dirigible {
 
     private readonly baseFadeOut = 1000
     private fadeOut = 0
@@ -33,11 +34,11 @@ export default class Cursor extends Positionable {
                 0,
                 255
             )
-            this.p.fill(this.app.light, alpha)
+            this.p.fill(this.app.white, alpha)
             this.p.noStroke()
             this.p.ellipse(this.x,this.y,this.diameter)
             this.p.noFill()
-            this.p.stroke(this.app.light, alpha)
+            this.p.stroke(this.app.white, alpha)
             this.p.strokeWeight(2)
             this.p.ellipse(this.x,this.y,this.auraDiameter)
         }

@@ -64,7 +64,7 @@ export default abstract class Bonus extends Positionable {
             duration: 500,
             value: {
                 text: `+ 1 pts`,
-                color: this.p.color(this.app.light)
+                color: this.p.color(this.app.white)
             }
         }))
         this.party.setAnimation({

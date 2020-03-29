@@ -9,7 +9,8 @@ import API from '../API';
 import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
-import {constrain, map} from '../../utils';
+import {constrain, map, norm} from '../../utils';
+import Angle from './Angle';
 
 export default class Player extends Positionable {
 
@@ -173,7 +174,7 @@ export default class Player extends Positionable {
             duration: 500,
             value: {
                 text: `+ ${this.combo ? score * this.combo.multiplicator : score} pts`,
-                color: this.p.color(this.app.light)
+                color: this.p.color(this.app.white)
             }
         }))
     }
@@ -341,35 +342,72 @@ export default class Player extends Positionable {
         this.shootRating.interval = this.fireRate
 
         if(this.shootRating.canTrigger()){
-            const direction = {
-                x: this.p.map(this.speedX * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4),
-                y: this.p.map(this.speedY * .5, this.speedMax * -.5, this.speedMax * .5, -.4, .4)
+            const shift = {
+                x: map(this.speedX, this.speedMax * -1, this.speedMax, -30, 30),
+                y: map(this.speedY, this.speedMax * -1, this.speedMax, -30, 30)
             }
             if(this.getTemporary('starBalls')){
                 if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
-                    this.shots.push(
-                        new Shot( this,1 + direction.x, direction.y),
-                        new Shot( this,-1 + direction.x, direction.y),
-                        new Shot( this, direction.x,1 + direction.y),
-                        new Shot( this, direction.x,-1 + direction.y),
-                        new Shot( this,1 + direction.x,1 + direction.y),
-                        new Shot( this,-1 + direction.x,1 + direction.y),
-                        new Shot( this,1 + direction.x,-1 + direction.y),
-                        new Shot( this,-1 + direction.x,-1 + direction.y)
-                    )
+                    for(let i=0; i<8; i++)
+                        this.shots.push(new Shot( this,i * 45))
                 }
             }else{
-                if(this.app.keyIsPressed('shoot','up')) direction.y -= 1
-                if(this.app.keyIsPressed('shoot','left')) direction.x -= 1
-                if(this.app.keyIsPressed('shoot','down')) direction.y += 1
-                if(this.app.keyIsPressed('shoot','right')) direction.x += 1
                 if(this.app.shootKeyIsPressed()){
                     this.shootRating.trigger()
-                    this.shots.push( new Shot( this,
-                        direction.x,
-                        direction.y
-                    ))
+                    if(
+                        (
+                            this.app.keyIsPressed('shoot','up') &&
+                            this.app.keyIsPressed('shoot','left') &&
+                            this.app.keyIsPressed('shoot','right')
+                        ) || (
+                            this.app.keyIsPressed('shoot','up') &&
+                            !this.app.keyIsPressed('shoot','left') &&
+                            !this.app.keyIsPressed('shoot','right')
+                        )
+                    ){ this.shots.push(new Shot(this,90 + shift.x)) } else if(
+                        (
+                            this.app.keyIsPressed('shoot','down') &&
+                            this.app.keyIsPressed('shoot','left') &&
+                            this.app.keyIsPressed('shoot','right')
+                        ) || (
+                            this.app.keyIsPressed('shoot','down') &&
+                            !this.app.keyIsPressed('shoot','left') &&
+                            !this.app.keyIsPressed('shoot','right')
+                        )
+                    ){ this.shots.push(new Shot(this,270 - shift.x)) } else if(
+                        (
+                            this.app.keyIsPressed('shoot','left') &&
+                            this.app.keyIsPressed('shoot','up') &&
+                            this.app.keyIsPressed('shoot','down')
+                        ) || (
+                            this.app.keyIsPressed('shoot','left') &&
+                            !this.app.keyIsPressed('shoot','up') &&
+                            !this.app.keyIsPressed('shoot','down')
+                        )
+                    ){ this.shots.push(new Shot(this,-shift.y)) } else if(
+                        (
+                            this.app.keyIsPressed('shoot','right') &&
+                            this.app.keyIsPressed('shoot','up') &&
+                            this.app.keyIsPressed('shoot','down')
+                        ) || (
+                            this.app.keyIsPressed('shoot','right') &&
+                            !this.app.keyIsPressed('shoot','up') &&
+                            !this.app.keyIsPressed('shoot','down')
+                        )
+                    ){ this.shots.push(new Shot(this,180 + shift.y)) } else if(
+                        this.app.keyIsPressed('shoot','up') &&
+                        this.app.keyIsPressed('shoot','right')
+                    ){ this.shots.push(new Shot(this,135)) } else if(
+                        this.app.keyIsPressed('shoot','down') &&
+                        this.app.keyIsPressed('shoot','right')
+                    ){ this.shots.push(new Shot(this,225)) } else if(
+                        this.app.keyIsPressed('shoot','down') &&
+                        this.app.keyIsPressed('shoot','left')
+                    ){ this.shots.push(new Shot(this,315)) } else if(
+                        this.app.keyIsPressed('shoot','up') &&
+                        this.app.keyIsPressed('shoot','left')
+                    ){ this.shots.push(new Shot(this,45)) }
                 }
             }
 
@@ -385,20 +423,18 @@ export default class Player extends Positionable {
             this.p.stroke(0)
             this.p.strokeWeight(1)
         }
-        this.p.fill(200,200,255)
+        this.p.fill(this.app.light(.8))
         this.p.ellipse(this.x,this.y,this.diameter)
     }
 
     private drawLifeBar(): void {
         this.p.fill(0,100)
-        this.p.stroke(this.app.light)
+        this.p.stroke(this.app.white)
         this.p.strokeWeight(1)
         this.p.rect(this.x - 40,this.y - 50,80,14,5)
         this.p.noStroke()
-        this.p.fill(
-            this.p.map( this.life || this.baseLife, 0, this.baseLife, 255, 50 ),50,
-            this.p.map( this.life || this.baseLife, 0, this.baseLife, 50, 255 ),200
-        )
+        const color = this.app.red(norm( this.life || this.baseLife, 0, this.baseLife ), .7)
+        this.p.fill(color)
         this.p.rect(
             this.x - 40,
             this.y - 50,
@@ -408,7 +444,7 @@ export default class Player extends Positionable {
     }
 
     private drawMultiplicator(): void {
-        this.p.fill(this.app.light,Math.min(255,this.p.map(
+        this.p.fill(this.app.white,Math.min(255,this.p.map(
             this.party.time,
             this.combo.time,
             this.combo.time + this.comboTimeout,
@@ -447,10 +483,7 @@ export default class Player extends Positionable {
             0, 1
         ))
         this.p.noStroke()
-        this.p.fill(
-            this.p.map( timeBar, 0, 1, 255, 50 ),50,
-            this.p.map( timeBar, 0, 1, 50, 255 ),200
-        )
+        this.p.fill(this.app.red(timeBar,.7))
         this.p.rect(
             this.x + this.diameter,
             this.y + this.diameter * -.5 + this.p.map( timeBar, 0, 1, this.diameter, 0 ),
@@ -458,7 +491,7 @@ export default class Player extends Positionable {
             this.diameter - this.p.map( timeBar, 0, 1, this.diameter, 0 ),
             5
         )
-        this.p.fill(200,50,200,200)
+        this.p.fill(this.app.light(.7, .7))
         this.p.rect(
             this.x + this.diameter * .7,
             this.y + this.diameter * -.5 + this.p.map( stateBar, 0, 1, this.diameter, 0 ),
@@ -468,7 +501,7 @@ export default class Player extends Positionable {
         )
 
         this.p.noFill()
-        this.p.stroke(this.app.light,200)
+        this.p.stroke(this.app.white,200)
         this.p.strokeWeight(1)
         this.p.rect(
             this.x + this.diameter * .7,
@@ -492,7 +525,7 @@ export default class Player extends Positionable {
             if(this.getTemporary(flag)){
                 const temp = this.temporary[flag]
                 this.p.fill(0,100)
-                this.p.stroke(this.app.light)
+                this.p.stroke(this.app.white)
                 this.p.strokeWeight(1)
                 this.p.rect(
                     this.x - 40,
@@ -500,7 +533,7 @@ export default class Player extends Positionable {
                     80, 14, 5
                 )
                 this.p.noStroke()
-                this.p.fill(255,0,190)
+                this.p.fill(this.app.red(.7))
                 this.p.rect(
                     (this.x - 40) + this.p.map( this.party.time, temp.triggerTime, temp.timeout, 0, 66 ),
                     this.y - (64 + 14 * flagIndex),
@@ -513,7 +546,7 @@ export default class Player extends Positionable {
                     this.y - (64 + 14 * flagIndex),
                     14, 14, 5
                 )
-                this.p.fill(255,0,190)
+                this.p.fill(this.app.red(.7))
                 temp.shape(
                     this.p,
                     this.x + 26,
@@ -529,7 +562,7 @@ export default class Player extends Positionable {
         const bonusLength = this.consumables.length + this.passives.length
         if(bonusLength > 0){
             this.p.fill(0,100)
-            this.p.stroke(this.app.light)
+            this.p.stroke(this.app.white)
             this.p.strokeWeight(1)
             const width = bonusLength * 14
             this.p.rect(
@@ -554,7 +587,7 @@ export default class Player extends Positionable {
                 )
                 for(let i=0; i<(bonus.quantity||bonus.level); i++){
                     if(max) this.p.fill(200, 200, 0,200)
-                    else bonus.quantity ? this.p.fill(255,0,190) : this.p.fill(190,0,255)
+                    else bonus.quantity ? this.p.fill(this.app.red(.7)) : this.p.fill(this.app.blue(.7))
                     this.p.ellipse(
                         this.x - width * .5 + 7 + index * 14,
                         this.y + 57 + i * 14,5

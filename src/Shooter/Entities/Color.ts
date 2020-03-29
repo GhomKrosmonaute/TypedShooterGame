@@ -28,7 +28,8 @@ export default class Color {
         return Color.rgbToHex(this.rgb)
     }
 
-    fusion( color:Color, proportion:number ): Color {
+    fusion( resolvable:ColorResolvable, proportion:number ): Color {
+        const color = new Color(this.p,resolvable)
         return new Color(this.p,this.rgb.map((c,i)=>{
             return map(proportion,0,1,c,color.rgb[i])
         }) as RGB)

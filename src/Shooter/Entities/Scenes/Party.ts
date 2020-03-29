@@ -55,7 +55,7 @@ export default class Party extends Scene {
         this.p.noStroke()
         this.p.rect(this.p.width * -.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
         if(this.player.score > 0){
-            isHigh ? this.p.noFill() : this.p.fill(170,0,250)
+            isHigh ? this.p.noFill() : this.p.fill(this.app.blue(.6))
             this.p.rect(
                 this.p.width * -.3,
                 this.p.height * -.5 + 50,
@@ -72,7 +72,7 @@ export default class Party extends Scene {
                 30,
                 2
             )
-            this.p.fill(250,0,170)
+            this.p.fill(this.app.red(.6))
             this.p.rect(
                 this.p.width * -.3,
                 this.p.height * -.5 + 70,
@@ -95,7 +95,7 @@ export default class Party extends Scene {
         this.p.strokeWeight(3)
         this.p.rect(this.p.width*-.3,this.p.height * -.5 + 50,this.p.width*.6,30,2)
         this.p.noStroke()
-        this.p.fill(this.app.light,200)
+        this.p.fill(this.app.white,200)
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(25)
         if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)

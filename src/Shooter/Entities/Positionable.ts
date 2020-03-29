@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import {Vector2D} from "../../interfaces"
 import {LIMITS,SECURITY,VIEWPORT} from '../../config'
-import { dist, map } from '../../utils'
+import { dist, map, random } from '../../utils'
 
 export default class Positionable {
 
@@ -31,32 +31,6 @@ export default class Positionable {
         this.y = vector.y
     }
 
-    public follow( target:Vector2D, speed:number ): void {
-        if(this.rawDist(target) <= speed * 2) return
-        this.p.angleMode(this.p.RADIANS)
-        const angle = this.p.degrees(
-            this.p.atan2(
-                target.y - this.y,
-                target.x - this.x
-            ) + this.p.PI
-        )
-        const speedX = speed * this.p.cos(this.p.radians(angle))
-        const speedY = speed * this.p.sin(this.p.radians(angle))
-        this.move(
-            speedX * -2,
-            speedY * -2
-        )
-        this.p.angleMode(this.p.DEGREES)
-    }
-
-    public target( target:Vector2D, speedFraction:number ): void {
-        if(this.rawDist(target) > 5)
-            this.move(
-                (target.x - this.x) * speedFraction,
-                (target.y - this.y) * speedFraction
-            )
-    }
-
     public placeOutOfLimits(): void {
         this.x = LIMITS * 2
         this.y = LIMITS * 2
@@ -67,11 +41,11 @@ export default class Positionable {
         this.y = 0
         while(!this.isOutOfViewPort()){
             if(withSecurity){
-                this.x = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )
-                this.y = this.p.random( -LIMITS + SECURITY, LIMITS - SECURITY )
+                this.x = random( -LIMITS + SECURITY, LIMITS - SECURITY )
+                this.y = random( -LIMITS + SECURITY, LIMITS - SECURITY )
             }else{
-                this.x = this.p.random( -LIMITS, LIMITS )
-                this.y = this.p.random( -LIMITS, LIMITS )
+                this.x = random( -LIMITS, LIMITS )
+                this.y = random( -LIMITS, LIMITS )
             }
         }
     }

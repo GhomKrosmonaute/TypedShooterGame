@@ -4,11 +4,12 @@ import Player from './Player';
 import {fade} from '../../utils';
 import explosion from '../Animations/explosion';
 import {Vector2D} from '../../interfaces';
+import Dirigible from './Dirigible';
+import Angle from './Angle';
 
-export default class Shot extends Positionable {
+export default class Shot extends Dirigible {
 
     public readonly basePosition:Positionable
-    public readonly direction:Positionable
     private readonly speed:number
     public readonly damage:number
     private piercingShots:number = 1
@@ -16,13 +17,14 @@ export default class Shot extends Positionable {
 
     constructor(
         public player:Player,
-        directionX:number,
-        directionY:number
+        degrees:number
     ){
-        super( player.p, player.x, player.y, player.shotSize )
-        this.direction = new Positionable( this.p,
-            directionX * 5000,
-            directionY * 5000
+        super(
+            player.p,
+            player.x,
+            player.y,
+            player.shotSize,
+            new Angle(player.p,degrees)
         )
         this.basePosition = new Positionable( this.p,
             player.x + player.speedX * 10,
@@ -88,9 +90,9 @@ export default class Shot extends Positionable {
                 target = temp.enemy
             }
             if(target){
-                this.follow(target,this.speed)
+                this.follow(target,this.speed,20)
             }else{
-                this.follow(this.direction,this.speed)
+                this.angleMove(this.speed)
             }
         }
     }
