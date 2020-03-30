@@ -24,7 +24,6 @@ canvas {
 a, button, input {
   font-size: 20px;
   color: inherit;
-  background-color: #000;
   text-decoration: none;
   display: inline-block;
   padding: 20px;
@@ -32,6 +31,11 @@ a, button, input {
   width: 100%;
   border-radius: 20px;
   text-align: center;
+}
+
+input[type="text"],
+input[type="password"] {
+  background-color: #000;
 }
 
 input[type="color"] {

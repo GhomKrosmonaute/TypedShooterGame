@@ -22,7 +22,7 @@ export default class Profile extends Scene {
                     newUsername: form.inputs[0].value,
                     newPassword: form.inputs[1].value,
                     password: form.inputs[2].value
-                }).catch(console.error)
+                }).then(form.app.scenes.profile.reset)
             }
         )
         const appZone = this.app.zone
@@ -55,7 +55,8 @@ export default class Profile extends Scene {
                 'Delete profile',
                 (a)=>{
                     a.api.delete('profile')
-                        .catch()
+                        // @ts-ignore
+                        .then(Location.reload)
                 }
             )
         )
