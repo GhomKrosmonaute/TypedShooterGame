@@ -129,7 +129,7 @@ export default class Player extends Positionable {
         if(passive) {
             passive.level--
             if(passive.level <= 0)
-                this.passives = this.passives.filter( p => p.id === id )
+                this.passives = this.passives.filter( p => p.id !== id )
         }
     }
 
@@ -222,9 +222,7 @@ export default class Player extends Positionable {
         this.drawPlayer()
         this.drawLifeBar()
         if(this.combo){
-            if(this.combo.multiplicator > 1){
-                this.drawMultiplicator()
-            }
+            this.drawMultiplicator()
             this.drawComboBars()
         }
         this.drawTemporaries()
@@ -418,10 +416,16 @@ export default class Player extends Positionable {
     }
 
     private drawPlayer(): void {
-        if(this.app.lightMode) this.p.noStroke()
-        else {
-            this.p.stroke(0)
-            this.p.strokeWeight(1)
+        const shield = this.getPassive('shield')
+        if(shield){
+            this.p.stroke(this.app.red(norm(shield.level,1,shield.levelMax)))
+            this.p.strokeWeight(shield.level * 2)
+        }else{
+            if(this.app.lightMode) this.p.noStroke()
+            else {
+                this.p.stroke(0)
+                this.p.strokeWeight(1)
+            }
         }
         this.p.fill(this.app.light(.8))
         this.p.ellipse(this.x,this.y,this.diameter)
@@ -433,7 +437,7 @@ export default class Player extends Positionable {
         this.p.strokeWeight(1)
         this.p.rect(this.x - 40,this.y - 50,80,14,5)
         this.p.noStroke()
-        const color = this.app.red(norm( this.life || this.baseLife, 0, this.baseLife ), .7)
+        const color = this.app.blue(norm( this.life || this.baseLife, 0, this.baseLife ), .7)
         this.p.fill(color)
         this.p.rect(
             this.x - 40,
@@ -455,12 +459,12 @@ export default class Player extends Positionable {
         this.p.textAlign(this.p.LEFT,this.p.CENTER)
         this.p.textSize(
             this.diameter * .6 +
-            constrain( map( Date.now(),
+            constrain( map( this.party.time,
                 this.combo.time,
                 this.combo.time + 500,
-                50,
+                30,
                 0
-            ),0,this.diameter * .3)
+            ), 10, 30)
         )
         this.p.text(
             `x${this.combo.multiplicator}`,
@@ -470,28 +474,26 @@ export default class Player extends Positionable {
     }
 
     private drawComboBars(): void {
-        const timeBar = this.p.map(
+        const timeBar = norm(
             this.party.time,
             this.combo.time,
-            this.combo.time + this.comboTimeout,
-            1, 0
+            this.combo.time + this.comboTimeout
         )
-        const stateBar = Math.min(1,this.p.map(
+        const stateBar = Math.min(1, norm(
             this.combo.hits,
             (this.combo.multiplicator - 1) * this.comboStateSize,
-            this.combo.multiplicator * this.comboStateSize,
-            0, 1
+            this.combo.multiplicator * this.comboStateSize
         ))
         this.p.noStroke()
         this.p.fill(this.app.red(timeBar,.7))
         this.p.rect(
             this.x + this.diameter,
-            this.y + this.diameter * -.5 + this.p.map( timeBar, 0, 1, this.diameter, 0 ),
+            this.y + this.diameter * -.5 + this.p.map( timeBar, 1, 0, this.diameter, 0 ),
             this.diameter * .3,
-            this.diameter - this.p.map( timeBar, 0, 1, this.diameter, 0 ),
+            this.diameter - this.p.map( timeBar, 1, 0, this.diameter, 0 ),
             5
         )
-        this.p.fill(this.app.light(.7, .7))
+        this.p.fill(this.app.light(.3, .7))
         this.p.rect(
             this.x + this.diameter * .7,
             this.y + this.diameter * -.5 + this.p.map( stateBar, 0, 1, this.diameter, 0 ),
