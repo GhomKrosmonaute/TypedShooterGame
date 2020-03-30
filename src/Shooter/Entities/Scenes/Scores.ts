@@ -75,18 +75,14 @@ export default class Scores extends Scene {
             this.p.text(player.username, name.x, name.y)
             this.p.text(`Score: ${player.score} pts`,score.x,score.y)
         })
+        this.drawButtons()
         this.drawAnimations()
     }
 
-    step() {
-
-    }
+    step() {}
 
     keyPressed(key: string) {
 
-    }
-
-    mousePressed(): any {
     }
 
 }

@@ -90,7 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             grecaptcha.execute(siteKey, { action: 'login' }).then(async function(token) {
                 try {
-                    const res = await axios.post('login', qs.stringify({ token, username, password }),{ baseURL })
+                    const res = await axios.post('login', qs.stringify({ token, username, password }),{
+                        baseURL, headers: {'Access-Control-Allow-Origin': '*'}
+                    })
                     if( res.status === 200 ){
                         started = true
                         document.getElementById('login').remove()
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }catch(error){
                     const alert = document.getElementById('alert')
                     if(error.message.includes(401)) alert.innerText = 'Incorrect password, please retry !'
-                    else if(error.message.includes(501)) alert.innerText = 'You may already have an account using this ip address.'
+                    else if(error.message.includes(502)) alert.innerText = 'Oops :( The API has a little problem... Try again later!'
                     else if(error.message.includes(500)) alert.innerText = 'reCAPTCHA token denied.'
                     else throw error
                 }

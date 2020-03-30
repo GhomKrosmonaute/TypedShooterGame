@@ -100,6 +100,7 @@ export default class Party extends Scene {
         this.p.textSize(25)
         if(!isHigh) this.p.text(`${this.player.score} / ${this.player.highScore} pts`,0,this.p.height * -.5 + 65)
         else this.p.text(`${this.player.highScore} + ${this.player.score - this.player.highScore} pts`,0,this.p.height * -.5 + 65)
+        this.drawButtons()
         this.drawAnimations('popup')
     }
 

@@ -263,6 +263,7 @@ export default class App {
     public mousePressed(){
         if(this.scene.form) this.scene.form.mousePressed()
         this.scene.links.forEach( link => link.mousePressed() )
+        this.scene.buttons.forEach( button => button.mousePressed() )
     }
 
     public switchGamepad(): void {

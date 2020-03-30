@@ -3,6 +3,7 @@ import Scene from '../Scene';
 import App from '../../App';
 import Form from '../Form';
 import Link from '../Link';
+import Button from '../Button';
 
 export default class Profile extends Scene {
 
@@ -46,6 +47,18 @@ export default class Profile extends Scene {
                 }
             )
         )
+        this.buttons.push(
+            new Button(
+                this.app,
+                this.p.width * .2,
+                this.p.height * .2,
+                'Delete profile',
+                (a)=>{
+                    a.api.delete('profile')
+                        .catch()
+                }
+            )
+        )
         this.reset()
     }
 
@@ -54,9 +67,9 @@ export default class Profile extends Scene {
         this.form.inputs[0].value = ''
         this.form.inputs[1].value = ''
         this.form.inputs[2].value = ''
-        this.app.api.get('leaderboard')
-            .then( leaderBoard => {
-                this.form.inputs[0].value = leaderBoard.player.username
+        this.app.api.get<any>('profile')
+            .then( player => {
+                this.form.inputs[0].value = player.username
             })
     }
 
@@ -66,6 +79,7 @@ export default class Profile extends Scene {
         this.p.textAlign(this.p.CENTER,this.p.CENTER)
         this.p.textSize(35)
         this.p.text( this.title,0,this.p.height * -.35)
+        this.drawButtons()
         this.drawAnimations()
     }
 

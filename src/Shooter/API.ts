@@ -1,31 +1,33 @@
 
-import axios from 'axios';
+import axios, {AxiosRequestConfig, AxiosResponse} from 'axios';
 import {baseURL, siteKey} from '../config';
 import qs from "querystring";
 
 export default class API {
 
-    constructor( private apiToken:string ) {}
+    private readonly config:AxiosRequestConfig
 
-    get( route:string ): Promise<any> {
-        return new Promise(async (resolve,reject) => {
-            axios.get('/'+route,{
-                baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
-            })
-                .then( res => res.status === 200 ? resolve(res.data) : reject(res.status))
-                .catch(reject)
-        })
+    constructor( private apiToken:string ) {
+        this.config = {
+            baseURL, headers: {
+                Authorization: 'Bearer ' + this.apiToken,
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
     }
 
-    patch(route:string, data:{[key:string]:string|boolean|number} ): Promise<void> {
-        return new Promise(async (resolve,reject) => {
-            data.token = await grecaptcha.execute(siteKey, { action: 'homepage' })
-            axios.patch('/'+route, qs.stringify(data),{
-                baseURL, headers: { Authorization: 'Bearer ' + this.apiToken }
-            })
-                .then( res => res.status === 200 ? resolve() : reject(res.status))
-                .catch(reject)
-        })
+    get<T>( route:string ): Promise<T> {
+        return axios.get('/'+route,this.config )
+            .then( (res) => res.data )
+    }
+
+    async patch( route:string, data:{[key:string]:string|boolean|number} ): Promise<AxiosResponse> {
+        data.token = await grecaptcha.execute(siteKey, { action: 'homepage' })
+        return axios.patch('/'+route, qs.stringify(data),this.config)
+    }
+
+    delete( route:string ): Promise<AxiosResponse> {
+        return axios.delete('/'+route, this.config)
     }
 
     save( key:string, value:any ): void {

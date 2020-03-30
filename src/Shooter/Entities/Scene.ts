@@ -8,6 +8,7 @@ import Link from './Link';
 import Form from './Form';
 import Positionable from './Positionable';
 import { isOutOfViewPort } from '../../utils';
+import Button from './Button';
 
 export default abstract class Scene {
 
@@ -15,6 +16,7 @@ export default abstract class Scene {
     public time:number = 0
     public animations:{[key:string]:Animation[]} = {}
     public links:Link[] = []
+    public buttons:Button[] = []
     public form?:Form
     public showParticles = true
 
@@ -27,6 +29,11 @@ export default abstract class Scene {
 
     protected constructor( public app:App ) {
         this.p = app.p
+    }
+
+    protected drawButtons(): void {
+        for(const button of this.buttons)
+            button.draw()
     }
 
     protected drawAnimations( className?:AnimationClass ): void {

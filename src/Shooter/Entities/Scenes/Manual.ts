@@ -67,6 +67,7 @@ export default class Manual extends Scene {
             this.drawDirectionKeys(keyZone,'shoot', .85, .80,size)
             this.drawConsomablesKeys(keyZone,size)
         }
+        this.drawButtons()
         this.drawAnimations()
     }
 
@@ -201,7 +202,7 @@ export default class Manual extends Scene {
         y:number,
         size:number
     ): void {
-        const shift5 = this.app.mouseShift(5)
+        const shift = this.app.mouseShift(5)
         this.p.noFill()
         this.p.strokeWeight(1)
         this.p.stroke(this.app.color)
@@ -215,8 +216,8 @@ export default class Manual extends Scene {
         this.p.fill(this.app.color)
         this.p.textSize(key.length === 1 ? 30 : 20)
         this.p.text( key.length === 1 ? key.toUpperCase() : key,
-            shift5.x + x + size * .5,
-            shift5.y + y + size * .5
+            shift.x + x + size * .5,
+            shift.y + y + size * .5
         )
     }
 

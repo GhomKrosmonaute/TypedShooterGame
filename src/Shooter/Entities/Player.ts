@@ -57,8 +57,8 @@ export default class Player extends Positionable {
     }
 
     public getHighScore(): Promise<number> {
-        return this.api.get('score').then( data => {
-            this.highScore = data.score
+        return this.api.get<number>('score').then( score => {
+            this.highScore = score
             return this.highScore
         })
     }
