@@ -220,7 +220,7 @@ export default class App {
         return this.light(1-proportion,alpha)
     }
 
-    public lightAt( light:number ): number {
+    public whiteAt(light:number ): number {
         return this.p.map(light,0,255,this.black,this.white)
     }
 

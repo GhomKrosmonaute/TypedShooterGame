@@ -65,6 +65,7 @@ export default class Manual extends Scene {
             this.drawShortcuts(keyZone,size)
             this.drawDirectionKeys(keyZone,'move', .5, .80,size)
             this.drawDirectionKeys(keyZone,'shoot', .85, .80,size)
+            this.drawConsomablesKeys(keyZone,size)
         }
         this.drawAnimations()
     }
@@ -170,6 +171,28 @@ export default class Manual extends Scene {
             zone.fractionX(.60),
             zone.center.y
         )
+    }
+
+    private drawConsomablesKeys( zone:Zone, size:number ): void {
+        let i = 0
+        const shift = this.app.mouseShift(5)
+        this.p.fill(this.app.color)
+        this.p.textSize(30)
+        this.p.textAlign(this.p.CENTER,this.p.CENTER)
+        this.p.text(
+            'CONSUMABLES',
+            shift.x + zone.fractionX(.6),
+            shift.y + zone.fractionY(.1)
+        )
+        for(const keys of this.app.keyMode.numeric){
+            this.drawKey(
+                keys[1] + '\n' + keys[0],
+                shift.x * 2 + zone.fractionX(.4) + size * i,
+                shift.y * 2 + zone.fractionY(.2),
+                size
+            )
+            i ++
+        }
     }
 
     private drawKey(
