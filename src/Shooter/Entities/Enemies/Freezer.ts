@@ -1,49 +1,51 @@
+
 import Enemy from '../Enemy';
 import Party from '../Scenes/Party'
 import Shot from "../Shot";
+import {Vector2D} from "../../../interfaces";
+import { arc } from '../../Shapes/arc';
+import {isOnArc, random} from '../../../utils';
 
-export default class ShieldPiercer extends Enemy {
+export default class Freezer extends Enemy {
 
     public immune: boolean = false
-    public damages: number = 1
-    public speed: number = 4
+    public speed: number = 3.5
+    public damages: number = 2
     public gain: number = 1
-    public life: number = 2
-    public id = 'shieldPiercer'
+    public life: number = 4
+    public id = 'slower'
 
     constructor( party:Party ) {
         super( party )
-        this.diameter = 30
+        this.diameter = 80
         if(this.app.hardcore){
-            this.life += 2
             this.speed ++
-            this.damages ++
+            this.life ++
         }
-        this.baseSpeed = this.speed
         this.baseGain = this.gain
+        this.baseSpeed = this.speed
         this.baseLife = this.life
         this.baseDamages = this.damages
     }
 
     public pattern(): void {
         this.follow(this.party.player, this.speed, 10)
+        // TODO: Ralentis le joueur et les shots si ils sont dans la zone de freeze
     }
 
     onPlayerContact(): void {
-        this.party.player.inflictDamages(this.damages)
-        this.kill()
+        this.checkShield()
     }
 
     shotFilter(shoot: Shot): boolean {
         return true
     }
 
-    overDraw(): void {
-    }
+    overDraw(): void {}
 
     onDraw(): void {
         this.p.noStroke()
-        this.p.fill(this.app.color)
+        this.p.fill(this.app.blue())
         this.p.ellipse(
             this.x,
             this.y,

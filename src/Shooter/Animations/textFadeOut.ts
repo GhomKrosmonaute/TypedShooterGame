@@ -4,7 +4,6 @@ import {AnimationMinimalOptions, AnimationOptions} from '../../interfaces';
 export default function popup( options:AnimationMinimalOptions ): AnimationOptions {
     return {
         ...options,
-        className: options.className || 'high',
         draw: a => {
             a.p.noStroke()
             a.value.color.setAlpha(

@@ -1,5 +1,4 @@
 import p5 from 'p5';
-import App from './Shooter/App';
 import Bonus from './Shooter/Entities/Bonus';
 import Enemy from './Shooter/Entities/Enemy';
 import PiercingShots from './Shooter/Entities/Bonus/PiercingShots';
@@ -19,12 +18,12 @@ import CircularSaw from "./Shooter/Entities/Enemies/CircularSaw";
 import Tesla from "./Shooter/Entities/Enemies/Tesla";
 import Party from './Shooter/Entities/Scenes/Party';
 import Rocket from './Shooter/Entities/Enemies/Rocket';
-import Animation from './Shooter/Entities/Animation';
 import SpeedUp from './Shooter/Entities/Bonus/SpeedUp';
-import Positionable from './Shooter/Entities/Positionable';
 import ExplosiveShots from './Shooter/Entities/Bonus/ExplosiveShots';
-import {AnimationMinimalOptions, AnimationOptions, Vector2D} from './interfaces';
+import {Vector2D} from './interfaces';
 import {LIMITS, VIEWPORT} from './config';
+import Pulsar from './Shooter/Entities/Enemies/Pulsar';
+import Freezer from './Shooter/Entities/Enemies/Freezer';
 
 export function constrain( n:number, low:number, high:number ): number {
     return Math.max(Math.min(n, high), low);
@@ -136,13 +135,15 @@ export function pick<T>( list:T[] ): T {
 }
 
 export function pickEnemy( party:Party ): Enemy {
-    const rdm = Math.floor(Math.random() * 5)
+    const rdm = Math.floor(Math.random() * 7)
     switch (rdm) {
         case 0: return new ShieldPiercer(party)
         case 1: return new BlobMob(party)
         case 2: return new CircularSaw(party)
         case 3: return new Tesla(party)
         case 4: return new Rocket(party)
+        case 5: return new Pulsar(party)
+        case 6: return new Freezer(party)
     }
 }
 

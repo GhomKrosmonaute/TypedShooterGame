@@ -10,7 +10,7 @@ export default class Rocket extends Enemy {
     public life: number = 1
     public speed: number = 0
     public immune: boolean = true
-    public damage: number = 2
+    public damages: number = 2
     public id: string = 'rocket'
 
     private rotation = 0
@@ -25,11 +25,11 @@ export default class Rocket extends Enemy {
         this.lockTime = party.time + 1000
         this.damageTime = party.time + (this.app.hardcore ? 1400 : 2000)
         this.diameter = 50
-        if(this.app.hardcore) this.damage ++
+        if(this.app.hardcore) this.damages ++
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
-        this.baseDamage = this.damage
+        this.baseDamages = this.damages
     }
 
     pattern(): void {
@@ -44,10 +44,10 @@ export default class Rocket extends Enemy {
 
                 for(const enemy of this.party.enemies)
                     if(this.rawDist(enemy) < this.damageZone)
-                        enemy.inflictDamages(this.damage)
+                        enemy.inflictDamages(this.damages)
 
                 if(this.rawDist(this.party.player) < this.damageZone)
-                    this.party.player.inflictDamages(this.damage)
+                    this.party.player.inflictDamages(this.damages)
 
                 this.party.setAnimation(explosion({
                     className: 'low',

@@ -9,7 +9,7 @@ export default class CircularSaw extends Enemy {
     public life: number = 1
     public speed: number = 0
     public immune: boolean = true
-    public damage: number = 5
+    public damages: number = 5
     public id: string = 'circularSaw'
 
     private lastDamage:number
@@ -24,7 +24,7 @@ export default class CircularSaw extends Enemy {
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
-        this.baseDamage = this.damage
+        this.baseDamages = this.damages
     }
 
     pattern(): void {
@@ -42,7 +42,7 @@ export default class CircularSaw extends Enemy {
     onPlayerContact(): void {
         if(this.party.time > this.lastDamage + this.damageInterval){
             this.lastDamage = this.party.time
-            this.party.player.inflictDamages(this.damage)
+            this.checkShield()
         }
     }
 

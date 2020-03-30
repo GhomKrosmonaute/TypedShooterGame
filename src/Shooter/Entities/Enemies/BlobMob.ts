@@ -7,7 +7,7 @@ export default class BlobMob extends Enemy {
 
     public immune: boolean = false
     public speed: number = 3
-    public damage: number = 2
+    public damages: number = 2
     public gain: number = 1
     public life: number = 2
     public maxLife: number = 10
@@ -17,14 +17,14 @@ export default class BlobMob extends Enemy {
         super( party )
         this.diameter = 50
         if(this.app.hardcore){
-            this.damage ++
+            this.damages ++
             this.life += 2
             this.speed ++
         }
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
-        this.baseDamage = this.damage
+        this.baseDamages = this.damages
     }
 
     pattern(): void {
@@ -50,17 +50,12 @@ export default class BlobMob extends Enemy {
 
     absorb( enemy:Enemy ){
         this.life += enemy.life
-        this.damage += enemy.damage
         this.gain += enemy.gain
+        this.damages += enemy.damages
     }
 
     onPlayerContact(): void {
-        const shield = this.party.player.getPassive('shield')
-        if(!shield || shield.level < this.damage){
-            this.party.player.removePassive('shield')
-            this.party.player.inflictDamages(this.damage)
-        }
-        this.kill(!!shield)
+        this.checkShield()
     }
 
     shotFilter(shoot: Shot): boolean {

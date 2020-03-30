@@ -66,8 +66,10 @@ export default class Animation {
         this.position.y += y
     }
 
-    public map( start:number, stop:number ): number {
-        return map(this.time,0,this.duration,start,stop)
+    public map( ...steps:number[] ): number {
+        if(steps.length <= 1) return steps[0]
+        const currentStep = Math.floor(map(this.time,0,this.duration,0,steps.length-1.0001))
+        return map(this.time,0,this.duration,steps[currentStep],steps[currentStep + 1])
     }
 
 }

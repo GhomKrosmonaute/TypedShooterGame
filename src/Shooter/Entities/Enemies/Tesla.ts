@@ -10,7 +10,7 @@ export default class Tesla extends Enemy {
 
     public immune: boolean = false
     public speed: number = 3
-    public damage: number = 2
+    public damages: number = 2
     public gain: number = 1
     public life: number = 2
     public arcInterval: number = 500
@@ -37,7 +37,7 @@ export default class Tesla extends Enemy {
         this.baseSpeed = this.speed
         this.baseGain = this.gain
         this.baseLife = this.life
-        this.baseDamage = this.damage
+        this.baseDamages = this.damages
     }
 
     public pattern(): void {
@@ -79,8 +79,7 @@ export default class Tesla extends Enemy {
     }
 
     onPlayerContact(): void {
-        this.party.player.inflictDamages(this.damage)
-        this.kill()
+        this.checkShield()
     }
 
     kill( addToScore:boolean = false ){
@@ -112,7 +111,7 @@ export default class Tesla extends Enemy {
         this.p.ellipse(
             this.x,
             this.y,
-            this.currentDiameter
+            this.diameter
         )
     }
 

@@ -5,7 +5,6 @@ import p5 from 'p5';
 export default function explosion( options:AnimationMinimalOptions ): AnimationOptions {
     return {
         ...options,
-        className: options.className || 'low',
         draw: a => {
             const opacity = a.p.map(a.time,0,a.duration,255,0)
             a.p.noStroke()

@@ -581,7 +581,7 @@ export default class Player extends Positionable {
                     this.x - width * .5 + index * 14,
                     this.y + 36, 14, 14, 5
                 )
-                bonus.quantity ? this.p.fill(255,0,190) : this.p.fill(190,0,255)
+                bonus.quantity ? this.p.fill(this.app.red(.8)) : this.p.fill(this.app.blue(.8))
                 bonus.shape(
                     this.p,
                     this.x - width * .5 + index * 14,

@@ -44,9 +44,9 @@ export default class Party extends Scene {
 
     draw() {
         this.background.draw()
+        this.drawAnimations('low')
         this.enemies.forEach( enemy => enemy.draw() )
         this.bonus.forEach( bonus => bonus.draw() )
-        this.drawAnimations('low')
         this.player.draw()
         this.drawAnimations('high')
         this.foreground.draw()
@@ -117,7 +117,7 @@ export default class Party extends Scene {
         await this.player.step()
         if(this.player.score >= this.bonusState){
             this.lastBonusState = this.bonusState
-            this.bonusState += Math.ceil(this.bonusState * .5)
+            this.bonusState += this.bonusState * 1.25
             const bonus = pickBonus(this)
             this.bonus.push(bonus)
         }

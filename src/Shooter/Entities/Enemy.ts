@@ -14,11 +14,11 @@ export default abstract class Enemy extends Dirigible {
     protected baseGain:number
     protected baseLife:number
     protected baseSpeed:number
-    protected baseDamage:number
+    protected baseDamages:number
     public abstract gain:number
     public abstract life:number
     public abstract speed:number
-    public abstract damage:number
+    public abstract damages:number
     public abstract immune:boolean
     public abstract id:string
     public abstract pattern():void
@@ -134,12 +134,12 @@ export default abstract class Enemy extends Dirigible {
             this.baseGain &&
             this.baseLife &&
             this.baseSpeed &&
-            this.baseDamage
+            this.baseDamages
         ){
             this.gain = this.baseGain
             this.life = this.baseLife
             this.speed = this.baseSpeed
-            this.damage = this.baseDamage
+            this.damages = this.baseDamages
         }
         this.placeOutOfViewport()
     }
@@ -156,6 +156,16 @@ export default abstract class Enemy extends Dirigible {
             this.MIN_DIAMETER,
             this._diameter
         )
+    }
+
+    public checkShield(): void {
+        const shield = this.party.player.getPassive('shield')
+        let notProtected = !shield || shield.level < this.damages
+        if(notProtected){
+            this.party.player.removePassive('shield')
+            this.party.player.inflictDamages(this.damages)
+        }
+        this.kill(!notProtected)
     }
 
 }

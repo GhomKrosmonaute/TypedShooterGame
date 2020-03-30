@@ -13,6 +13,12 @@ export default class Angle {
     }
     set radians( radians:number ){
         this.degrees = this.p.degrees(radians)
+        this.normalize()
+    }
+
+    public move( degrees:number ): void {
+        this.degrees += degrees
+        this.normalize()
     }
 
     public pointTo(angle:Angle, speedDegrees:number ): void {
@@ -21,10 +27,7 @@ export default class Angle {
         if(dist < speedDegrees)
             speedDegrees = dist
         this.degrees += speedDegrees * sens
-        if(this.degrees < 0)
-            this.degrees += 360
-        if(this.degrees > 360)
-            this.degrees -= 360
+        this.normalize()
     }
 
     static dist( angle:Angle, target:Angle ): { dist:number, sens:number } {
@@ -50,6 +53,13 @@ export default class Angle {
             sens: dist.toUp < dist.toDown ? 1 : -1,
             dist: dist.toUp < dist.toDown ? dist.toUp : dist.toDown
         }
+    }
+
+    private normalize(): void {
+        if(this.degrees < 0)
+            this.degrees += 360
+        if(this.degrees > 360)
+            this.degrees -= 360
     }
 
 }
