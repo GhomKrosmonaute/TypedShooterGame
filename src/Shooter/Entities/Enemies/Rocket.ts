@@ -23,7 +23,7 @@ export default class Rocket extends Enemy {
     constructor( party:Party ) {
         super( party )
         this.lockTime = party.time + 1000
-        this.damageTime = party.time + (this.app.hardcore ? 1400 : 2000)
+        this.damageTime = party.time + (this.app.hardcore ? 1500 : 2000)
         this.diameter = 50
         if(this.app.hardcore) this.damages ++
         this.baseSpeed = this.speed

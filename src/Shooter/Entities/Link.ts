@@ -29,7 +29,7 @@ export default class Link extends Zone {
     }
 
     draw(): void {
-        this.p.fill(255,this.touchVector(this.scene.app.mouseFromCenter) ? 255 : 100)
+        this.p.fill(this.scene.app.white,this.touchVector(this.scene.app.mouseFromCenter) ? 255 : 100)
         this.p.noStroke()
         this.p.textSize(this.height * .5)
         this.p.text(this.text || this.targetName,

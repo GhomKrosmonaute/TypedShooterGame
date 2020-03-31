@@ -52,10 +52,10 @@ export default class Pulsar extends Enemy {
         ){
             for(const enemy of this.party.enemies)
                 if(enemy.id !== 'pulsar' && this.calculatedDist(enemy) - this.radius < this.repulsiveWaveDiameter * .5)
-                    enemy.repulseBy(this,enemy.speed, 20)
+                    enemy.repulseBy(this,enemy.speed, 10)
             for(const shot of this.party.player.shots)
                 if(this.calculatedDist(shot) - this.radius < this.repulsiveWaveDiameter * .5)
-                    shot.repulseBy(this,this.party.player.shotSpeed, 20)
+                    shot.repulseBy(this,this.party.player.shotSpeed, 10)
             // TODO: slower.party.player.repulseBy(slower,slower.repulseSpeed)
         }
     }

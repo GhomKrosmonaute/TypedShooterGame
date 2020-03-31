@@ -9,15 +9,15 @@ import {isOnArc, random} from '../../../utils';
 export default class Freezer extends Enemy {
 
     public immune: boolean = false
-    public speed: number = 3.5
+    public speed: number = 2.5
     public damages: number = 2
     public gain: number = 1
-    public life: number = 4
+    public life: number = 3
     public id = 'slower'
 
     constructor( party:Party ) {
         super( party )
-        this.diameter = 80
+        this.diameter = 50
         if(this.app.hardcore){
             this.speed ++
             this.life ++
