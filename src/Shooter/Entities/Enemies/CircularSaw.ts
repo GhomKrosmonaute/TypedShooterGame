@@ -67,7 +67,7 @@ export default class CircularSaw extends Enemy {
             0,
             0,
             this.diameter * .2,
-            this.diameter * .5,
+            this.radius,
             12
         )
         this.p.fill(80)
@@ -76,7 +76,7 @@ export default class CircularSaw extends Enemy {
         this.p.ellipse(
             0,
             0,
-            this.diameter * .5
+            this.radius
         )
     }
 

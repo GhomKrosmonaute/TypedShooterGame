@@ -108,10 +108,11 @@ export default class Tesla extends Enemy {
         this.p.strokeWeight(random(2,5))
         this.p.stroke(this.app.red(random(.1,.5)))
         this.p.fill(this.app.blue(.4))
+        const pos = this.constrain()
         this.p.ellipse(
-            this.x,
-            this.y,
-            this.diameter
+            pos.x,
+            pos.y,
+            this.onScreenBasedDiameter
         )
     }
 

@@ -1,10 +1,9 @@
-import Enemy from '../Enemy';
-import Shot from "../Shot";
-import Party from '../Scenes/Party';
-import {constrain, seconds} from '../../../utils';
-import Rate from '../Rate';
-import wave from '../../Animations/wave';
-import Positionable from '../Positionable';
+import Enemy from '../Enemy'
+import Shot from "../Shot"
+import Party from '../Scenes/Party'
+import {seconds, map} from '../../../utils'
+import Rate from '../Rate'
+import wave from '../../Animations/wave'
 
 export default class Pulsar extends Enemy {
 
@@ -15,8 +14,8 @@ export default class Pulsar extends Enemy {
     public life: number = 3
     public id = 'pulsar'
 
-    private repulsiveWaveRate = new Rate(seconds(3))
-    private repulsiveWaveDiameter = 400
+    private waveRate = new Rate(seconds(3))
+    private waveDiameter = 400
 
     constructor( party:Party ) {
         super( party )
@@ -31,32 +30,42 @@ export default class Pulsar extends Enemy {
         this.baseDamages = this.damages
     }
 
+    private get waveRadius(): number {
+        return this.waveDiameter * .5
+    }
+
     pattern(): void {
         this.follow(
             this.party.player,
             this.speed,
             3
         )
-        if(this.repulsiveWaveRate.canTrigger(true)){
+        if(this.waveRate.canTrigger(true)){
             this.party.setAnimation(wave({
                 position: this,
                 attach: true,
-                value: this.repulsiveWaveDiameter,
+                value: this.waveDiameter,
                 className: 'low',
                 duration: 500
             }))
         }
-        if(
-            this.repulsiveWaveRate.triggeredForMoreThan(200) &&
-            this.repulsiveWaveRate.triggeredForLessThan(600)
-        ){
-            for(const enemy of this.party.enemies)
-                if(enemy.id !== 'pulsar' && this.calculatedDist(enemy) - this.radius < this.repulsiveWaveDiameter * .5)
-                    enemy.repulseBy(this,enemy.speed, 10)
-            for(const shot of this.party.player.shots)
-                if(this.calculatedDist(shot) - this.radius < this.repulsiveWaveDiameter * .5)
-                    shot.repulseBy(this,this.party.player.shotSpeed, 10)
-            // TODO: slower.party.player.repulseBy(slower,slower.repulseSpeed)
+        if(this.waveRate.range(200,600)){
+            for(const enemy of this.party.enemies) {
+                const distance = this.calculatedDist(enemy) - this.radius
+                if (enemy !== this && !enemy.immune && distance < this.waveRadius) {
+                    const speed = map(distance,0,this.waveRadius,enemy.speed,0)
+                    enemy.repulsedBy(this, speed, 10)
+                }
+            }
+            for(const shot of this.party.player.shots) {
+                const distance = this.calculatedDist(shot) - this.radius
+                if (distance < this.waveRadius) {
+                    const speed = map(distance,0,this.waveRadius,this.party.player.shotSpeed,0)
+                    shot.repulsedBy(this, speed, 10)
+                    // TODO: slower.party.player.repulseBy(slower,slower.repulseSpeed)
+                    // TODO: convertir le player en dirigible et le faire avaner comme tel
+                }
+            }
         }
     }
 
@@ -74,10 +83,11 @@ export default class Pulsar extends Enemy {
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(this.app.blue(.6))
+        const pos = this.constrain()
         this.p.ellipse(
-            this.x,
-            this.y,
-            this.diameter
+            pos.x,
+            pos.y,
+            this.onScreenBasedDiameter
         )
     }
 

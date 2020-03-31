@@ -1,7 +1,8 @@
 import p5 from 'p5'
 import {Vector2D} from "../../interfaces"
 import {LIMITS,SECURITY,VIEWPORT} from '../../config'
-import { dist, map, random } from '../../utils'
+import {constrain, dist, map, random} from '../../utils'
+import Zone from './Zone';
 
 export default class Positionable {
 
@@ -50,13 +51,14 @@ export default class Positionable {
         }
     }
 
-    public showIfNotOnScreen(): void {
-        if(!this.isOnScreen()){
-            this.p.ellipse(
-                this.x > this.p.width * .5 ? this.p.width * .5 : this.x < this.p.width * -.5 ? this.p.width * -.5 : this.x,
-                this.y > this.p.height * .5 ? this.p.height * .5 : this.y < this.p.height * -.5 ? this.p.height * -.5 : this.y,
-                map(this.rawDist(),0,LIMITS,30,0,true)
-            )
+    public constrain( zone?:Zone ): Vector2D {
+        if(zone) return {
+            x: constrain(this.x,zone.start.x,zone.stop.x),
+            y: constrain(this.y,zone.start.y,zone.stop.y)
+        }
+        return {
+            x: constrain(this.x,this.p.width * -.5,this.p.width * .5),
+            y: constrain(this.y,this.p.height * -.5,this.p.height * .5),
         }
     }
 

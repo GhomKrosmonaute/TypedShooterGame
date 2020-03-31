@@ -44,10 +44,11 @@ export default class ShieldPiercer extends Enemy {
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(this.app.color)
+        const pos = this.constrain()
         this.p.ellipse(
-            this.x,
-            this.y,
-            this.diameter
+            pos.x,
+            pos.y,
+            this.onScreenBasedDiameter
         )
     }
 

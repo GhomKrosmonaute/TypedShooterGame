@@ -37,7 +37,7 @@ export default class Dirigible extends Positionable {
         this.angleMove( speed )
     }
 
-    public repulseBy( target:Vector2D, speed:number, rotationSpeed:number = 360 ): void {
+    public repulsedBy(target:Vector2D, speed:number, rotationSpeed:number = 360 ): void {
         this.p.angleMode(this.p.RADIANS)
         const targetAngle = new Angle(this.p,this.p.degrees(
             this.p.atan2(

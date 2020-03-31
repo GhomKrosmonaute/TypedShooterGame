@@ -57,15 +57,9 @@ export default abstract class Enemy extends Dirigible {
 
     public draw(){
         this.overDraw()
-        if(this.isOnScreen()){
-            this.p.push()
-            this.onDraw()
-            this.p.pop()
-        }else{
-            this.p.fill(this.app.alpha(.3))
-            this.p.noStroke()
-        }
-        this.showIfNotOnScreen()
+        this.p.push()
+        this.onDraw()
+        this.p.pop()
     }
 
     public kill( addToScore:boolean = false ): void {
@@ -156,6 +150,10 @@ export default abstract class Enemy extends Dirigible {
             this.MIN_DIAMETER,
             this._diameter
         )
+    }
+
+    public get onScreenBasedDiameter(): number {
+        return this.isOnScreen() ? this.diameter : 15
     }
 
     public checkShield(): void {

@@ -46,14 +46,15 @@ export default class Freezer extends Enemy {
     onDraw(): void {
         this.p.noStroke()
         this.p.fill(this.app.blue())
+        const pos = this.constrain()
         this.p.ellipse(
-            this.x,
-            this.y,
-            this.diameter
+            pos.x,
+            pos.y,
+            this.onScreenBasedDiameter
         )
     }
 
-    public get currentDiameter(){
+    public get currentDiameter(): number {
         return this.lifeBasedDiameter
     }
 

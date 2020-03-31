@@ -71,6 +71,13 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 
 document.addEventListener('DOMContentLoaded', async () => {
 
+    const storageColors = localStorage.getItem('colors')
+    if(storageColors){
+        const colors = JSON.parse(storageColors)
+        getInput('red').value = colors.red
+        getInput('blue').value = colors.blue
+    }
+
     const submit = getInput('submit')
 
     grecaptcha.ready(function(){
@@ -96,8 +103,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if( res.status === 200 ){
                         started = true
                         document.getElementById('login').remove()
-                        new p5(p => sketch(p,hexColors,res.data.token), document.getElementById('p5') )
                         document.getElementById('p5').focus()
+                        localStorage.setItem('colors',JSON.stringify({
+                            red: hexColors[0],
+                            blue: hexColors[1]
+                        }))
+                        new p5(p => sketch(p,hexColors,res.data.token), document.getElementById('p5') )
                     }
                 }catch(error){
                     const alert = document.getElementById('alert')

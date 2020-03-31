@@ -27,14 +27,12 @@ export default abstract class Bonus extends Positionable {
         this.p.noFill()
         this.p.stroke(255,140,0)
         this.p.strokeWeight(3)
-        if(this.isOnScreen()){
-            this.p.ellipse(
-                this.x,
-                this.y,
-                this.diameter
-            )
-        }
-        this.showIfNotOnScreen()
+        const pos = this.constrain()
+        this.p.ellipse(
+            pos.x,
+            pos.y,
+            this.diameter
+        )
     }
 
     public step(): void {

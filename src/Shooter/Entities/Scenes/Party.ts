@@ -11,6 +11,7 @@ export default class Party extends Scene {
 
     private readonly maxEnemyCount = 40
     private readonly minEnemyCount = 10
+    private readonly baseBonusState = 2
 
     public background:Particles
     public foreground:Particles
@@ -28,11 +29,16 @@ export default class Party extends Scene {
         this.reset()
     }
 
+    private newBonusState(){
+        this.lastBonusState = this.bonusState
+        this.bonusState += this.bonusState * 1.20
+    }
+
     reset(){
         this.time = 0
         this.rate = new Rate(25)
         this.lastBonusState = 0
-        this.bonusState = 2
+        this.bonusState = this.baseBonusState
         this.player = new Player(this)
         this.enemies = []
         this.bonus = []
@@ -117,8 +123,7 @@ export default class Party extends Scene {
         this.enemies.forEach( enemy => enemy.step() )
         await this.player.step()
         if(this.player.score >= this.bonusState){
-            this.lastBonusState = this.bonusState
-            this.bonusState += this.bonusState * 1.25
+            this.newBonusState()
             const bonus = pickBonus(this)
             this.bonus.push(bonus)
         }

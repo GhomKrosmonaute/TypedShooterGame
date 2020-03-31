@@ -90,7 +90,7 @@ export default class Shot extends Dirigible {
                 target = temp.enemy
             }
             if(target){
-                this.follow(target,this.speed,20)
+                this.follow(target,this.speed,10)
             }else{
                 this.angleMove(this.speed)
             }

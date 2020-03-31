@@ -19,6 +19,13 @@ export default class Rate {
         return !this.triggeredForLessThan(time)
     }
 
+    public range( starts:number, ends:number ): boolean {
+        return (
+            this.triggeredForMoreThan(starts) &&
+            this.triggeredForLessThan(ends)
+        )
+    }
+
     public canTrigger( trigger:boolean = false ): boolean {
         const can = Date.now() > this.triggerTime + this.interval
         if(can) if(trigger) this.trigger()
