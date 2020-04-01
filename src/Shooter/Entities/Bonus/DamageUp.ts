@@ -4,8 +4,8 @@ import p5 from 'p5';
 
 export default class DamageUp extends Bonus implements Passive {
 
-    public level = 1
-    public levelMax = 4
+    public level = 1 // 1.5
+    public levelMax = 4 // 3
     public id = 'damageUp'
     public displayName = 'Damage Up'
     public description = '{value} damages'

@@ -5,8 +5,8 @@ import p5 from 'p5';
 
 export default class PiercingShots extends Bonus implements Passive {
 
-    public level = 1
-    public levelMax = 3
+    public level = 1 // 100
+    public levelMax = 3 // 200
     public id = 'explosiveShots'
     public displayName = 'Explosive Shots'
     public description = 'Explosion {value}px'
@@ -23,7 +23,7 @@ export default class PiercingShots extends Bonus implements Passive {
     }
 
     get value(): number {
-        return 50 + this.level * 25
+        return 50 + this.level * 50
     }
 
 }

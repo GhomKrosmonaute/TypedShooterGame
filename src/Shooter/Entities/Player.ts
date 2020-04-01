@@ -19,7 +19,7 @@ export default class Player extends Positionable {
     public score = 0
     public baseSpeedMax = 10
     public baseShotSpeed = 10
-    public baseShotRange = 300
+    public baseShotRange = 250
     public baseShotDamage = 1
     public baseFireRate = 500
     public baseShotSize = 15

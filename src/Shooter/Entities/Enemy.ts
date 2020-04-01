@@ -11,10 +11,10 @@ import Dirigible from './Dirigible';
 export default abstract class Enemy extends Dirigible {
 
     protected readonly MIN_DIAMETER = 15
-    protected baseGain:number
-    protected baseLife:number
-    protected baseSpeed:number
-    protected baseDamages:number
+    public baseGain:number
+    public baseLife:number
+    public baseSpeed:number
+    public baseDamages:number
     public abstract gain:number
     public abstract life:number
     public abstract speed:number

@@ -2,22 +2,28 @@
 import Enemy from '../Enemy';
 import Party from '../Scenes/Party'
 import Shot from "../Shot";
-import {Vector2D} from "../../../interfaces";
-import { arc } from '../../Shapes/arc';
-import {isOnArc, random} from '../../../utils';
+import Rate from '../Rate';
+import Positionable from '../Positionable';
+import {dist, random, map, seconds, norm} from '../../../utils';
 
 export default class Freezer extends Enemy {
 
     public immune: boolean = false
     public speed: number = 2.5
-    public damages: number = 2
+    public damages: number = 1
     public gain: number = 1
     public life: number = 3
-    public id = 'slower'
+    public id = 'freezer'
+
+    private freezeRange = 10
+    private freezeRate = new Rate(seconds(2))
+    private freeze:Positionable
 
     constructor( party:Party ) {
         super( party )
-        this.diameter = 50
+        this.diameter = 40
+        this.freeze = new Positionable(this.p,0,0,50)
+        this.freeze.placeOutOfLimits()
         if(this.app.hardcore){
             this.speed ++
             this.life ++
@@ -30,7 +36,22 @@ export default class Freezer extends Enemy {
 
     public pattern(): void {
         this.follow(this.party.player, this.speed, 10)
-        // TODO: Ralentis le joueur et les shots si ils sont dans la zone de freeze
+        if(this.freezeRate.canTrigger(true)){
+            this.repopFreeze()
+        }
+        if(this.toFreeze()){
+            for(const enemy of this.party.enemies) {
+                if (enemy.id !== 'freezer' && enemy.calculatedTouch(this.freeze)) {
+                    enemy.speed = map(
+                        enemy.rawDist(this.freeze),
+                        0,
+                        this.freeze.radius,
+                        .01,
+                        enemy.baseSpeed
+                    )
+                } else enemy.speed = enemy.baseSpeed
+            }
+        }
     }
 
     onPlayerContact(): void {
@@ -41,11 +62,24 @@ export default class Freezer extends Enemy {
         return true
     }
 
-    overDraw(): void {}
+    overDraw(): void {
+        if(this.toFreeze()){
+            const alpha = norm(Date.now(),this.freezeRate.endTime - this.freezeRate.interval * .5,this.freezeRate.triggerTime)
+            this.p.noFill()
+            this.p.stroke(this.app.light(.5,alpha))
+            this.p.strokeWeight(3)
+            this.p.ellipse(
+                this.freeze.x,
+                this.freeze.y,
+                this.freeze.diameter
+            )
+        }
+    }
 
     onDraw(): void {
-        this.p.noStroke()
-        this.p.fill(this.app.blue())
+        this.p.fill(this.app.blue(.8))
+        this.p.stroke(this.app.light(.5))
+        this.p.strokeWeight(3)
         const pos = this.constrain()
         this.p.ellipse(
             pos.x,
@@ -54,8 +88,35 @@ export default class Freezer extends Enemy {
         )
     }
 
+    public move(x: number, y: number): void {
+        super.move(x, y)
+        this.freeze.move(x,y)
+    }
+
     public get currentDiameter(): number {
         return this.lifeBasedDiameter
+    }
+
+    public repopFreeze(): void {
+        this.freeze.diameter = random(this.diameter * 2, this.diameter * 4)
+        this.freeze.placeOutOfLimits()
+        while(
+            this.calculatedDist(this.freeze) < 0 ||
+            this.calculatedDist(this.freeze) > this.freezeRange
+        ) this.freeze.place({
+            x: random(
+                ((this.x - this.radius) - this.freeze.radius) - this.freezeRange,
+                this.x + this.freeze.radius + this.radius + this.freezeRange
+            ),
+            y: random(
+                ((this.y - this.radius) - this.freeze.radius) - this.freezeRange,
+                this.y + this.freeze.radius + this.radius + this.freezeRange
+            )
+        })
+    }
+
+    private toFreeze(): boolean {
+        return this.freezeRate.range(0,seconds(1))
     }
 
 }

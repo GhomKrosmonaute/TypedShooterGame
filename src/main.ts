@@ -9,8 +9,11 @@ import {baseURL, siteKey} from './config'
 import API from './Shooter/API'
 import Color from './Shooter/Entities/Color';
 import {Palette} from './interfaces';
+import MB from 'mobile-detect'
 
 let started:boolean = false
+const mb = new MB(window.navigator.userAgent)
+const mobile = mb.mobile()
 
 function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 
@@ -22,36 +25,59 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             blue: new Color(p,hexColors[0]),
             red: new Color(p,hexColors[1])
         }
-        app = new App(p,colors,new API(apiToken))
+        app = new App(p,colors,!!mobile,new API(apiToken))
     }
 
     p.draw = async () => {
         if(!app) return
         await app.step()
         await app.draw()
+        if(app.debugMode)
+            app.debug()
     }
 
-    p.keyPressed = () => {
-        if(!app) return false
-        app.keyPressed(p.key)
-        return false
-    }
+    //if(mobile){
 
-    p.keyReleased = () => {
-        if(!app) return false
-        app.keyReleased(p.key)
-        return false
-    }
+        p.touchStarted = event => {
+            if(!app) return false
+            app.touchStarted(event)
+        }
 
-    p.mousePressed = () => {
-        if(!app) return
-        app.mousePressed()
-    }
+        p.touchMoved = event => {
+            if(!app) return false
+            app.touchMoved(event)
+        }
 
-    p.mouseMoved = () => {
-        if(!app) return
-        app.mouseMoved()
-    }
+        p.touchEnded = event => {
+            if(!app) return false
+            app.touchEnded(event)
+        }
+
+    //}else{
+
+        p.keyPressed = () => {
+            if(!app) return false
+            app.keyPressed(p.key)
+            return false
+        }
+
+        p.keyReleased = () => {
+            if(!app) return false
+            app.keyReleased(p.key)
+            return false
+        }
+
+        p.mousePressed = () => {
+            if(!app) return
+            app.mousePressed()
+        }
+
+        p.mouseMoved = () => {
+            if(!app) return
+            app.mouseMoved()
+        }
+
+    //}
 
     p.windowResized = () => {
         p.resizeCanvas(p.windowWidth,p.windowHeight)

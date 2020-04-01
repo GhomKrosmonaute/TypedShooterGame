@@ -24,6 +24,7 @@ import {Vector2D} from './interfaces';
 import {LIMITS, VIEWPORT} from './config';
 import Pulsar from './Shooter/Entities/Enemies/Pulsar';
 import Freezer from './Shooter/Entities/Enemies/Freezer';
+import ShotsSpeedUp from './Shooter/Entities/Bonus/ShotsSpeedUp';
 
 export function constrain( n:number, low:number, high:number ): number {
     return Math.max(Math.min(n, high), low);
@@ -148,7 +149,7 @@ export function pickEnemy( party:Party ): Enemy {
 }
 
 export function pickBonus( party:Party ): Bonus {
-    const rdm = Math.floor(Math.random() * 13)
+    const rdm = Math.floor(Math.random() * 14)
     switch (rdm) {
         case 0: return new Heal(party)
         case 1: return new StarBalls(party)
@@ -163,6 +164,7 @@ export function pickBonus( party:Party ): Bonus {
         case 10: return new DeadChain(party)
         case 11: return new SpeedUp(party)
         case 12: return new ExplosiveShots(party)
+        case 23: return new ShotsSpeedUp(party)
     }
 }
 
@@ -205,4 +207,11 @@ export function isOnArc(
 ): boolean {
     if(!target) return false
     return rawDist(a,target) + rawDist(b,target) < rawDist(a,b) + arcWeight
+}
+
+export function fromCenter( p:p5, vector:Vector2D ): Vector2D {
+    return {
+        x: vector.x - p.width * .5,
+        y: vector.y - p.height * .5
+    }
 }

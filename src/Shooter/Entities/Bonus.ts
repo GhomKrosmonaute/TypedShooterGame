@@ -45,7 +45,7 @@ export default abstract class Bonus extends Positionable {
         if(this.calculatedTouch(this.party.player))
             this.use()
 
-        if(this.app.debug) this.use()
+        if(this.app.debugMode) this.use()
 
     }
 

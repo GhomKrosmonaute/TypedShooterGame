@@ -4,8 +4,8 @@ import p5 from 'p5';
 
 export default class DeadChain extends Bonus implements Passive {
 
-    public level = 1
-    public levelMax = 4
+    public level = 1 // 100
+    public levelMax = 4 // 175
     public id = 'deadChain'
     public displayName = 'Dead Chain'
     public description = 'Explosion {value}px'
@@ -22,7 +22,7 @@ export default class DeadChain extends Bonus implements Passive {
     }
 
     get value(): number {
-        return 100 + this.level * 25
+        return 75 + this.level * 25
     }
 
 }

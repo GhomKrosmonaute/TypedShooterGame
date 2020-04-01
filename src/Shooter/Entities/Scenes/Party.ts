@@ -3,19 +3,19 @@ import Enemy from '../Enemy';
 import Bonus from '../Bonus';
 import Particles from '../Particles';
 import Player from '../Player';
-import {pickBonus, pickEnemy} from '../../../utils';
+import {constrain, map, pickBonus, pickEnemy} from '../../../utils';
 import App from '../../App';
 import Rate from '../Rate';
 
 export default class Party extends Scene {
 
-    private readonly maxEnemyCount = 40
+    private readonly maxEnemyCount = 60
     private readonly minEnemyCount = 10
-    private readonly baseBonusState = 2
+    private readonly baseBonusState = 5
 
     public background:Particles
     public foreground:Particles
-    public bonusState:number
+    public nextBonusState:number
     public lastBonusState:number
     public enemies:Enemy[]
     public bonus:Bonus[]
@@ -30,15 +30,21 @@ export default class Party extends Scene {
     }
 
     private newBonusState(){
-        this.lastBonusState = this.bonusState
-        this.bonusState += this.bonusState * 1.20
+        this.lastBonusState = this.nextBonusState
+        this.nextBonusState += Math.max(5,map(
+            this.player.score,
+            0,
+            1000,
+            10,
+            200
+        ))
     }
 
     reset(){
         this.time = 0
         this.rate = new Rate(25)
         this.lastBonusState = 0
-        this.bonusState = this.baseBonusState
+        this.nextBonusState = this.baseBonusState
         this.player = new Player(this)
         this.enemies = []
         this.bonus = []
@@ -86,7 +92,7 @@ export default class Party extends Scene {
                     Math.min(this.p.width * .6,
                         this.p.map( this.player.score,
                             this.lastBonusState,
-                            this.bonusState,
+                            this.nextBonusState,
                             0,
                             this.p.width * .6
                         )
@@ -122,7 +128,7 @@ export default class Party extends Scene {
             this.enemies.push(pickEnemy(this))
         this.enemies.forEach( enemy => enemy.step() )
         await this.player.step()
-        if(this.player.score >= this.bonusState){
+        if(this.player.score >= this.nextBonusState){
             this.newBonusState()
             const bonus = pickBonus(this)
             this.bonus.push(bonus)

@@ -21,6 +21,7 @@ Les specs c'est en dessous.
 | ✅ | Shield | protection rudimentaire contre les petits dommages | passif |
 | ✅ | Damage Up | les tirs infligent plus de dommages | passif |
 | ✅ | Shots Size Up | les tirs sont plus gros | passif |
+| ✅ | Shots Speed Up | les tirs sont plus rapides | passif |
 | ✅ | Fire Rate Up | la cadence de tir est plus rapide | passif |
 | ✅ | Range Up | les tirs vont plus loin | passif |
 | ✅ | Speed Up | le joueur se déplace plus vite | passif |
@@ -33,6 +34,8 @@ Les specs c'est en dessous.
 | ✅ | Blob | absorbe les ennemis qu'il touche |
 | ✅ | Rocket | une cible suit le joueur puis explose |
 | ✅ | Circular Saw | tue tout ce qui le touche |
+| ✅ | Pulsar | repousse tout avec des ondes |
+| ✅ | Freezer | gèle les ennemis et le joueur |
 | ❌ | Bound | peut faire des bonds et des plongées |
 | ✅ | Tesla | crée des arcs électriques |
 | ❌ | Slug | crée une trainée de poison |

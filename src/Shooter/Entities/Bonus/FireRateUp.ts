@@ -1,11 +1,12 @@
 import Bonus from '../Bonus';
 import {Passive} from '../../../interfaces';
 import p5 from 'p5';
+import { map } from '../../../utils';
 
 export default class FireRateUp extends Bonus implements Passive {
 
-    public level = 1
-    public levelMax = 4
+    public level = 1 // 400
+    public levelMax = 2 // 300
     public id = 'fireRateUp'
     public displayName = 'Fire Rate Up'
     public description = 'Fires every {value}ms'
@@ -22,7 +23,7 @@ export default class FireRateUp extends Bonus implements Passive {
     }
 
     get value(): number {
-        return this.p.map(this.level,1,5,this.party.player.baseFireRate,100)
+        return map(this.level,0,2,this.party.player.baseFireRate,300)
     }
 
 }

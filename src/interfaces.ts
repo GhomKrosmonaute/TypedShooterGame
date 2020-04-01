@@ -73,6 +73,12 @@ export interface Keys {
     [key:string]: boolean
 }
 
+export interface Touch {
+    active: boolean
+    base: Vector2D
+    current: Vector2D
+}
+
 export interface KeyMode {
     name: string
     shoot: DirectionalKeys

@@ -29,6 +29,7 @@ a, button, input {
   padding: 20px;
   border: 2px solid #FFF;
   width: 100%;
+  max-width: 80vw;
   border-radius: 20px;
   text-align: center;
 }
@@ -43,6 +44,7 @@ input[type="color"] {
   flex-grow: 1;
   padding: 0;
   border-radius: 0;
+  min-width: 20px;
 }
 
 input[type="submit"], button {
@@ -81,8 +83,29 @@ div {
   justify-content: center;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 form > div {
   flex-direction: row;
   justify-content: space-around;
+}
+
+@media screen and (min-width: 800px) {
+  input[type="text"],
+  input[type="password"],
+  input[type="submit"] {
+    max-width: none;
+    min-width: 300px;
+  }
+}
+
+@media screen and (max-width: 437px) {
+  h2 {
+    font-size: 22px;
+  }
 }
 

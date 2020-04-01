@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
 import fontUrl from './fonts/Baloo2-Regular.ttf'
-import {KeyMode, Keys, Palette, SceneName, Vector2D} from '../interfaces'
+import {KeyMode, Keys, Palette, SceneName, Touch, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {keyModes, VERSION} from '../config';
 import Party from './Entities/Scenes/Party';
@@ -15,6 +15,8 @@ import Variation from './Entities/Variation';
 import Cursor from './Entities/Cursor';
 import Particles from './Entities/Particles';
 import Color from './Entities/Color';
+import {fromCenter} from '../utils';
+import Angle from './Entities/Angle';
 
 export default class App {
 
@@ -29,12 +31,17 @@ export default class App {
     }
 
     public readonly version = VERSION
-    public readonly debug = false
+    public readonly debugMode = false
 
     private hardcoreVariator:Variation
 
     public gamepad?:Gamepad
     public keys:Keys = {}
+    public touch:Touch = {
+        active: false,
+        base: {x:0,y:0},
+        current: {x:0,y:0}
+    }
     public rate:Rate
     public useGamepad = false
     public particles:Particles
@@ -44,6 +51,7 @@ export default class App {
     constructor(
         public p:p5,
         public colors:Palette,
+        public mobile:boolean,
         public api:API
     ){
 
@@ -127,6 +135,19 @@ export default class App {
         this.cursor.draw()
     }
 
+    public debug(): void {
+        this.p.stroke(255,0,0)
+        this.p.strokeWeight(2)
+        if(this.touch.active){
+            this.p.line(
+                this.touch.base.x,
+                this.touch.base.y,
+                this.touch.current.x,
+                this.touch.current.y
+            )
+        }
+    }
+
     public get hardcore(): boolean {
         if(!this.scenes) return false
         return this.scenes.party.player.score > 1000
@@ -149,10 +170,7 @@ export default class App {
         }
     }
     public get mouseFromCenter(): Vector2D {
-        return {
-            x: this.p.mouseX - this.p.width * .5,
-            y: this.p.mouseY - this.p.height * .5
-        }
+        return fromCenter(this.p,this.mouse)
     }
     public mouseShift( shift:number ): Vector2D {
         return {
@@ -264,6 +282,34 @@ export default class App {
         if(this.scene.form) this.scene.form.mousePressed()
         this.scene.links.forEach( link => link.mousePressed() )
         this.scene.buttons.forEach( button => button.mousePressed() )
+    }
+
+    public touchStarted( event:any ): void {
+        if(this.mouseFromCenter.y > this.p.height * .3){
+            // TODO: use activable
+        }else{
+            this.touch.active = true
+            this.touch.base = this.mouseFromCenter
+            this.touch.current = this.mouseFromCenter
+        }
+    }
+    public touchMoved( event:any ): void {
+        this.touch.current = this.mouseFromCenter
+    }
+    public touchEnded( event:any ): void {
+        if(this.mouseFromCenter.y > this.p.height * .3){
+            // TODO: use activable
+        }else{
+            this.touch.active = false
+        }
+    }
+
+    public get touchAngle(): Angle | false {
+        if(!this.touch.active) return false
+        return Angle.fromTo(this.p,
+            this.touch.base,
+            this.touch.current
+        )
     }
 
     public switchGamepad(): void {

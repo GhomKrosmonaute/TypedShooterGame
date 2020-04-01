@@ -7,9 +7,9 @@ export default class ShotsSizeUp extends Bonus implements Passive {
 
     public level = 1
     public levelMax = 3
-    public id = 'shotsSizeUp'
-    public displayName = 'Shots Size Up'
-    public description = '{value}px'
+    public id = 'shotsSpeedUp'
+    public displayName = 'Shots Speed Up'
+    public description = '{value}px per frame'
 
     applyEffect(): void {
         this.party.player.addPassive(this)
@@ -22,22 +22,10 @@ export default class ShotsSizeUp extends Bonus implements Passive {
             w * .2,
             h * .6
         )
-        p.rect(
-            x + w * .6,
-            y + h * .2,
-            w * .2,
-            h * .6
-        )
-        p.rect(
-            x + w * .4,
-            y + h * .4,
-            w * .2,
-            h * .4
-        )
     }
 
     get value(): number {
-        return map(this.level,0,3,this.party.player.baseShotSize,this.party.player.baseShotSize * 2)
+        return map(this.level,0,3,this.party.player.baseShotSpeed,this.party.player.baseShotSpeed * 2)
     }
 
 }

@@ -1,5 +1,6 @@
 import p5 from 'p5';
 import {map} from '../../utils';
+import {Vector2D} from '../../interfaces';
 
 export default class Angle {
 
@@ -30,6 +31,13 @@ export default class Angle {
         this.normalize()
     }
 
+    private normalize(): void {
+        if(this.degrees < 0)
+            this.degrees += 360
+        if(this.degrees > 360)
+            this.degrees -= 360
+    }
+
     static dist( angle:Angle, target:Angle ): { dist:number, sens:number } {
         let dist = { toUp: 0, toDown: 0 }
         let degrees = Math.round(angle.degrees)
@@ -55,11 +63,14 @@ export default class Angle {
         }
     }
 
-    private normalize(): void {
-        if(this.degrees < 0)
-            this.degrees += 360
-        if(this.degrees > 360)
-            this.degrees -= 360
+    static fromTo( p:p5, a:Vector2D, b:Vector2D ): Angle {
+        p.angleMode(p.RADIANS)
+        return new Angle(p,p.degrees(
+            p.atan2(
+                b.y - a.y,
+                b.x - a.x
+            ) + p.PI
+        ))
     }
 
 }

@@ -5,7 +5,7 @@ import p5 from 'p5'
 export default class SpeedUp extends Bonus implements Passive {
 
     public level = 1
-    public levelMax = 4
+    public levelMax = 3
     public id = 'speedUp'
     public displayName = 'Speed Up'
     public description = '{value}px per frame'
