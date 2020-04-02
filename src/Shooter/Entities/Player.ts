@@ -258,7 +258,7 @@ export default class Player extends Dirigible {
                 className: 'low',
                 duration: 700,
                 callback: a => {
-                    a.scene.app.sceneName = 'manual'
+                    a.scene.app.sceneName = a.scene.app.homeScene
                     a.scene.app.scenes.party.reset()
                 }
             }))
@@ -326,11 +326,12 @@ export default class Player extends Dirigible {
                         enemy:Enemy
                         distance:number
                     }[] = []
-                    for(const enemy of this.party.enemies){
-                        const distance = enemy.calculatedDist(this)
-                        if(distance < this.shotRange)
-                            enemies.push({ enemy, distance })
-                    }
+                    for(const enemy of this.party.enemies)
+                        if(!enemy.immune){
+                            const distance = enemy.calculatedDist(this)
+                            if(distance < this.shotRange)
+                                enemies.push({ enemy, distance })
+                        }
                     if(enemies.length > 0){
                         this.shootRating.trigger()
                         this.shots.push(

@@ -75,7 +75,7 @@ export default class App {
     }
 
     public reset(): void {
-        this.sceneName = 'manual'
+        this.sceneName = this.homeScene
         this.rate = new Rate(25)
     }
 
@@ -146,6 +146,10 @@ export default class App {
                 this.touch.current.y
             )
         }
+    }
+
+    public get homeScene(): SceneName {
+        return this.mobile ? 'scores' : 'manual'
     }
 
     public get hardcore(): boolean {

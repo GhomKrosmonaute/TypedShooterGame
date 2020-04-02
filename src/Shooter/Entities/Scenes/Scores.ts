@@ -12,30 +12,31 @@ export default class Scores extends Scene {
     constructor( app:App ) {
         super(app)
         const appZone = this.app.zone
-        this.links.push(
-            new Link( this,
-                1/6,
-                5/6,
-                {
-                    targetName: 'party'
-                }
-            ),
-            new Link( this,
-                .5,
-                5/6,
-                {
-                    targetName: 'profile',
-                    resetNew: true
-                }
-            ),
-            new Link( this,
-                5/6,
-                5/6,
-                {
-                    targetName: 'manual'
-                }
+        this.links.push(new Link( this,
+            app.mobile ? .5 : 1/6,
+            5/6,
+            {
+                targetName: 'party'
+            }
+        ))
+        if(!app.mobile)
+            this.links.push(
+                new Link( this,
+                    .5,
+                    5/6,
+                    {
+                        targetName: 'profile',
+                        resetNew: true
+                    }
+                ),
+                new Link( this,
+                    5/6,
+                    5/6,
+                    {
+                        targetName: 'manual'
+                    }
+                )
             )
-        )
         this.reset()
     }
 
