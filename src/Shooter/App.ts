@@ -65,7 +65,7 @@ export default class App {
 
         this.particles = new Particles(this,50,0,5)
         this.hardcoreVariator = new Variation(-10,10,2)
-        this.lightModeTransition = this.lightMode ? 0 : 255
+        this.lightModeTransition = this.lightMode ? 255 : 0
         this.cursor = new Cursor(this)
         const font = p.loadFont(fontUrl)
         this.p.smooth()

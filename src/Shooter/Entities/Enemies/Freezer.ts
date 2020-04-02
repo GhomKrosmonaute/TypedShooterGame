@@ -17,7 +17,7 @@ export default class Freezer extends Enemy {
 
     private freezeRange = 10
     private freezeRate = new Rate(seconds(2))
-    private freeze:Positionable
+    private readonly freeze:Positionable
 
     constructor( party:Party ) {
         super( party )

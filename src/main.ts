@@ -36,7 +36,7 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             app.debug()
     }
 
-    //if(mobile){
+    if(!!mobile){
 
         p.touchStarted = event => {
             if(!app) return false
@@ -53,7 +53,7 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             app.touchEnded(event)
         }
 
-    //}else{
+    }else{
 
         p.keyPressed = () => {
             if(!app) return false
@@ -77,7 +77,7 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             app.mouseMoved()
         }
 
-    //}
+    }
 
     p.windowResized = () => {
         p.resizeCanvas(p.windowWidth,p.windowHeight)
@@ -96,6 +96,8 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    await screen.orientation.lock("landscape")
 
     const storageColors = localStorage.getItem('colors')
     if(storageColors){
