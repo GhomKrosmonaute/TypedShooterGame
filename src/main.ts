@@ -97,7 +97,8 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    await screen.orientation.lock("landscape")
+    try{ await screen.orientation.lock("landscape") }
+    catch(err){ console.error(err) }
 
     const storageColors = localStorage.getItem('colors')
     if(storageColors){
