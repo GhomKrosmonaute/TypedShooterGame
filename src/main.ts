@@ -67,16 +67,16 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             return false
         }
 
-        p.mousePressed = () => {
-            if(!app) return
-            app.mousePressed()
-        }
-
         p.mouseMoved = () => {
             if(!app) return
             app.mouseMoved()
         }
 
+    }
+
+    p.mousePressed = () => {
+        if(!app) return
+        app.mousePressed()
     }
 
     p.windowResized = () => {

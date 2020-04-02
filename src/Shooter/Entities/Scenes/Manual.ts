@@ -16,21 +16,24 @@ export default class Manual extends Scene {
         const appZone = this.app.zone
         this.links.push(
             new Link( this,
-                appZone.fractionX(1/6),
-                appZone.fractionY(5/6), {
+                1/6,
+                5/6,
+                {
                     targetName: 'party'
                 }
             ),
             new Link( this,
-                appZone.fractionX(.5),
-                appZone.fractionY(5/6), {
+                .5,
+                5/6,
+                {
                     targetName: 'scores',
                     resetNew: true
                 }
             ),
             new Link( this,
-                appZone.fractionX(5/6),
-                appZone.fractionY(5/6), {
+                5/6,
+                5/6,
+                {
                     targetName: 'profile',
                     resetNew: true
                 }
