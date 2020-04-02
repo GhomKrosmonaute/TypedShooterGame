@@ -1,6 +1,8 @@
 import p5 from 'p5';
 import {map} from '../../utils';
 import {Vector2D} from '../../interfaces';
+import Shot from './Shot';
+import App from '../App';
 
 export default class Angle {
 
@@ -17,44 +19,42 @@ export default class Angle {
         this.normalize()
     }
 
-    public move( degrees:number ): void {
+    public move( degrees:number ): Angle {
         this.degrees += degrees
-        this.normalize()
+        return this.normalize()
     }
 
-    public pointTo(angle:Angle, speedDegrees:number ): void {
-        if(angle.degrees === this.degrees) return
-        const { dist, sens } = Angle.dist(this,angle)
+    public pointTo(angle:Angle, speedDegrees:number = 360, ignoreOpposite:boolean = false ): Angle {
+        if(angle.degrees === this.degrees) return this
+        const { dist, sens } = Angle.pathFinder(this,angle)
+        if(ignoreOpposite && dist > 135) return this
         if(dist < speedDegrees)
             speedDegrees = dist
-        this.degrees += speedDegrees * sens
-        this.normalize()
+        return this.move(speedDegrees * sens)
     }
 
-    private normalize(): void {
+    public normalize(): Angle {
         if(this.degrees < 0)
             this.degrees += 360
-        if(this.degrees > 360)
+        if(this.degrees > 359)
             this.degrees -= 360
+        return this
     }
 
-    static dist( angle:Angle, target:Angle ): { dist:number, sens:number } {
-        let dist = { toUp: 0, toDown: 0 }
-        let degrees = Math.round(angle.degrees)
-        const degreesTarget = Math.round(target.degrees)
-        for(let i=0; i<180; i++){
-            if(degreesTarget === degrees) break
-            degrees --
-            if(degrees < 0)
-                degrees += 360
+    static pathFinder( angle:Angle, target:Angle ): { dist:number, sens:number } {
+        const dist = { toUp: 0, toDown: 0 }
+        let newAngle = new Angle(angle.p,angle.degrees)
+        for(let i=0; i<181; i++){
+            if(Math.floor(newAngle.degrees) === Math.floor(target.degrees))
+                break
+            newAngle.move(-1)
             dist.toDown ++
         }
-        degrees = Math.round(angle.degrees)
-        for(let i=0; i<180; i++){
-            if(degreesTarget === degrees) break
-            degrees ++
-            if(degrees > 360)
-                degrees -= 360
+        newAngle = new Angle(angle.p,angle.degrees)
+        for(let i=0; i<181; i++){
+            if(Math.floor(newAngle.degrees) === Math.floor(target.degrees))
+                break
+            newAngle.move(1)
             dist.toUp ++
         }
         return {
@@ -71,6 +71,62 @@ export default class Angle {
                 b.x - a.x
             ) + p.PI
         ))
+    }
+
+    static fromDirectionalKeys( app:App, type:'shoot'|'move' ): Angle {
+        if(
+            (
+                app.keyIsPressed(type,'up') &&
+                app.keyIsPressed(type,'left') &&
+                app.keyIsPressed(type,'right')
+            ) || (
+                app.keyIsPressed(type,'up') &&
+                !app.keyIsPressed(type,'left') &&
+                !app.keyIsPressed(type,'right')
+            )
+        ){ return new Angle(app.p,90) } else if(
+            (
+                app.keyIsPressed(type,'down') &&
+                app.keyIsPressed(type,'left') &&
+                app.keyIsPressed(type,'right')
+            ) || (
+                app.keyIsPressed(type,'down') &&
+                !app.keyIsPressed(type,'left') &&
+                !app.keyIsPressed(type,'right')
+            )
+        ){ return new Angle(app.p,270) } else if(
+            (
+                app.keyIsPressed(type,'left') &&
+                app.keyIsPressed(type,'up') &&
+                app.keyIsPressed(type,'down')
+            ) || (
+                app.keyIsPressed(type,'left') &&
+                !app.keyIsPressed(type,'up') &&
+                !app.keyIsPressed(type,'down')
+            )
+        ){ return new Angle(app.p,0) } else if(
+            (
+                app.keyIsPressed(type,'right') &&
+                app.keyIsPressed(type,'up') &&
+                app.keyIsPressed(type,'down')
+            ) || (
+                app.keyIsPressed(type,'right') &&
+                !app.keyIsPressed(type,'up') &&
+                !app.keyIsPressed(type,'down')
+            )
+        ){ return new Angle(app.p,180) } else if(
+            app.keyIsPressed(type,'up') &&
+            app.keyIsPressed(type,'right')
+        ){ return new Angle(app.p,135) } else if(
+            app.keyIsPressed(type,'down') &&
+            app.keyIsPressed(type,'right')
+        ){ return new Angle(app.p,225) } else if(
+            app.keyIsPressed(type,'down') &&
+            app.keyIsPressed(type,'left')
+        ){ return new Angle(app.p,315) } else if(
+            app.keyIsPressed(type,'up') &&
+            app.keyIsPressed(type,'left')
+        ){ return new Angle(app.p,45) }
     }
 
 }

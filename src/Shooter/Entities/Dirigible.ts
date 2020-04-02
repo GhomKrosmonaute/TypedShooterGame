@@ -15,12 +15,18 @@ export default class Dirigible extends Positionable {
         super(p,x,y,diameter)
     }
 
-    public angleMove(speed:number ): void {
-        const speedX = speed * this.p.cos(this.angle.radians)
-        const speedY = speed * this.p.sin(this.angle.radians)
+    public getAngleMove( speed:number ): Vector2D {
+        return {
+            x: speed * this.p.cos(this.angle.radians),
+            y: speed * this.p.sin(this.angle.radians)
+        }
+    }
+
+    public moveByAngle(speed:number ): void {
+        const move = this.getAngleMove(speed)
         this.move(
-            speedX * -2,
-            speedY * -2
+            move.x * -2,
+            move.y * -2
         )
     }
 
@@ -28,14 +34,14 @@ export default class Dirigible extends Positionable {
         if(this.rawDist(target) <= speed * 2) return
         const targetAngle = Angle.fromTo(this.p,this,target)
         this.angle.pointTo(targetAngle,rotationSpeed)
-        this.angleMove( speed )
+        this.moveByAngle( speed )
     }
 
     public repulsedBy( target:Vector2D, speed:number, rotationSpeed:number = 360 ): void {
         const targetAngle = Angle.fromTo(this.p,this,target)
         targetAngle.move(180)
         this.angle.pointTo(targetAngle,rotationSpeed)
-        this.angleMove( speed )
+        this.moveByAngle( speed )
     }
 
     public target( target:Vector2D, speedFraction:number ): void {

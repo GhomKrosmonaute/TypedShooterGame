@@ -9,7 +9,7 @@ import Angle from './Angle';
 
 export default class Shot extends Dirigible {
 
-    public readonly basePosition:Positionable
+    public readonly basePosition:Dirigible
     private readonly speed:number
     public readonly damage:number
     private piercingShots:number = 1
@@ -26,10 +26,13 @@ export default class Shot extends Dirigible {
             player.shotSize,
             new Angle(player.p,degrees)
         )
-        this.basePosition = new Positionable( this.p,
-            player.x + player.speedX * 10,
-            player.y + player.speedY * 10
+        this.basePosition = new Dirigible( this.p,
+            player.x * 10,
+            player.y * 10,
+            0,
+            player.angle
         )
+        this.basePosition.moveByAngle(player.speed * 2)
         this.speed = this.player.shotSpeed
         this.damage = this.player.shotDamage
         const piercingShots = this.player.getPassive('piercingShots')
@@ -92,7 +95,7 @@ export default class Shot extends Dirigible {
                 target,
                 this.speed,
                 this.speed * 2
-            ); else this.angleMove(this.speed)
+            ); else this.moveByAngle(this.speed)
         }
     }
 

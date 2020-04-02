@@ -42,13 +42,13 @@ export default class Freezer extends Enemy {
         if(this.toFreeze()){
             for(const enemy of this.party.enemies) {
                 if (enemy.id !== 'freezer' && enemy.calculatedTouch(this.freeze)) {
-                    enemy.speed = map(
+                    enemy.speed = Math.max(0,map(
                         enemy.rawDist(this.freeze),
-                        0,
+                        this.freeze.radius / 2,
                         this.freeze.radius,
-                        .01,
+                        0,
                         enemy.baseSpeed
-                    )
+                    ))
                 } else enemy.speed = enemy.baseSpeed
             }
         }

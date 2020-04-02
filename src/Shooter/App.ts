@@ -59,7 +59,7 @@ export default class App {
         if( !storage || JSON.parse(storage).version !== this.version )
             localStorage.setItem('shooter', JSON.stringify({
                 keyModeIndex: 0,
-                lightMode: true,
+                lightMode: false,
                 version: this.version
             }))
 

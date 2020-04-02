@@ -1,5 +1,4 @@
 
-import Positionable from './Positionable';
 import Shot from './Shot';
 import {Combo, Consumable, Passive, ShapeFunction, TemporaryEffects} from '../../interfaces';
 import Rate from './Rate';
@@ -10,9 +9,11 @@ import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
 import {constrain, map, norm} from '../../utils';
+import Dirigible from './Dirigible';
 import Angle from './Angle';
+import Enemy from './Enemy';
 
-export default class Player extends Positionable {
+export default class Player extends Dirigible {
 
     public baseLife = 5
     public life = 5
@@ -23,8 +24,7 @@ export default class Player extends Positionable {
     public baseShotDamage = 1
     public baseFireRate = 500
     public baseShotSize = 15
-    public speedX = 0
-    public speedY = 0
+    public speed = 0
     public acc = 3
     public desc = .7
     public angleMaxSpeedFraction = .7071067811865476
@@ -267,150 +267,103 @@ export default class Player extends Positionable {
     }
 
     private moveStep(): void {
-        if(!this.app.moveKeyIsPressed()){
 
-            this.speedX *= this.desc
-            this.speedY *= this.desc
-
+        if(this.app.mobile){
+            if(!this.app.touchAngle){
+                this.speed *= this.desc
+            }else{
+                this.speed += this.acc
+                this.angle.pointTo(this.app.touchAngle,22.5)
+            }
         }else{
-
-            if(
-                !this.app.keyIsPressed('move','left') &&
-                !this.app.keyIsPressed('move','right')
-            ) this.speedX *= this.desc
-
-            if(
-                !this.app.keyIsPressed('move','up') &&
-                !this.app.keyIsPressed('move','down')
-            ) this.speedY *= this.desc
-
-            if(this.app.keyIsPressed('move','left')) {
-                this.speedX -= this.acc
-                if(
-                    this.app.keyIsPressed('move','up') ||
-                    this.app.keyIsPressed('move','down')
-                ) this.speedX = Math.max(this.speedMax * this.angleMaxSpeedFraction * -1, this.speedX)
+            if(!this.app.moveKeyIsPressed()){
+                this.speed *= this.desc
+            }else{
+                this.speed += this.acc
+                this.angle.pointTo(Angle.fromDirectionalKeys(this.app,'move'),22.5)
             }
-            if(this.app.keyIsPressed('move','right')){
-                this.speedX += this.acc
-                if(
-                    this.app.keyIsPressed('move','up') ||
-                    this.app.keyIsPressed('move','down')
-                ) this.speedX = Math.min(this.speedMax * this.angleMaxSpeedFraction, this.speedX)
-            }
-            if(this.app.keyIsPressed('move','up')){
-                this.speedY -= this.acc
-                if(
-                    this.app.keyIsPressed('move','left') ||
-                    this.app.keyIsPressed('move','right')
-                ) this.speedY = Math.max(this.speedMax * this.angleMaxSpeedFraction * -1, this.speedY)
-            }
-            if(this.app.keyIsPressed('move','down')){
-                this.speedY += this.acc
-                if(
-                    this.app.keyIsPressed('move','left') ||
-                    this.app.keyIsPressed('move','right')
-                ) this.speedY = Math.min(this.speedMax * this.angleMaxSpeedFraction, this.speedY)
-            }
-
-            if(this.speedX < this.speedMax * -1) this.speedX = this.speedMax * -1
-            if(this.speedY < this.speedMax * -1) this.speedY = this.speedMax * -1
-            if(this.speedX > this.speedMax) this.speedX = this.speedMax
-            if(this.speedY > this.speedMax) this.speedY = this.speedMax
-
         }
 
-        if(this.speedX < .1 && this.speedX > -.1)
-            this.speedX = 0
+        if(this.speed < this.speedMax * -1) this.speed = this.speedMax * -1
+        if(this.speed > this.speedMax) this.speed = this.speedMax
 
-        if(this.speedY < .1 && this.speedY > -.1)
-            this.speedY = 0
+        if(this.speed < .1 && this.speed > -.1)
+            this.speed = 0
 
-        this.place({
-            x: this.speedX * .5,
-            y: this.speedY * .5
-        })
-        this.party.move(
-            this.speedX * -1,
-            this.speedY * -1
-        )
+        if(this.speed !== 0){
+            const angleMove = this.getAngleMove(this.speed)
+            this.party.move(
+                angleMove.x,
+                angleMove.y
+            )
+        }
+
     }
 
     private shotsStep(): void {
         this.shootRating.interval = this.fireRate
-
         if(this.shootRating.canTrigger()){
-            const shift = {
-                x: map(this.speedX, this.speedMax * -1, this.speedMax, -30, 30),
-                y: map(this.speedY, this.speedMax * -1, this.speedMax, -30, 30)
-            }
             if(this.getTemporary('starBalls')){
-                if(this.app.shootKeyIsPressed()){
+                if(this.app.shootKeyIsPressed() || this.app.mobile){
                     this.shootRating.trigger()
                     for(let i=0; i<8; i++)
-                        this.shots.push(new Shot( this,i * 45))
+                        this.shots.push(
+                            new Shot(this,
+                                (new Angle(
+                                    this.p,
+                                    45 * i
+                                )).pointTo(
+                                    this.angle,
+                                    this.speed * 3,
+                                    true
+                                ).degrees
+                            )
+                        )
                 }
             }else{
-                if(this.app.shootKeyIsPressed()){
-                    this.shootRating.trigger()
-                    if(
-                        (
-                            this.app.keyIsPressed('shoot','up') &&
-                            this.app.keyIsPressed('shoot','left') &&
-                            this.app.keyIsPressed('shoot','right')
-                        ) || (
-                            this.app.keyIsPressed('shoot','up') &&
-                            !this.app.keyIsPressed('shoot','left') &&
-                            !this.app.keyIsPressed('shoot','right')
+                if(this.app.mobile){
+                    const enemies:{
+                        enemy:Enemy
+                        distance:number
+                    }[] = []
+                    for(const enemy of this.party.enemies){
+                        const distance = enemy.calculatedDist(this)
+                        if(distance < this.shotRange)
+                            enemies.push({ enemy, distance })
+                    }
+                    if(enemies.length > 0){
+                        this.shootRating.trigger()
+                        this.shots.push(
+                            new Shot(this,
+                                Angle.fromTo(
+                                    this.p,
+                                    this,
+                                    enemies.sort((a,b)=>{
+                                        return a.distance - b.distance
+                                    })[0].enemy
+                                ).degrees
+                            )
                         )
-                    ){ this.shots.push(new Shot(this,90 + shift.x)) } else if(
-                        (
-                            this.app.keyIsPressed('shoot','down') &&
-                            this.app.keyIsPressed('shoot','left') &&
-                            this.app.keyIsPressed('shoot','right')
-                        ) || (
-                            this.app.keyIsPressed('shoot','down') &&
-                            !this.app.keyIsPressed('shoot','left') &&
-                            !this.app.keyIsPressed('shoot','right')
+                    }
+                }else{
+                    if(this.app.shootKeyIsPressed()){
+                        this.shootRating.trigger()
+                        this.shots.push(
+                            new Shot(this,
+                                Angle.fromDirectionalKeys(
+                                    this.app,
+                                    'shoot'
+                                ).pointTo(
+                                    this.angle,
+                                    this.speed * 3,
+                                    true
+                                ).degrees
+                            )
                         )
-                    ){ this.shots.push(new Shot(this,270 - shift.x)) } else if(
-                        (
-                            this.app.keyIsPressed('shoot','left') &&
-                            this.app.keyIsPressed('shoot','up') &&
-                            this.app.keyIsPressed('shoot','down')
-                        ) || (
-                            this.app.keyIsPressed('shoot','left') &&
-                            !this.app.keyIsPressed('shoot','up') &&
-                            !this.app.keyIsPressed('shoot','down')
-                        )
-                    ){ this.shots.push(new Shot(this,-shift.y)) } else if(
-                        (
-                            this.app.keyIsPressed('shoot','right') &&
-                            this.app.keyIsPressed('shoot','up') &&
-                            this.app.keyIsPressed('shoot','down')
-                        ) || (
-                            this.app.keyIsPressed('shoot','right') &&
-                            !this.app.keyIsPressed('shoot','up') &&
-                            !this.app.keyIsPressed('shoot','down')
-                        )
-                    ){ this.shots.push(new Shot(this,180 + shift.y)) } else if(
-                        this.app.keyIsPressed('shoot','up') &&
-                        this.app.keyIsPressed('shoot','right')
-                    ){ this.shots.push(new Shot(this,135)) } else if(
-                        this.app.keyIsPressed('shoot','down') &&
-                        this.app.keyIsPressed('shoot','right')
-                    ){ this.shots.push(new Shot(this,225)) } else if(
-                        this.app.keyIsPressed('shoot','down') &&
-                        this.app.keyIsPressed('shoot','left')
-                    ){ this.shots.push(new Shot(this,315)) } else if(
-                        this.app.keyIsPressed('shoot','up') &&
-                        this.app.keyIsPressed('shoot','left')
-                    ){ this.shots.push(new Shot(this,45)) }
+                    }
                 }
             }
-
         }
-
         this.shots = this.shots.filter(shoot => !shoot.isOutOfLimits() )
         this.shots.forEach(shoot => shoot.step() )
     }
