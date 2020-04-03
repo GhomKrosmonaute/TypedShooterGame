@@ -25,6 +25,7 @@ import {LIMITS, VIEWPORT} from './config';
 import Pulsar from './Shooter/Entities/Enemies/Pulsar';
 import Freezer from './Shooter/Entities/Enemies/Freezer';
 import ShotsSpeedUp from './Shooter/Entities/Bonus/ShotsSpeedUp';
+import RotationSpeedUp from './Shooter/Entities/Bonus/RotationSpeedUp';
 
 export function constrain( n:number, low:number, high:number ): number {
     return Math.max(Math.min(n, high), low);
@@ -149,7 +150,7 @@ export function pickEnemy( party:Party ): Enemy {
 }
 
 export function pickBonus( party:Party ): Bonus {
-    const rdm = Math.floor(Math.random() * 14)
+    const rdm = Math.floor(Math.random() * 15)
     switch (rdm) {
         case 0: return new Heal(party)
         case 1: return new StarBalls(party)
@@ -164,7 +165,8 @@ export function pickBonus( party:Party ): Bonus {
         case 10: return new DeadChain(party)
         case 11: return new SpeedUp(party)
         case 12: return new ExplosiveShots(party)
-        case 23: return new ShotsSpeedUp(party)
+        case 13: return new ShotsSpeedUp(party)
+        case 14: return new RotationSpeedUp(party)
     }
 }
 

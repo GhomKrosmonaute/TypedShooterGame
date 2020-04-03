@@ -24,6 +24,7 @@ export default class Player extends Dirigible {
     public baseShotDamage = 1
     public baseFireRate = 500
     public baseShotSize = 15
+    public baseRotationSpeed = 45
     public speed = 0
     public acc = 3
     public desc = .7
@@ -72,7 +73,9 @@ export default class Player extends Dirigible {
         return speedUp.value
     }
     public get shotSpeed(): number {
-        return this.baseShotSpeed
+        const shotSpeedUp = this.getPassive('shotSpeedUp')
+        if(!shotSpeedUp) return this.baseShotSpeed
+        return shotSpeedUp.value
     }
     public get shotRange(): number {
         const rangeUp = this.getPassive('rangeUp')
@@ -93,6 +96,11 @@ export default class Player extends Dirigible {
         const fireRateUp = this.getPassive('fireRateUp')
         if(!fireRateUp) return this.baseFireRate
         return fireRateUp.value
+    }
+    public get rotationSpeed(): number {
+        const rotationSpeedUp = this.getPassive('rotationSpeedUp')
+        if(!rotationSpeedUp) return this.baseRotationSpeed
+        return rotationSpeedUp.value
     }
 
     public setTemporary( flag:string, duration:number, shape:ShapeFunction ): void {
@@ -273,14 +281,14 @@ export default class Player extends Dirigible {
                 this.speed *= this.desc
             }else{
                 this.speed += this.acc
-                this.angle.pointTo(this.app.touchAngle,22.5)
+                this.angle.pointTo(this.app.touchAngle,this.rotationSpeed)
             }
         }else{
             if(!this.app.moveKeyIsPressed()){
                 this.speed *= this.desc
             }else{
                 this.speed += this.acc
-                this.angle.pointTo(Angle.fromDirectionalKeys(this.app,'move'),22.5)
+                this.angle.pointTo(Angle.fromDirectionalKeys(this.app,'move'),this.rotationSpeed)
             }
         }
 

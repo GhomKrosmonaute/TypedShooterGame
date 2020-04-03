@@ -23,6 +23,7 @@ Les specs c'est en dessous.
 | ✅ | Shots Size Up | les tirs sont plus gros | passif |
 | ✅ | Shots Speed Up | les tirs sont plus rapides | passif |
 | ✅ | Fire Rate Up | la cadence de tir est plus rapide | passif |
+| ✅ | Rotation Speed Up | la rotation est plus rapide | passif |
 | ✅ | Range Up | les tirs vont plus loin | passif |
 | ✅ | Speed Up | le joueur se déplace plus vite | passif |
 
