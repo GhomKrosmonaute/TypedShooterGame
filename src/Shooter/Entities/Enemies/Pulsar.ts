@@ -73,10 +73,6 @@ export default class Pulsar extends Enemy {
         this.checkShield()
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return true
-    }
-
     overDraw(): void {
     }
 

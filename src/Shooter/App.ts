@@ -310,7 +310,7 @@ export default class App {
 
     public get touchAngle(): Angle | false {
         if(!this.touch.active) return false
-        return Angle.fromTo(this.p,
+        return Angle.between(this.p,
             this.touch.base,
             this.touch.current
         )

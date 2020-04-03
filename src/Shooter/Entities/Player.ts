@@ -8,7 +8,7 @@ import API from '../API';
 import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
-import {constrain, map, norm} from '../../utils';
+import {constrain, map, norm, seconds} from '../../utils';
 import Dirigible from './Dirigible';
 import Angle from './Angle';
 import Enemy from './Enemy';
@@ -45,6 +45,7 @@ export default class Player extends Dirigible {
     private killed = false
     private immune:number
     private immuneTime = 500
+    private smokeRate = new Rate(300)
 
     constructor(
         public party:Party
@@ -276,20 +277,52 @@ export default class Player extends Dirigible {
 
     private moveStep(): void {
 
+        let move = false
+
         if(this.app.mobile){
             if(!this.app.touchAngle){
-                this.speed *= this.desc
+                move = true
             }else{
                 this.speed += this.acc
                 this.angle.pointTo(this.app.touchAngle,this.rotationSpeed)
             }
         }else{
             if(!this.app.moveKeyIsPressed()){
-                this.speed *= this.desc
+                move = true
             }else{
                 this.speed += this.acc
                 this.angle.pointTo(Angle.fromDirectionalKeys(this.app,'move'),this.rotationSpeed)
             }
+        }
+
+        if(move){
+            this.speed *= this.desc
+        }else{
+            if(this.smokeRate.canTrigger(true))
+                this.party.setAnimation({
+                    duration: this.smokeRate.interval,
+                    value: this,
+                    position: this.getVector(),
+                    className: 'low',
+                    draw: a => {
+                        a.p.noFill()
+                        a.p.strokeWeight(
+                            a.map(3,1)
+                        )
+                        a.p.stroke(
+                            a.scene.app.white,
+                            a.map(100,0)
+                        )
+                        a.p.ellipse(
+                            a.position.x,
+                            a.position.y,
+                            a.map(
+                                a.value.diameter * .8,
+                                a.value.diameter * .2
+                            )
+                        )
+                    }
+                })
         }
 
         if(this.speed < this.speedMax * -1) this.speed = this.speedMax * -1
@@ -344,7 +377,7 @@ export default class Player extends Dirigible {
                         this.shootRating.trigger()
                         this.shots.push(
                             new Shot(this,
-                                Angle.fromTo(
+                                Angle.between(
                                     this.p,
                                     this,
                                     enemies.sort((a,b)=>{

@@ -62,10 +62,6 @@ export default class Rocket extends Enemy {
 
     onPlayerContact(): void {}
 
-    shotFilter(shoot: Shot): boolean {
-        return false
-    }
-
     overDraw(): void {
     }
 

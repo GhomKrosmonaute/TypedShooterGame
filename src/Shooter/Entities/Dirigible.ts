@@ -32,13 +32,13 @@ export default class Dirigible extends Positionable {
 
     public follow( target:Vector2D, speed:number, rotationSpeed:number = 360 ): void {
         if(this.rawDist(target) <= speed * 2) return
-        const targetAngle = Angle.fromTo(this.p,this,target)
+        const targetAngle = Angle.between(this.p,this,target)
         this.angle.pointTo(targetAngle,rotationSpeed)
         this.moveByAngle( speed )
     }
 
     public repulsedBy( target:Vector2D, speed:number, rotationSpeed:number = 360 ): void {
-        const targetAngle = Angle.fromTo(this.p,this,target)
+        const targetAngle = Angle.between(this.p,this,target)
         targetAngle.move(180)
         this.angle.pointTo(targetAngle,rotationSpeed)
         this.moveByAngle( speed )

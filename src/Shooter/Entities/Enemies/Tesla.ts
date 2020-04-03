@@ -91,10 +91,6 @@ export default class Tesla extends Enemy {
         super.kill(addToScore)
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return true
-    }
-
     overDraw(): void {
         for(const tesla of this.connections){
             if(isOnArc(this,tesla,this.party.player,(tesla.arcWeight + this.arcWeight) * .5)) {

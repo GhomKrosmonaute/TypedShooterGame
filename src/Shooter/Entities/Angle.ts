@@ -41,6 +41,10 @@ export default class Angle {
         return this
     }
 
+    public clone(): Angle {
+        return new Angle(this.p,this.degrees)
+    }
+
     static pathFinder( angle:Angle, target:Angle ): { dist:number, sens:number } {
         const dist = { toUp: 0, toDown: 0 }
         let newAngle = new Angle(angle.p,angle.degrees)
@@ -63,7 +67,7 @@ export default class Angle {
         }
     }
 
-    static fromTo( p:p5, a:Vector2D, b:Vector2D ): Angle {
+    static between(p:p5, a:Vector2D, b:Vector2D ): Angle {
         p.angleMode(p.RADIANS)
         return new Angle(p,p.degrees(
             p.atan2(

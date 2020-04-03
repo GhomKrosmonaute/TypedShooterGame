@@ -46,10 +46,6 @@ export default class CircularSaw extends Enemy {
         }
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return false
-    }
-
     overDraw(): void {
     }
 

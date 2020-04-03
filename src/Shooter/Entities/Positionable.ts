@@ -96,4 +96,11 @@ export default class Positionable {
         return this.rawDist(vector) <= this.radius
     }
 
+    public getVector(): Vector2D {
+        return {
+            x: this.x,
+            y: this.y
+        }
+    }
+
 }

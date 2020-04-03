@@ -34,10 +34,6 @@ export default class ShieldPiercer extends Enemy {
         this.kill()
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return true
-    }
-
     overDraw(): void {
     }
 

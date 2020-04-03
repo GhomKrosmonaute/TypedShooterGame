@@ -58,10 +58,6 @@ export default class BlobMob extends Enemy {
         this.checkShield()
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return true
-    }
-
     overDraw(): void {
     }
 

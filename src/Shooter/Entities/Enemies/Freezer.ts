@@ -1,29 +1,35 @@
 
 import Enemy from '../Enemy';
 import Party from '../Scenes/Party'
-import Shot from "../Shot";
 import Rate from '../Rate';
-import Positionable from '../Positionable';
-import {dist, random, map, seconds, norm} from '../../../utils';
+import {seconds} from '../../../utils';
+import Dirigible from '../Dirigible';
+import star from '../../Shapes/star';
 
 export default class Freezer extends Enemy {
 
     public immune: boolean = false
-    public speed: number = 2.5
+    public speed: number = 2.2
     public damages: number = 1
     public gain: number = 1
     public life: number = 3
     public id = 'freezer'
 
-    private freezeRange = 10
-    private freezeRate = new Rate(seconds(2))
-    private readonly freeze:Positionable
+    private readonly freezeRange = 500
+    private readonly freezeDamages = 1
+    private readonly freezeRate = new Rate(seconds(1))
+    private readonly freezeExplosionDuration = 300
+
+    private freeze?:Dirigible
+    private freezeExplosions:{
+        x:number
+        y:number
+        time:number
+    }[] = []
 
     constructor( party:Party ) {
         super( party )
-        this.diameter = 40
-        this.freeze = new Positionable(this.p,0,0,50)
-        this.freeze.placeOutOfLimits()
+        this.diameter = 80
         if(this.app.hardcore){
             this.speed ++
             this.life ++
@@ -36,42 +42,48 @@ export default class Freezer extends Enemy {
 
     public pattern(): void {
         this.follow(this.party.player, this.speed, 10)
-        if(this.freezeRate.canTrigger(true)){
-            this.repopFreeze()
-        }
-        if(this.toFreeze()){
-            for(const enemy of this.party.enemies) {
-                if (enemy.id !== 'freezer' && enemy.calculatedTouch(this.freeze)) {
-                    enemy.speed = Math.max(0,map(
-                        enemy.rawDist(this.freeze),
-                        this.freeze.radius / 2,
-                        this.freeze.radius,
-                        0,
-                        enemy.baseSpeed
-                    ))
-                } else enemy.speed = enemy.baseSpeed
+        if(this.freeze && this.rawDist(this.freeze) > this.freezeRange)
+            this.freeze = null
+        if(this.freezeRate.canTrigger(true) && !this.freeze)
+            this.launchFreeze()
+        if(this.freeze){
+            this.freeze.follow(
+                this.party.player,
+                this.app.hardcore ? this.party.player.speedMax : this.party.player.speedMax * .8,
+                10
+            )
+            for(const enemy of this.party.enemies)
+                if(this.freeze && !enemy.immune && enemy.calculatedTouch(this.freeze))
+                    this.exploseFreeze()
+            if(this.freeze && this.party.player.calculatedTouch(this.freeze)){
+                this.party.player.inflictDamages(this.freezeDamages)
+                this.exploseFreeze()
             }
         }
+        this.freezeExplosions = this.freezeExplosions.filter( fe => fe.time < this.party.time + this.freezeExplosionDuration )
+        for(const fe of this.freezeExplosions){
+            for(const enemy of this.party.enemies)
+                if(enemy.id !== 'freezer')
+                    this.makeSlow(enemy)
+        }
+
     }
 
     onPlayerContact(): void {
         this.checkShield()
     }
 
-    shotFilter(shoot: Shot): boolean {
-        return true
-    }
-
     overDraw(): void {
-        if(this.toFreeze()){
-            const alpha = norm(Date.now(),this.freezeRate.endTime - this.freezeRate.interval * .5,this.freezeRate.triggerTime)
-            this.p.noFill()
-            this.p.stroke(this.app.light(.5,alpha))
-            this.p.strokeWeight(3)
-            this.p.ellipse(
+        if(this.freeze){
+            this.p.fill(this.app.light(.5))
+            this.p.noStroke()
+            star(
+                this.p,
                 this.freeze.x,
                 this.freeze.y,
-                this.freeze.diameter
+                this.freeze.radius * .5,
+                this.freeze.radius,
+                8
             )
         }
     }
@@ -90,33 +102,44 @@ export default class Freezer extends Enemy {
 
     public move(x: number, y: number): void {
         super.move(x, y)
-        this.freeze.move(x,y)
+        if(this.freeze) this.freeze.move(x,y)
     }
 
     public get currentDiameter(): number {
         return this.lifeBasedDiameter
     }
 
-    public repopFreeze(): void {
-        this.freeze.diameter = random(this.diameter * 2, this.diameter * 4)
-        this.freeze.placeOutOfLimits()
-        while(
-            this.calculatedDist(this.freeze) < 0 ||
-            this.calculatedDist(this.freeze) > this.freezeRange
-        ) this.freeze.place({
-            x: random(
-                ((this.x - this.radius) - this.freeze.radius) - this.freezeRange,
-                this.x + this.freeze.radius + this.radius + this.freezeRange
-            ),
-            y: random(
-                ((this.y - this.radius) - this.freeze.radius) - this.freezeRange,
-                this.y + this.freeze.radius + this.radius + this.freezeRange
-            )
-        })
+    public launchFreeze(): void {
+        this.freeze = new Dirigible(
+            this.p,
+            this.x,
+            this.y,
+            this.diameter * .8,
+            this.angle.clone()
+        )
     }
 
-    private toFreeze(): boolean {
-        return this.freezeRate.range(0,seconds(1))
+    public exploseFreeze(): void {
+        this.party.setAnimation({
+            position: this.freeze,
+            attach: true,
+            duration: this.freezeExplosionDuration,
+            value: null,
+            className: 'low',
+            draw: a => {
+
+            }
+        })
+        this.freezeExplosions.push({
+            x: this.freeze.x,
+            y: this.freeze.y,
+            time: this.party.time
+        })
+        this.freeze = null
+    }
+
+    public makeSlow( target:Dirigible ): void {
+
     }
 
 }

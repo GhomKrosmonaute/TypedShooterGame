@@ -12,7 +12,7 @@ module.exports = {
     },
     
     output: {
-        filename: '[name].bundle.js',
+        filename: 'shooter.min.js',
         path: DESTINATION
     },
 

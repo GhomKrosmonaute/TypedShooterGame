@@ -24,8 +24,8 @@ export default abstract class Enemy extends Dirigible {
     public abstract pattern():void
     public abstract onDraw():void
     public abstract overDraw():void
-    public abstract shotFilter(shoot:Shot):boolean
     public abstract onPlayerContact():void
+    public shotFilter?:(shoot:Shot)=>boolean
     public app:App
 
     private lastDeadChain = 0
@@ -43,7 +43,7 @@ export default abstract class Enemy extends Dirigible {
         if(!this.immune)
             for(const shot of this.party.player.shots)
                 if(this.calculatedTouch(shot))
-                    if(this.shotFilter(shot))
+                    if((this.shotFilter && this.shotFilter(shot)) || !this.immune)
                         if(shot.handleShoot(this))
                             this.inflictDamages(shot.damage,true)
 
@@ -156,14 +156,15 @@ export default abstract class Enemy extends Dirigible {
         return this.isOnScreen() ? this.diameter : 15
     }
 
-    public checkShield(): void {
+    public checkShield( killSelf:boolean = true ): void {
         const shield = this.party.player.getPassive('shield')
         let notProtected = !shield || shield.level < this.damages
         if(notProtected){
             this.party.player.removePassive('shield')
             this.party.player.inflictDamages(this.damages)
         }
-        this.kill(!notProtected)
+        if(killSelf && !this.immune)
+            this.kill(!notProtected)
     }
 
 }
