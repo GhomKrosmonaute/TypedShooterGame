@@ -27,6 +27,10 @@ export default class Positionable {
         this.y += y
     }
 
+    public scroll( x:number, y:number ): void {
+        this.move(x,y)
+    }
+
     public place( vector:Vector2D ): void {
         this.x = vector.x
         this.y = vector.y

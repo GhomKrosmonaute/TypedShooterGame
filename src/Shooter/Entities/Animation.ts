@@ -61,7 +61,7 @@ export default class Animation {
         return this.time > this.duration
     }
 
-    public move( x:number, y:number ): void {
+    public scroll( x:number, y:number ): void {
         this.position.x += x
         this.position.y += y
     }

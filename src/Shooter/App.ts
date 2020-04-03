@@ -18,7 +18,17 @@ import Color from './Entities/Color';
 import {fromCenter} from '../utils';
 import Angle from './Entities/Angle';
 
+// images
+//@ts-ignore
+import playerImageURL from './images/player.png'
+//@ts-ignore
+import shotImageURL from './images/shot.png'
+
 export default class App {
+
+    public readonly images:{
+        [key:string]: p5.Image
+    }
 
     private readonly cursor:Cursor
 
@@ -62,6 +72,11 @@ export default class App {
                 lightMode: false,
                 version: this.version
             }))
+
+        this.images = {
+            player: this.p.loadImage(playerImageURL),
+            shot: this.p.loadImage(shotImageURL)
+        }
 
         this.particles = new Particles(this,50,0,5)
         this.hardcoreVariator = new Variation(-10,10,2)

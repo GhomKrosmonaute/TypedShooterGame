@@ -140,19 +140,19 @@ export default class Party extends Scene {
         else this.player.keyPressed(key)
     }
 
-    public move( x:number, y:number ) {
+    public scroll( x:number, y:number ) {
         for(const className in this.animations)
             this.animations[className]
                 .filter( a => !a.attach )
-                .forEach( a => a.move( x, y ) )
-        this.background.move( x, y )
-        this.foreground.move( x, y )
-        this.enemies.forEach( enemy => enemy.move( x, y ) )
+                .forEach( a => a.scroll( x, y ) )
+        this.background.scroll( x, y )
+        this.foreground.scroll( x, y )
+        this.enemies.forEach( enemy => enemy.scroll( x, y ) )
         this.player.shots.forEach(shoot => {
-            shoot.basePosition.move( x, y )
-            shoot.move( x, y )
+            shoot.basePosition.scroll( x, y )
+            shoot.scroll( x, y )
         })
-        this.bonus.forEach( bonus => bonus.move( x, y ) )
+        this.bonus.forEach( bonus => bonus.scroll( x, y ) )
     }
 
     get enemyCount(): number {

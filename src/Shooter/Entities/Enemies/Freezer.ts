@@ -49,11 +49,11 @@ export default class Freezer extends Enemy {
         if(this.freeze){
             this.freeze.follow(
                 this.party.player,
-                this.app.hardcore ? this.party.player.speedMax : this.party.player.speedMax * .8,
+                this.app.hardcore ? this.speed + 3 : this.speed + 2,
                 10
             )
             for(const enemy of this.party.enemies)
-                if(this.freeze && !enemy.immune && enemy.calculatedTouch(this.freeze))
+                if(this.freeze && !enemy.immune && enemy.id !== 'freezer' && enemy.calculatedTouch(this.freeze))
                     this.exploseFreeze()
             if(this.freeze && this.party.player.calculatedTouch(this.freeze)){
                 this.party.player.inflictDamages(this.freezeDamages)
@@ -83,7 +83,7 @@ export default class Freezer extends Enemy {
                 this.freeze.y,
                 this.freeze.radius * .5,
                 this.freeze.radius,
-                8
+                12
             )
         }
     }
@@ -100,9 +100,9 @@ export default class Freezer extends Enemy {
         )
     }
 
-    public move(x: number, y: number): void {
-        super.move(x, y)
-        if(this.freeze) this.freeze.move(x,y)
+    public scroll(x: number, y: number): void {
+        super.scroll(x, y)
+        if(this.freeze) this.freeze.scroll(x,y)
     }
 
     public get currentDiameter(): number {
@@ -114,7 +114,7 @@ export default class Freezer extends Enemy {
             this.p,
             this.x,
             this.y,
-            this.diameter * .8,
+            this.diameter * .5,
             this.angle.clone()
         )
     }

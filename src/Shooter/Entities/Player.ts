@@ -8,10 +8,11 @@ import API from '../API';
 import ellipseColorFadeOut from '../Animations/ellipseColorFadeOut';
 import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
-import {constrain, map, norm, seconds} from '../../utils';
+import {constrain, map, norm} from '../../utils';
 import Dirigible from './Dirigible';
 import Angle from './Angle';
 import Enemy from './Enemy';
+
 
 export default class Player extends Dirigible {
 
@@ -28,7 +29,6 @@ export default class Player extends Dirigible {
     public speed = 0
     public acc = 3
     public desc = .7
-    public angleMaxSpeedFraction = .7071067811865476
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shots:Shot[] = []
@@ -333,7 +333,7 @@ export default class Player extends Dirigible {
 
         if(this.speed !== 0){
             const angleMove = this.getAngleMove(this.speed)
-            this.party.move(
+            this.party.scroll(
                 angleMove.x,
                 angleMove.y
             )
@@ -411,19 +411,19 @@ export default class Player extends Dirigible {
     }
 
     private drawPlayer(): void {
-        const shield = this.getPassive('shield')
-        if(shield){
-            this.p.stroke(this.app.red(norm(shield.level,1,shield.levelMax)))
-            this.p.strokeWeight(shield.level * 2)
-        }else{
-            if(this.app.lightMode) this.p.noStroke()
-            else {
-                this.p.stroke(0)
-                this.p.strokeWeight(1)
-            }
-        }
-        this.p.fill(this.app.light(.8))
-        this.p.ellipse(this.x,this.y,this.diameter)
+        this.p.push()
+        this.p.translate(this.x,this.y)
+        this.p.angleMode(this.p.DEGREES)
+        this.p.rotate(this.angle.degrees + 180)
+        this.p.tint(255)
+        this.p.image(
+            this.app.images.player,
+            this.radius * -1,
+            this.radius * -1,
+            this.diameter,
+            this.diameter
+        )
+        this.p.pop()
     }
 
     private drawLifeBar(): void {
