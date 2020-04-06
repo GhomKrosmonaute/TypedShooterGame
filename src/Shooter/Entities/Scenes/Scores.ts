@@ -1,17 +1,18 @@
 
-
 import Scene from '../Scene';
 import App from '../../App';
 import Zone from '../Zone';
 import Link from '../Link';
+import {LeaderBoard} from '../../../interfaces';
+const tims = require('tims')
 
 export default class Scores extends Scene {
 
-    private leaderBoard?:any
+    private leaderBoard?:LeaderBoard
+    private leaderBoardType:'party'|'player'
 
     constructor( app:App ) {
         super(app)
-        const appZone = this.app.zone
         this.links.push(new Link( this,
             app.mobile ? .5 : 1/6,
             5/6,
@@ -41,28 +42,40 @@ export default class Scores extends Scene {
     }
 
     reset(){
-        this.app.api.get('leaderboard')
+        this.app.api.get<LeaderBoard>('leaderboard')
             .then( leaderBoard => {
                 this.leaderBoard = leaderBoard
-                if(this.leaderBoard.player.position > 30)
-                    this.leaderBoard.top.push(this.leaderBoard.player)
+                if(this.leaderBoard.top.every( player => {
+                    return player.username !== this.leaderBoard.player.username
+                })) this.leaderBoard.top.push(this.leaderBoard.player)
             })
     }
 
     draw() {
+        this.drawLeaderBoard()
+        this.drawButtons()
+        this.drawAnimations()
+    }
+
+    step() {}
+
+    keyPressed(key: string) {
+
+    }
+
+    drawLeaderBoard(): void {
         if(!this.leaderBoard) return
         const leaderBoardZone = new Zone(
-            0,0,
-            this.p.width / 2,
+            0,-20,
+            this.p.width * .7,
             this.p.height * .7,
             true
         )
-        this.leaderBoard.top.forEach( (player:any, index:number) => {
+        this.leaderBoard.top.forEach( (player, index) => {
             const color = (
-                this.leaderBoard.player.position === index + 1 ||
-                !!player.position
+                this.leaderBoard.player.username === player.username
             ) ? this.p.color(this.app.white) : this.app.color
-            const {y} = leaderBoardZone.fraction(0,(1/30)*index)
+            const y = leaderBoardZone.fractionY((1/30)*index)
             const size = leaderBoardZone.fraction(1,1/30,true)
             const rankZone = new Zone(
                 0, y,
@@ -72,21 +85,19 @@ export default class Scores extends Scene {
             this.p.fill(color)
             this.p.textAlign(this.p.CENTER,this.p.CENTER)
             this.p.textSize(rankZone.height * .8)
-            const rank = rankZone.fraction(1/6,.5)
-            const name = rankZone.fraction(.5,.5)
-            const score = rankZone.fraction(5/6,.5)
+            const rank = rankZone.fraction(1/12,.5)
+            const name = rankZone.fraction(3/12,.5)
+            const score = rankZone.fraction(5/12,.5)
+            const prec = rankZone.fraction(7/12,.5)
+            const kills = rankZone.fraction(9/12,.5)
+            const duration = rankZone.fraction(11/12,.5)
             this.p.text(`# ${index + 1}`, rank.x, rank.y)
             this.p.text(player.username, name.x, name.y)
-            this.p.text(`Score: ${player.score} pts`,score.x,score.y)
+            this.p.text(`${player.score} pts`,score.x,score.y)
+            this.p.text(`prec: ${Math.round(player.precision * 100)}%`,prec.x,prec.y)
+            this.p.text(`kills: ${player.kills}`,kills.x,kills.y)
+            this.p.text(tims.text(player.duration),duration.x,duration.y)
         })
-        this.drawButtons()
-        this.drawAnimations()
-    }
-
-    step() {}
-
-    keyPressed(key: string) {
-
     }
 
 }

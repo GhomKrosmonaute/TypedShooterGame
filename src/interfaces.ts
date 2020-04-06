@@ -126,3 +126,23 @@ export interface Palette {
 
 export type ColorResolvable = RGB | p5.Color | string | Color
 export type RGB = [number,number,number]
+
+export interface PartyResult {
+    score:number
+    duration:number
+    kills:number
+    precision:number
+}
+
+export interface LeaderBoard {
+    top: PlayerRank[],
+    player: PlayerRank
+}
+
+export interface PlayerRank {
+    username: string
+    score: number
+    precision: number
+    kills: number
+    duration: number
+}

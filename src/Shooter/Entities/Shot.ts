@@ -14,6 +14,7 @@ export default class Shot extends Dirigible {
     public readonly damage:number
     private piercingShots:number = 1
     private toIgnore:Enemy[] = []
+    private someEnemyHit = false
 
     constructor(
         public player:Player,
@@ -43,6 +44,7 @@ export default class Shot extends Dirigible {
         if(!this.toIgnore.includes(enemy)){
             this.piercingShots --
             this.toIgnore.push(enemy)
+            this.someEnemyHit = true
             if(this.piercingShots === 0)
                 this.terminate()
             return true
@@ -51,6 +53,7 @@ export default class Shot extends Dirigible {
     }
 
     public terminate(): void {
+        if(this.someEnemyHit) this.player.hitCount ++
         const explosiveShots = this.player.getPassive('explosiveShots')
         if(explosiveShots){
             this.player.party.setAnimation(explosion({

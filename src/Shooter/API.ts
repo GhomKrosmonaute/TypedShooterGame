@@ -17,17 +17,22 @@ export default class API {
     }
 
     get<T>( route:string ): Promise<T> {
-        return axios.get('/'+route,this.config )
+        return axios.get(route,this.config )
             .then( (res) => res.data )
     }
 
-    async patch( route:string, data:{[key:string]:string|boolean|number} ): Promise<AxiosResponse> {
+    async post( route:string, data:any ): Promise<AxiosResponse> {
         data.token = await grecaptcha.execute(siteKey, { action: 'homepage' })
-        return axios.patch('/'+route, qs.stringify(data),this.config)
+        return axios.post(route, qs.stringify(data),this.config)
+    }
+
+    async patch( route:string, data:any ): Promise<AxiosResponse> {
+        data.token = await grecaptcha.execute(siteKey, { action: 'homepage' })
+        return axios.patch(route, qs.stringify(data),this.config)
     }
 
     delete( route:string ): Promise<AxiosResponse> {
-        return axios.delete('/'+route, this.config)
+        return axios.delete(route, this.config)
     }
 
     save( key:string, value:any ): void {
@@ -36,7 +41,7 @@ export default class API {
         localStorage.setItem('shooter',JSON.stringify(storage))
     }
 
-    load( key:string ): any {
+    load<T>( key:string ): T {
         return JSON.parse(localStorage.getItem('shooter'))[key]
     }
 

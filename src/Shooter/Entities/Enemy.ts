@@ -66,6 +66,8 @@ export default abstract class Enemy extends Dirigible {
 
         const position:Vector2D = { x:this.x, y:this.y }
 
+        if(addToScore) this.party.player.kills ++
+
         const deadChain = this.party.player.getPassive('deadChain')
         if(addToScore && deadChain){
             setTimeout(() => {

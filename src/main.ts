@@ -109,48 +109,48 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const submit = getInput('submit')
 
-    grecaptcha.ready(function(){
+    submit.onclick = async event => {
 
-        submit.onclick = async event => {
+        event.preventDefault()
 
-            if(started) return false
+        grecaptcha.ready(function () {
 
-            event.preventDefault()
+            // if (started) return false
 
             const username = getInput('username').value
             const password = getInput('password').value
-            const hexColors:[string,string] = [
+            const hexColors: [string, string] = [
                 getInput('red').value,
                 getInput('blue').value
             ]
 
-            grecaptcha.execute(siteKey, { action: 'login' }).then(async function(token) {
+            grecaptcha.execute(siteKey, {action: 'login'}).then(async function (token) {
                 try {
-                    const res = await axios.post('login', qs.stringify({ token, username, password }),{
+                    const res = await axios.post('login', qs.stringify({token, username, password}), {
                         baseURL, headers: {'Access-Control-Allow-Origin': '*'}
                     })
-                    if( res.status === 200 ){
+                    if (res.status === 200) {
                         started = true
                         document.getElementById('login').remove()
                         document.getElementById('p5').focus()
-                        localStorage.setItem('colors',JSON.stringify({
+                        localStorage.setItem('colors', JSON.stringify({
                             red: hexColors[0],
                             blue: hexColors[1]
                         }))
-                        new p5(p => sketch(p,hexColors,res.data.token), document.getElementById('p5') )
+                        new p5(p => sketch(p, hexColors, res.data.token), document.getElementById('p5'))
                     }
-                }catch(error){
+                } catch (error) {
                     const alert = document.getElementById('alert')
-                    if(error.message.includes(401)) alert.innerText = 'Incorrect password, please retry !'
-                    else if(error.message.includes(502)) alert.innerText = 'Oops :( The API has a little problem... Try again later!'
-                    else if(error.message.includes(500)) alert.innerText = 'reCAPTCHA token denied.'
-                    else throw error
+                    if (error.message.includes(401)) alert.innerText = 'Incorrect password, please retry !'
+                    else if (error.message.includes(502)) alert.innerText = 'Oops :( The API has a little problem... Try again later!'
+                    else if (error.message.includes(500)) alert.innerText = 'reCAPTCHA token denied.'
+                    else console.error(error.message)
                 }
             })
+        })
 
-            return false
-        }
-    })
+        return false
+    }
 })
 
 

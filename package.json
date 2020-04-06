@@ -55,7 +55,9 @@
   "dependencies": {
     "axios": "^0.19.2",
     "mobile-detect": "^1.4.4",
+    "moment": "^2.24.0",
     "p5": "^1.0.0",
-    "querystring": "^0.2.0"
+    "querystring": "^0.2.0",
+    "tims": "^1.0.4"
   }
 }

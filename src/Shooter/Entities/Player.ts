@@ -1,6 +1,6 @@
 
 import Shot from './Shot';
-import {Combo, Consumable, Passive, ShapeFunction, TemporaryEffects} from '../../interfaces';
+import {Combo, Consumable, PartyResult, Passive, ShapeFunction, TemporaryEffects} from '../../interfaces';
 import Rate from './Rate';
 import Party from './Scenes/Party';
 import App from '../App';
@@ -12,31 +12,36 @@ import {constrain, map, norm} from '../../utils';
 import Dirigible from './Dirigible';
 import Angle from './Angle';
 import Enemy from './Enemy';
+import {AxiosResponse} from 'axios';
 
 
 export default class Player extends Dirigible {
 
-    public baseLife = 5
+    public readonly baseLife = 5
+    public readonly baseSpeedMax = 10
+    public readonly baseShotSpeed = 10
+    public readonly baseShotRange = 250
+    public readonly baseShotDamage = 1
+    public readonly baseFireRate = 500
+    public readonly baseShotSize = 15
+    public readonly baseRotationSpeed = 45
+    public readonly acc = 3
+    public readonly desc = .7
+    public readonly app:App
+    public readonly api:API
+
     public life = 5
     public score = 0
-    public baseSpeedMax = 10
-    public baseShotSpeed = 10
-    public baseShotRange = 250
-    public baseShotDamage = 1
-    public baseFireRate = 500
-    public baseShotSize = 15
-    public baseRotationSpeed = 45
     public speed = 0
-    public acc = 3
-    public desc = .7
+    public kills = 0
+    public hitCount = 0
+    public shotCount = 0
     public consumables:Consumable[] = []
     public passives:Passive[] = []
     public shots:Shot[] = []
     public temporary:TemporaryEffects = {}
     public shootRating:Rate
     public highScore:number = 0
-    public app:App
-    public api:API
 
     private combo:Combo = null
     private comboTimeout = 2500
@@ -59,13 +64,13 @@ export default class Player extends Dirigible {
     }
 
     public getHighScore(): Promise<number> {
-        return this.api.get<{score:number}>('score').then( data => {
-            this.highScore = data.score
+        return this.api.get<number>('highscore').then( score => {
+            this.highScore = score
             return this.highScore
         })
     }
-    public setHighScore( score:number ): Promise<any> {
-        return this.app.api.patch('score',{score})
+    public savePartyResult( result:PartyResult ): Promise<AxiosResponse> {
+        return this.app.api.post('result',result)
     }
 
     public get speedMax(): number {
@@ -260,8 +265,14 @@ export default class Player extends Dirigible {
         if(this.life <= 0){
             this.killed = true
             if(this.score > await this.getHighScore())
-                this.setHighScore(this.score)
-                    .catch(() => alert(`Error while saving your score :(`))
+                if(this.shotCount > 0){
+                    this.savePartyResult({
+                        score: this.score,
+                        duration: this.party.time,
+                        kills: this.kills,
+                        precision: this.hitCount / this.shotCount
+                    }).catch(() => alert(`Error while saving your score :(`))
+                }
             this.party.setAnimation(explosion({
                 value: this.diameter * 1.5,
                 className: 'low',
@@ -347,6 +358,7 @@ export default class Player extends Dirigible {
             if(this.getTemporary('starBalls')){
                 if(this.app.shootKeyIsPressed() || this.app.mobile){
                     this.shootRating.trigger()
+                    this.shotCount ++
                     for(let i=0; i<8; i++)
                         this.shots.push(
                             new Shot(this,
@@ -375,6 +387,7 @@ export default class Player extends Dirigible {
                         }
                     if(enemies.length > 0){
                         this.shootRating.trigger()
+                        this.shotCount ++
                         this.shots.push(
                             new Shot(this,
                                 Angle.between(
@@ -390,6 +403,7 @@ export default class Player extends Dirigible {
                 }else{
                     if(this.app.shootKeyIsPressed()){
                         this.shootRating.trigger()
+                        this.shotCount ++
                         this.shots.push(
                             new Shot(this,
                                 Angle.fromDirectionalKeys(
