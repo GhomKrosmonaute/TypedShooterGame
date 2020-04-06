@@ -264,15 +264,13 @@ export default class Player extends Dirigible {
     private async deathStep(): Promise<boolean> {
         if(this.life <= 0){
             this.killed = true
-            if(this.score > await this.getHighScore())
-                if(this.shotCount > 0){
-                    this.savePartyResult({
-                        score: this.score,
-                        duration: this.party.time,
-                        kills: this.kills,
-                        precision: this.hitCount / this.shotCount
-                    }).catch(() => alert(`Error while saving your score :(`))
-                }
+            if(this.shotCount > 0)
+                this.savePartyResult({
+                    score: this.score,
+                    duration: this.party.time,
+                    kills: this.kills,
+                    precision: this.hitCount / this.shotCount
+                }).catch(() => alert(`Error while saving your score :(`))
             this.party.setAnimation(explosion({
                 value: this.diameter * 1.5,
                 className: 'low',

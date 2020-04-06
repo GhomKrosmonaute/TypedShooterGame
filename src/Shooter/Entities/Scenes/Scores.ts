@@ -72,13 +72,14 @@ export default class Scores extends Scene {
             true
         )
         this.leaderBoard.top.forEach( (player, index) => {
+            const shift = this.app.mouseShift(index)
             const color = (
                 this.leaderBoard.player.username === player.username
             ) ? this.p.color(this.app.white) : this.app.color
             const y = leaderBoardZone.fractionY((1/30)*index)
             const size = leaderBoardZone.fraction(1,1/30,true)
             const rankZone = new Zone(
-                0, y,
+                shift.x, shift.y + y,
                 size.x, size.y, true
             )
             this.p.noStroke()
