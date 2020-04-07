@@ -16,8 +16,8 @@ export default class API {
         }
     }
 
-    get<T>( route:string ): Promise<T> {
-        return axios.get(route,this.config )
+    get<T>( route:string, params:{} = {} ): Promise<T> {
+        return axios.get(route,{ ...this.config, params } )
             .then( (res) => res.data )
     }
 

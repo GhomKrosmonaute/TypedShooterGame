@@ -4,16 +4,35 @@ import App from '../../App';
 import Zone from '../Zone';
 import Link from '../Link';
 import {LeaderBoard} from '../../../interfaces';
+import Button from '../Button';
 const tims = require('tims')
 
 export default class Scores extends Scene {
 
     private leaderBoard?:LeaderBoard
-    private leaderBoardType:'party'|'player'
+    public mode = 0
+    public modes:string[] = [
+        'Best of Parties',
+        'Best of Players (by average)',
+        'Best of Players (by total)'
+    ]
 
     constructor( app:App ) {
         super(app)
-        this.links.push(new Link( this,
+        this.buttons.push(new Button(this,
+            0, this.p.height * -.45,
+            this.modes[0],
+            (scores:Scores) => {
+                const max = scores.modes.length - 1
+                scores.mode ++
+                if(scores.mode > max)
+                    scores.mode = 0
+                scores.buttons[0].text = scores.modes[scores.mode]
+                scores.reset()
+            },
+            this
+        ))
+        this.links.push(new Link(this,
             app.mobile ? .5 : 1/6,
             5/6,
             {
@@ -42,7 +61,7 @@ export default class Scores extends Scene {
     }
 
     reset(){
-        this.app.api.get<LeaderBoard>('leaderboard')
+        this.app.api.get<LeaderBoard>('leaderboard',{ mode: this.mode })
             .then( leaderBoard => {
                 this.leaderBoard = leaderBoard
                 if(this.leaderBoard.top.every( player => {
@@ -52,6 +71,7 @@ export default class Scores extends Scene {
     }
 
     draw() {
+
         this.drawLeaderBoard()
         this.drawButtons()
         this.drawAnimations()
@@ -94,9 +114,9 @@ export default class Scores extends Scene {
             const duration = rankZone.fraction(11/12,.5)
             this.p.text(`# ${index + 1}`, rank.x, rank.y)
             this.p.text(player.username, name.x, name.y)
-            this.p.text(`${player.score} pts`,score.x,score.y)
+            this.p.text(`${Math.round(player.score)} pts`,score.x,score.y)
             this.p.text(`prec: ${Math.round(player.precision * 100)}%`,prec.x,prec.y)
-            this.p.text(`kills: ${player.kills}`,kills.x,kills.y)
+            this.p.text(`kills: ${Math.round(player.kills)}`,kills.x,kills.y)
             this.p.text(tims.text(player.duration),duration.x,duration.y)
         })
     }
