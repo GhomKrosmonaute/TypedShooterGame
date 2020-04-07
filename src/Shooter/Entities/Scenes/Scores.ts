@@ -3,13 +3,14 @@ import Scene from '../Scene';
 import App from '../../App';
 import Zone from '../Zone';
 import Link from '../Link';
-import {LeaderBoard} from '../../../interfaces';
+import {LeaderBoard, User} from '../../../interfaces';
 import Button from '../Button';
 const tims = require('tims')
 
 export default class Scores extends Scene {
 
     private leaderBoard?:LeaderBoard
+    private user?:User
     public mode = 0
     public modes:string[] = [
         'Best of Parties',
@@ -57,21 +58,15 @@ export default class Scores extends Scene {
                     }
                 )
             )
-        this.reset()
+        this.reset().catch()
     }
 
-    reset(){
-        this.app.api.get<LeaderBoard>('leaderboard',{ mode: this.mode })
-            .then( leaderBoard => {
-                this.leaderBoard = leaderBoard
-                if(this.leaderBoard.top.every( player => {
-                    return player.username !== this.leaderBoard.player.username
-                })) this.leaderBoard.top.push(this.leaderBoard.player)
-            })
+    async reset(){
+        this.user = await this.app.api.get<User>('profile')
+        this.leaderBoard = await this.app.api.get<LeaderBoard>('leaderboard',{ mode: this.mode })
     }
 
     draw() {
-
         this.drawLeaderBoard()
         this.drawButtons()
         this.drawAnimations()
@@ -91,10 +86,10 @@ export default class Scores extends Scene {
             this.p.height * .7,
             true
         )
-        this.leaderBoard.top.forEach( (player, index) => {
+        this.leaderBoard.forEach( (player, index) => {
             const shift = this.app.mouseShift(index)
             const color = (
-                this.leaderBoard.player.username === player.username
+                this.user.username === player.username
             ) ? this.p.color(this.app.white) : this.app.color
             const y = leaderBoardZone.fractionY((1/30)*index)
             const size = leaderBoardZone.fraction(1,1/30,true)

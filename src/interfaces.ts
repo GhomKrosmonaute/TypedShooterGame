@@ -134,10 +134,7 @@ export interface PartyResult {
     precision:number
 }
 
-export interface LeaderBoard {
-    top: PlayerRank[],
-    player: PlayerRank
-}
+export type LeaderBoard = PlayerRank[]
 
 export interface PlayerRank {
     username: string
@@ -145,4 +142,10 @@ export interface PlayerRank {
     precision: number
     kills: number
     duration: number
+}
+
+export interface User {
+    username: string
+    password: string
+    id: number
 }
