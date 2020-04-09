@@ -16,7 +16,6 @@ export default class Freezer extends Enemy {
     public id = 'freezer'
 
     private readonly freezeRange = 500
-    private readonly freezeDamages = 1
     private readonly freezeRate = new Rate(seconds(1))
     private readonly freezeExplosionDuration = 300
 
@@ -42,13 +41,10 @@ export default class Freezer extends Enemy {
             if(this.freeze){
                 this.p.fill(this.app.light(.5))
                 this.p.noStroke()
-                star(
-                    this.p,
+                this.p.ellipse(
                     this.freeze.x,
                     this.freeze.y,
-                    this.freeze.radius * .5,
-                    this.freeze.radius,
-                    12
+                    this.freeze.diameter
                 )
             }
         }
@@ -69,10 +65,8 @@ export default class Freezer extends Enemy {
             for(const enemy of this.party.enemies)
                 if(this.freeze && !enemy.immune && enemy.id !== 'freezer' && enemy.calculatedTouch(this.freeze))
                     this.exploseFreeze()
-            if(this.freeze && this.party.player.calculatedTouch(this.freeze)){
-                this.party.player.inflictDamages(this.freezeDamages)
+            if(this.freeze && this.party.player.calculatedTouch(this.freeze))
                 this.exploseFreeze()
-            }
         }
         this.freezeExplosions = this.freezeExplosions.filter( fe => fe.time < this.party.time + this.freezeExplosionDuration )
         for(const fe of this.freezeExplosions){
