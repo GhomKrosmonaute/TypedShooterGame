@@ -1,7 +1,7 @@
 import p5 from 'p5'
 // @ts-ignore
 import fontUrl from './fonts/Baloo2-Regular.ttf'
-import {KeyMode, Keys, Palette, SceneName, Touch, Vector2D} from '../interfaces'
+import {Images, KeyMode, Keys, Palette, SceneName, Touch, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {keyModes, VERSION} from '../config';
 import Party from './Entities/Scenes/Party';
@@ -18,17 +18,7 @@ import Color from './Entities/Color';
 import {fromCenter} from '../utils';
 import Angle from './Entities/Angle';
 
-// images
-//@ts-ignore
-import playerImageURL from './images/player.png'
-//@ts-ignore
-import shotImageURL from './images/shot.png'
-
 export default class App {
-
-    public readonly images:{
-        [key:string]: p5.Image
-    }
 
     private readonly cursor:Cursor
 
@@ -61,6 +51,7 @@ export default class App {
     constructor(
         public p:p5,
         public colors:Palette,
+        public images:Images,
         public mobile:boolean,
         public api:API
     ){
@@ -72,11 +63,6 @@ export default class App {
                 lightMode: false,
                 version: this.version
             }))
-
-        this.images = {
-            player: this.p.loadImage(playerImageURL),
-            shot: this.p.loadImage(shotImageURL)
-        }
 
         this.particles = new Particles(this,50,0,5)
         this.hardcoreVariator = new Variation(-10,10,2)

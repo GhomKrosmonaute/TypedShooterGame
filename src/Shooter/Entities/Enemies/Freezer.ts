@@ -38,6 +38,20 @@ export default class Freezer extends Enemy {
         this.baseSpeed = this.speed
         this.baseLife = this.life
         this.baseDamages = this.damages
+        this.overDraw = function(){
+            if(this.freeze){
+                this.p.fill(this.app.light(.5))
+                this.p.noStroke()
+                star(
+                    this.p,
+                    this.freeze.x,
+                    this.freeze.y,
+                    this.freeze.radius * .5,
+                    this.freeze.radius,
+                    12
+                )
+            }
+        }
     }
 
     public pattern(): void {
@@ -71,33 +85,6 @@ export default class Freezer extends Enemy {
 
     onPlayerContact(): void {
         this.checkShield()
-    }
-
-    overDraw(): void {
-        if(this.freeze){
-            this.p.fill(this.app.light(.5))
-            this.p.noStroke()
-            star(
-                this.p,
-                this.freeze.x,
-                this.freeze.y,
-                this.freeze.radius * .5,
-                this.freeze.radius,
-                12
-            )
-        }
-    }
-
-    onDraw(): void {
-        this.p.fill(this.app.blue(.8))
-        this.p.stroke(this.app.light(.5))
-        this.p.strokeWeight(3)
-        const pos = this.constrain()
-        this.p.ellipse(
-            pos.x,
-            pos.y,
-            this.onScreenBasedDiameter
-        )
     }
 
     public scroll(x: number, y: number): void {

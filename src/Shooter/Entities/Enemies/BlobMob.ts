@@ -58,20 +58,6 @@ export default class BlobMob extends Enemy {
         this.checkShield()
     }
 
-    overDraw(): void {
-    }
-
-    onDraw(): void {
-        this.p.noStroke()
-        this.p.fill(this.app.red(constrain(this.p.map(this.gain, 1, 10, .2, .8),.2,.8)))
-        const pos = this.constrain()
-        this.p.ellipse(
-            pos.x,
-            pos.y,
-            this.onScreenBasedDiameter
-        )
-    }
-
     public get currentDiameter(): number {
         return Math.max(
             this.MIN_DIAMETER,

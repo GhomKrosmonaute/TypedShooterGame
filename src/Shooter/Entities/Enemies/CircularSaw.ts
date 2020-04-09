@@ -25,6 +25,32 @@ export default class CircularSaw extends Enemy {
         this.baseGain = this.gain
         this.baseLife = this.life
         this.baseDamages = this.damages
+        this.onDraw = function(){
+            this.p.noStroke()
+            this.p.fill(130)
+            this.p.translate(
+                this.x,
+                this.y
+            )
+            this.p.angleMode(this.p.DEGREES)
+            this.p.rotate(this.rotation)
+            star(
+                this.p,
+                0,
+                0,
+                this.diameter * .2,
+                this.radius,
+                12
+            )
+            this.p.fill(80)
+            this.p.strokeWeight(3)
+            this.p.stroke(this.app.red(.7))
+            this.p.ellipse(
+                0,
+                0,
+                this.radius
+            )
+        }
     }
 
     pattern(): void {
@@ -44,36 +70,6 @@ export default class CircularSaw extends Enemy {
             this.lastDamage = this.party.time
             this.checkShield()
         }
-    }
-
-    overDraw(): void {
-    }
-
-    onDraw(): void {
-        this.p.noStroke()
-        this.p.fill(130)
-        this.p.translate(
-            this.x,
-            this.y
-        )
-        this.p.angleMode(this.p.DEGREES)
-        this.p.rotate(this.rotation)
-        star(
-            this.p,
-            0,
-            0,
-            this.diameter * .2,
-            this.radius,
-            12
-        )
-        this.p.fill(80)
-        this.p.strokeWeight(3)
-        this.p.stroke(this.app.red(.7))
-        this.p.ellipse(
-            0,
-            0,
-            this.radius
-        )
     }
 
 }

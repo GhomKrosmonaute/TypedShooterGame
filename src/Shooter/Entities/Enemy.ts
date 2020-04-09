@@ -1,4 +1,4 @@
-import Positionable from './Positionable'
+
 import App from '../App'
 import Shot from './Shot'
 import {Vector2D} from "../../interfaces"
@@ -7,6 +7,7 @@ import explosion from '../Animations/explosion';
 import textFadeOut from '../Animations/textFadeOut';
 import {constrain} from '../../utils';
 import Dirigible from './Dirigible';
+import p5 from 'p5';
 
 export default abstract class Enemy extends Dirigible {
 
@@ -22,19 +23,21 @@ export default abstract class Enemy extends Dirigible {
     public abstract immune:boolean
     public abstract id:string
     public abstract pattern():void
-    public abstract onDraw():void
-    public abstract overDraw():void
     public abstract onPlayerContact():void
     public shotFilter?:(shoot:Shot)=>boolean
+    public onDraw?:()=>void
+    public overDraw?:()=>void
     public app:App
 
     private lastDeadChain = 0
+    protected image:p5.Image
 
     protected constructor(
         public party:Party
     ){
         super( party.p )
         this.app = party.app
+        this.image = this.app.images.enemy
         this.reset()
     }
 
@@ -56,9 +59,15 @@ export default abstract class Enemy extends Dirigible {
     }
 
     public draw(){
-        this.overDraw()
+        if(this.overDraw)
+            this.overDraw()
         this.p.push()
-        this.onDraw()
+        if(this.onDraw)
+            this.onDraw()
+        else this.drawImage(this.image,{
+            diameter: this.onScreenBasedDiameter,
+            position: this.constrain()
+        })
         this.p.pop()
     }
 

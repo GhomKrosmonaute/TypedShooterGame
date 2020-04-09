@@ -29,7 +29,7 @@ export default class Scores extends Scene {
                 if(scores.mode > max)
                     scores.mode = 0
                 scores.buttons[0].text = scores.modes[scores.mode]
-                scores.reset()
+                scores.reset().catch()
             },
             this
         ))

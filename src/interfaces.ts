@@ -149,3 +149,7 @@ export interface User {
     password: string
     id: number
 }
+
+export interface Images {
+    [key:string]: p5.Image
+}

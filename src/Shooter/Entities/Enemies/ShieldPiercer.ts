@@ -34,20 +34,6 @@ export default class ShieldPiercer extends Enemy {
         this.kill()
     }
 
-    overDraw(): void {
-    }
-
-    onDraw(): void {
-        this.p.noStroke()
-        this.p.fill(this.app.color)
-        const pos = this.constrain()
-        this.p.ellipse(
-            pos.x,
-            pos.y,
-            this.onScreenBasedDiameter
-        )
-    }
-
     public get currentDiameter(){
         return this.lifeBasedDiameter
     }

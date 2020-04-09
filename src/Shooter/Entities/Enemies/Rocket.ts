@@ -30,6 +30,52 @@ export default class Rocket extends Enemy {
         this.baseGain = this.gain
         this.baseLife = this.life
         this.baseDamages = this.damages
+        this.onDraw = function(){
+            let color:p5.Color
+            this.p.translate(
+                this.x,
+                this.y
+            )
+            this.p.angleMode(this.p.DEGREES)
+            this.p.rotate(this.rotation)
+            if(this.party.time < this.lockTime){
+                color = this.p.color(255,0,0,100)
+            }else{
+                if(this.party.time < this.damageTime){
+                    color = this.p.color(255,0,0,this.p.map(
+                        this.party.time,
+                        this.lockTime,
+                        this.damageTime,
+                        100,
+                        255
+                    ))
+                }else{
+                    color = this.p.color(0,0)
+                }
+            }
+            this.p.noFill()
+            this.p.stroke(color)
+            this.p.strokeWeight(this.diameter * .2)
+            this.p.ellipse(0,0,this.diameter)
+            this.p.fill(color)
+            this.p.noStroke();
+            [90,90,90,90].forEach( angle => {
+                this.p.rotate(angle)
+                this.p.rect(
+                    this.diameter * -.7,
+                    this.diameter * -.1,
+                    this.diameter * .4,
+                    this.diameter * .2
+                )
+            })
+            if(this.party.time > this.lockTime){
+                color.setAlpha(Math.max(0,this.p.alpha(color) - 200))
+                this.p.noFill()
+                this.p.stroke(color)
+                this.p.strokeWeight(10)
+                this.p.ellipse(0,0,this.damageZone * 2)
+            }
+        }
     }
 
     pattern(): void {
@@ -61,54 +107,4 @@ export default class Rocket extends Enemy {
     }
 
     onPlayerContact(): void {}
-
-    overDraw(): void {
-    }
-
-    onDraw(): void {
-        let color:p5.Color
-        this.p.translate(
-            this.x,
-            this.y
-        )
-        this.p.angleMode(this.p.DEGREES)
-        this.p.rotate(this.rotation)
-        if(this.party.time < this.lockTime){
-            color = this.p.color(255,0,0,100)
-        }else{
-            if(this.party.time < this.damageTime){
-                color = this.p.color(255,0,0,this.p.map(
-                    this.party.time,
-                    this.lockTime,
-                    this.damageTime,
-                    100,
-                    255
-                ))
-            }else{
-                color = this.p.color(0,0)
-            }
-        }
-        this.p.noFill()
-        this.p.stroke(color)
-        this.p.strokeWeight(this.diameter * .2)
-        this.p.ellipse(0,0,this.diameter)
-        this.p.fill(color)
-        this.p.noStroke();
-        [90,90,90,90].forEach( angle => {
-            this.p.rotate(angle)
-            this.p.rect(
-                this.diameter * -.7,
-                this.diameter * -.1,
-                this.diameter * .4,
-                this.diameter * .2
-            )
-        })
-        if(this.party.time > this.lockTime){
-            color.setAlpha(Math.max(0,this.p.alpha(color) - 200))
-            this.p.noFill()
-            this.p.stroke(color)
-            this.p.strokeWeight(10)
-            this.p.ellipse(0,0,this.damageZone * 2)
-        }
-    }
 }

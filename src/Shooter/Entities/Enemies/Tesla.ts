@@ -38,6 +38,14 @@ export default class Tesla extends Enemy {
         this.baseGain = this.gain
         this.baseLife = this.life
         this.baseDamages = this.damages
+        this.overDraw = function(){
+            for(const tesla of this.connections){
+                if(isOnArc(this,tesla,this.party.player,(tesla.arcWeight + this.arcWeight) * .5)) {
+                    arc( this.app, this.party.player, tesla, tesla.arcWeight)
+                    arc( this.app, this.party.player, this, this.arcWeight )
+                } else this.arc(tesla)
+            }
+        }
     }
 
     public pattern(): void {
@@ -89,27 +97,6 @@ export default class Tesla extends Enemy {
                 (enemy as Tesla).connections = (enemy as Tesla).connections.filter(tesla => tesla !== this )
         })
         super.kill(addToScore)
-    }
-
-    overDraw(): void {
-        for(const tesla of this.connections){
-            if(isOnArc(this,tesla,this.party.player,(tesla.arcWeight + this.arcWeight) * .5)) {
-                arc( this.app, this.party.player, tesla, tesla.arcWeight)
-                arc( this.app, this.party.player, this, this.arcWeight )
-            } else this.arc(tesla)
-        }
-    }
-
-    onDraw(): void {
-        this.p.strokeWeight(random(2,5))
-        this.p.stroke(this.app.red(random(.1,.5)))
-        this.p.fill(this.app.blue(.4))
-        const pos = this.constrain()
-        this.p.ellipse(
-            pos.x,
-            pos.y,
-            this.onScreenBasedDiameter
-        )
     }
 
     arc( tesla:Tesla ): void {

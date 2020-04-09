@@ -233,7 +233,7 @@ export default class Player extends Dirigible {
     public draw(): void {
         this.shots.forEach(shoot => shoot.draw() )
         if(this.killed) return
-        this.drawPlayer()
+        this.drawImage(this.app.images.player)
         this.drawLifeBar()
         if(this.combo){
             this.drawMultiplicator()
@@ -420,22 +420,6 @@ export default class Player extends Dirigible {
         }
         this.shots = this.shots.filter(shoot => !shoot.isOutOfLimits() )
         this.shots.forEach(shoot => shoot.step() )
-    }
-
-    private drawPlayer(): void {
-        this.p.push()
-        this.p.translate(this.x,this.y)
-        this.p.angleMode(this.p.DEGREES)
-        this.p.rotate(this.angle.degrees + 180)
-        this.p.tint(255)
-        this.p.image(
-            this.app.images.player,
-            this.radius * -1,
-            this.radius * -1,
-            this.diameter,
-            this.diameter
-        )
-        this.p.pop()
     }
 
     private drawLifeBar(): void {

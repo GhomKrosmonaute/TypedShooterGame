@@ -8,16 +8,33 @@ import { getInput } from './utils'
 import {baseURL, siteKey} from './config'
 import API from './Shooter/API'
 import Color from './Shooter/Entities/Color';
-import {Palette} from './interfaces';
+import {Images, Palette} from './interfaces';
 import MB from 'mobile-detect'
 
 let started:boolean = false
 const mb = new MB(window.navigator.userAgent)
 const mobile = mb.mobile()
 
+// images
+//@ts-ignore
+import playerImageURL from './Shooter/images/player.png'
+//@ts-ignore
+import shotImageURL from './Shooter/images/shot.png'
+//@ts-ignore
+import enemyImageURL from './Shooter/images/enemy.png'
+
 function sketch( p:p5, hexColors:[string,string], apiToken:string ){
 
     let app:App = null
+    let images:Images = null
+
+    p.preload = () => {
+        images = {
+            player: p.loadImage(playerImageURL),
+            shot: p.loadImage(shotImageURL),
+            enemy: p.loadImage(enemyImageURL)
+        }
+    }
 
     p.setup = () => {
         p.createCanvas(p.windowWidth,p.windowHeight)
@@ -25,7 +42,7 @@ function sketch( p:p5, hexColors:[string,string], apiToken:string ){
             blue: new Color(p,hexColors[0]),
             red: new Color(p,hexColors[1])
         }
-        app = new App(p,colors,!!mobile,new API(apiToken))
+        app = new App(p,colors,images,!!mobile,new API(apiToken))
     }
 
     p.draw = async () => {

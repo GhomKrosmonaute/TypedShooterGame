@@ -52,4 +52,28 @@ export default class Dirigible extends Positionable {
             )
     }
 
+    protected drawImage( image:p5.Image, options:{
+        diameter?:number
+        tint?:number|p5.Color
+        position?:Vector2D
+    } = {}): void {
+        this.p.push()
+        this.p.translate(
+            options.position ? options.position.x : this.x,
+            options.position ? options.position.y : this.y
+        )
+        this.p.angleMode(this.p.DEGREES)
+        this.p.rotate(this.angle.degrees + 180)
+        //@ts-ignore
+        this.p.tint(options.tint ? options.tint : 255)
+        this.p.image(
+            image,
+            options.diameter ? options.diameter * -.5 : this.radius * -1,
+            options.diameter ? options.diameter * -.5 : this.radius * -1,
+            options.diameter ? options.diameter : this.diameter,
+            options.diameter ? options.diameter : this.diameter
+        )
+        this.p.pop()
+    }
+
 }

@@ -73,20 +73,6 @@ export default class Pulsar extends Enemy {
         this.checkShield()
     }
 
-    overDraw(): void {
-    }
-
-    onDraw(): void {
-        this.p.noStroke()
-        this.p.fill(this.app.blue(.6))
-        const pos = this.constrain()
-        this.p.ellipse(
-            pos.x,
-            pos.y,
-            this.onScreenBasedDiameter
-        )
-    }
-
     public get currentDiameter(){
         return this.lifeBasedDiameter
     }
