@@ -104,7 +104,8 @@ export default class Scores extends Scene {
             this.p.textSize(constrain(map(
                 dist(
                     0,this.app.mouseFromCenter.y,
-                    0,rankZone.center.y),
+                    0,rankZone.center.y
+                ),
                 0,
                 30,
                 rankZone.fractionHeight(.9),

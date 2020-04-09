@@ -6,15 +6,18 @@ import explosion from '../Animations/explosion';
 import {Vector2D} from '../../interfaces';
 import Dirigible from './Dirigible';
 import Angle from './Angle';
+import Variation from './Variation';
 
 export default class Shot extends Dirigible {
 
     public readonly basePosition:Dirigible
-    private readonly speed:number
     public readonly damage:number
+    private readonly speed:number
+    private readonly powered:boolean
     private piercingShots:number = 1
     private toIgnore:Enemy[] = []
     private someEnemyHit = false
+    private flashing = new Variation(0,255,25.5)
 
     constructor(
         public player:Player,
@@ -33,9 +36,10 @@ export default class Shot extends Dirigible {
             0,
             player.angle
         )
+        this.powered = this.angle.degrees === this.basePosition.angle.degrees
         this.basePosition.moveByAngle(player.speed * 2)
         this.speed = this.player.shotSpeed
-        this.damage = this.player.shotDamage
+        this.damage = this.powered ? this.player.shotDamage * 2 : this.player.shotDamage
         const piercingShots = this.player.getPassive('piercingShots')
         if(piercingShots) this.piercingShots += piercingShots.level
     }
@@ -65,11 +69,19 @@ export default class Shot extends Dirigible {
             for(const enemy of this.player.party.enemies)
                 if(this.rawDist(enemy) < explosiveShots.value)
                     enemy.inflictDamages(this.damage,true)
+        }else{
+            this.player.party.setAnimation(explosion({
+                className: 'low',
+                duration: 50,
+                position: { x: this.x, y: this.y },
+                value: this.diameter
+            }))
         }
         this.placeOutOfLimits()
     }
 
     public step(): void {
+        if(this.powered) this.flashing.step()
         if(this.rawDist(this.basePosition) > this.player.shotRange){
             this.terminate()
         }else{
@@ -108,7 +120,7 @@ export default class Shot extends Dirigible {
             this.p.translate(this.x,this.y)
             this.p.angleMode(this.p.DEGREES)
             this.p.rotate(this.angle.degrees + 180)
-            this.p.tint(255)
+            this.powered ? this.p.tint(255,this.flashing.value,this.flashing.value) : this.p.tint(255)
             this.p.image(
                 this.player.app.images.shot,
                 this.radius * -1,

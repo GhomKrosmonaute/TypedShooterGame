@@ -55,10 +55,9 @@ export default class Profile extends Scene {
                 this.p.width * .3,
                 this.p.height * -.3,
                 'Delete profile',
-                (button)=>{
+                (button:Button) => {
                     button.app.api.delete('profile')
-                        // @ts-ignore
-                        .then(Location.reload)
+                        .then(() => window.location.reload())
                 }
             )
         )
