@@ -33,7 +33,16 @@ export default class Button extends Zone {
         this.p.text(
             this.text,
             shift.x + this.center.x,
-            shift.y + this.center.y
+            -5 + shift.y + this.center.y
+        )
+        this.p.noFill()
+        this.p.stroke(hovered ? this.app.light(.2) : this.app.color)
+        this.p.strokeWeight(2)
+        this.p.line(
+            shift.x + this.fractionX(hovered ? .3 : .35),
+            shift.y + this.stop.y,
+            shift.x + this.fractionX(hovered ? .7 : .65),
+            shift.y + this.stop.y
         )
     }
 

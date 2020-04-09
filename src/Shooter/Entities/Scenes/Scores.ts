@@ -5,6 +5,7 @@ import Zone from '../Zone';
 import Link from '../Link';
 import {LeaderBoard, User} from '../../../interfaces';
 import Button from '../Button';
+import {map, constrain, dist} from '../../../utils';
 const tims = require('tims')
 
 export default class Scores extends Scene {
@@ -100,7 +101,15 @@ export default class Scores extends Scene {
             this.p.noStroke()
             this.p.fill(color)
             this.p.textAlign(this.p.CENTER,this.p.CENTER)
-            this.p.textSize(rankZone.height * .8)
+            this.p.textSize(constrain(map(
+                dist(
+                    0,this.app.mouseFromCenter.y,
+                    0,rankZone.center.y),
+                0,
+                30,
+                rankZone.fractionHeight(.9),
+                rankZone.fractionHeight(.7)
+            ),rankZone.fractionHeight(.7),rankZone.fractionHeight(.9)))
             const rank = rankZone.fraction(1/12,.5)
             const name = rankZone.fraction(3/12,.5)
             const score = rankZone.fraction(5/12,.5)
