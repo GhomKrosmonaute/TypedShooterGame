@@ -38,15 +38,8 @@ export default class Freezer extends Enemy {
         this.baseLife = this.life
         this.baseDamages = this.damages
         this.overDraw = function(){
-            if(this.freeze){
-                this.p.fill(this.app.light(.5))
-                this.p.noStroke()
-                this.p.ellipse(
-                    this.freeze.x,
-                    this.freeze.y,
-                    this.freeze.diameter
-                )
-            }
+            if(this.freeze)
+                this.freeze.drawImage(this.party.app.images.freeze)
         }
     }
 

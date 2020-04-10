@@ -1,9 +1,9 @@
 import Enemy from '../Enemy'
-import Shot from "../Shot"
 import Party from '../Scenes/Party'
-import {seconds, map} from '../../../utils'
+import {seconds, norm, dist} from '../../../utils'
 import Rate from '../Rate'
 import wave from '../../Animations/wave'
+import Dirigible from '../Dirigible';
 
 export default class Pulsar extends Enemy {
 
@@ -53,18 +53,28 @@ export default class Pulsar extends Enemy {
             for(const enemy of this.party.enemies) {
                 const distance = this.calculatedDist(enemy) - this.radius
                 if (enemy !== this && !enemy.immune && distance < this.waveRadius) {
-                    const speed = map(distance,0,this.waveRadius,enemy.speed,0)
-                    enemy.repulsedBy(this, speed, 10)
+                    this.repulse(
+                        enemy,
+                        enemy.speed
+                    )
                 }
             }
             for(const shot of this.party.player.shots) {
                 const distance = this.calculatedDist(shot) - this.radius
                 if (distance < this.waveRadius) {
-                    const speed = map(distance,0,this.waveRadius,this.party.player.shotSpeed,0)
-                    shot.repulsedBy(this, speed, 10)
-                    // TODO: slower.party.player.repulseBy(slower,slower.repulseSpeed)
-                    // TODO: convertir le player en dirigible et le faire avaner comme tel
+                    this.repulse(
+                        shot,
+                        this.party.player.shotSpeed
+                    )
                 }
+            }
+            const distance = this.calculatedDist(this.party.player) - this.radius
+            if(distance < this.waveRadius){
+                this.repulse(
+                    this.party.player,
+                    this.party.player.speedMax,
+                    .5
+                )
             }
         }
     }
@@ -75,5 +85,13 @@ export default class Pulsar extends Enemy {
 
     public get currentDiameter(){
         return this.lifeBasedDiameter
+    }
+
+    private repulse( target:Dirigible, baseSpeed:number, factor:number = 1 ): void {
+        const distance = this.calculatedDist(target) - this.radius
+        const distFactor = norm(distance,this.waveRadius,0)
+        const speed = baseSpeed * distFactor
+        const rotationSpeed = 90 * distFactor
+        target.repulsedBy(this,speed * factor,rotationSpeed * factor)
     }
 }

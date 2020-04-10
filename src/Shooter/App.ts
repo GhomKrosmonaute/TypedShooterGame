@@ -1,7 +1,5 @@
 import p5 from 'p5'
-// @ts-ignore
-import fontUrl from './fonts/Baloo2-Regular.ttf'
-import {Images, KeyMode, Keys, Palette, SceneName, Touch, Vector2D} from '../interfaces'
+import {Fonts, Images, KeyMode, Keys, Palette, SceneName, Touch, Vector2D} from '../interfaces'
 import Rate from './Entities/Rate'
 import {keyModes, VERSION} from '../config';
 import Party from './Entities/Scenes/Party';
@@ -52,6 +50,7 @@ export default class App {
         public p:p5,
         public colors:Palette,
         public images:Images,
+        public fonts:Fonts,
         public mobile:boolean,
         public api:API
     ){
@@ -68,10 +67,9 @@ export default class App {
         this.hardcoreVariator = new Variation(-10,10,2)
         this.lightModeTransition = this.lightMode ? 255 : 0
         this.cursor = new Cursor(this)
-        const font = p.loadFont(fontUrl)
         this.p.smooth()
         this.p.angleMode(this.p.DEGREES)
-        this.p.textFont(font)
+        this.p.textFont(fonts.regular)
         this.reset()
     }
 

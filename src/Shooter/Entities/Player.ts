@@ -243,6 +243,13 @@ export default class Player extends Dirigible {
         this.drawBonus()
     }
 
+    public move(x: number, y: number): void {
+        this.party.scroll(
+            x * -1,
+            y * -1
+        )
+    }
+
     public keyPressed(key:string): void {
         this.app.keyMode.numeric.forEach( (keys, i) => {
             if(keys.includes(key) && this.consumables[i]){
@@ -342,9 +349,9 @@ export default class Player extends Dirigible {
 
         if(this.speed !== 0){
             const angleMove = this.getAngleMove(this.speed)
-            this.party.scroll(
-                angleMove.x,
-                angleMove.y
+            this.move(
+                angleMove.x * -1,
+                angleMove.y * -1
             )
         }
 

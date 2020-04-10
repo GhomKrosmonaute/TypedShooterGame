@@ -115,20 +115,11 @@ export default class Shot extends Dirigible {
     }
 
     public draw(): void {
-        if(this.isOnScreen()){
-            this.p.push()
-            this.p.translate(this.x,this.y)
-            this.p.angleMode(this.p.DEGREES)
-            this.p.rotate(this.angle.degrees + 180)
-            this.powered ? this.p.tint(255,this.flashing.value,this.flashing.value) : this.p.tint(255)
-            this.p.image(
-                this.player.app.images.shot,
-                this.radius * -1,
-                this.radius * -1,
-                this.diameter,
-                this.diameter
-            )
-            this.p.pop()
-        }
+        if(this.isOnScreen())
+            this.drawImage(this.player.app.images.shot,{
+                tint: this.powered ? (
+                    this.p.color(255,this.flashing.value,this.flashing.value)
+                ) : 255
+            })
     }
 }

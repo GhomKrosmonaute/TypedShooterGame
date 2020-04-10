@@ -153,3 +153,7 @@ export interface User {
 export interface Images {
     [key:string]: p5.Image
 }
+
+export interface Fonts {
+    [key:string]: p5.Font
+}
