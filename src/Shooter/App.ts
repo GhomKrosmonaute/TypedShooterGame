@@ -65,7 +65,7 @@ export default class App {
     public readonly mobile: boolean,
     public readonly api?: API
   ) {
-    this.online = !api
+    this.online = !!api
 
     const storage = localStorage.getItem("shooter")
     if (!storage || JSON.parse(storage).version !== this.version)
@@ -219,14 +219,14 @@ export default class App {
   }
 
   public get keyModeIndex(): number {
-    return this.storage.load("keyModeIndex")
+    return this.storage.load("keyModeIndex", 0)
   }
   public set keyModeIndex(index: number) {
     this.storage.save("keyModeIndex", index)
   }
 
   public get lightMode(): boolean {
-    return this.storage.load("lightMode")
+    return this.storage.load("lightMode", false)
   }
   public set lightMode(isActivate: boolean) {
     this.storage.save("lightMode", isActivate)

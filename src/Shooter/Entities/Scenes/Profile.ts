@@ -9,34 +9,55 @@ export default class Profile extends Scene {
 
   constructor(app: App) {
     super(app)
-    this.form = new Form(
-      app,
-      0,
-      0,
-      this.p.width * 0.4,
-      this.p.height * 0.4,
-      [
-        { value: "", placeholder: "New username", required: true },
-        { value: "", placeholder: "New password", required: true, hide: true },
-        {
-          value: "",
-          placeholder: "Current password",
-          required: true,
-          hide: true,
-        },
-      ],
-      true,
-      (form) => {
-        form.app.api
-          .patch("profile", {
-            newUsername: form.inputs[0].value,
-            newPassword: form.inputs[1].value,
-            password: form.inputs[2].value,
-          })
-          .then(form.app.scenes.profile.reset)
-      }
-    )
-    const appZone = this.app.zone
+    if (app.online) {
+      this.form = new Form(
+        app,
+        0,
+        0,
+        this.p.width * 0.4,
+        this.p.height * 0.4,
+        [
+          { value: "", placeholder: "New username", required: true },
+          {
+            value: "",
+            placeholder: "New password",
+            required: true,
+            hide: true,
+          },
+          {
+            value: "",
+            placeholder: "Current password",
+            required: true,
+            hide: true,
+          },
+        ],
+        true,
+        (form) => {
+          form.app.api
+            .patch("profile", {
+              newUsername: form.inputs[0].value,
+              newPassword: form.inputs[1].value,
+              password: form.inputs[2].value,
+            })
+            .then(form.app.scenes.profile.reset)
+        }
+      )
+
+      this.buttons.push(
+        new Button(
+          this,
+          this.p.width * 0.3,
+          this.p.height * -0.3,
+          "Delete profile",
+          (button: Button) => {
+            button.app.api
+              .delete("profile")
+              .then(() => window.location.reload())
+          }
+        )
+      )
+    }
+
     this.links.push(
       new Link(this, 1 / 6, 5 / 6, {
         targetName: "party",
@@ -49,18 +70,8 @@ export default class Profile extends Scene {
         targetName: "manual",
       })
     )
-    this.buttons.push(
-      new Button(
-        this,
-        this.p.width * 0.3,
-        this.p.height * -0.3,
-        "Delete profile",
-        (button: Button) => {
-          button.app.api.delete("profile").then(() => window.location.reload())
-        }
-      )
-    )
-    this.reset()
+
+    if (app.online) this.reset()
   }
 
   reset() {

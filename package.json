@@ -2,7 +2,7 @@
   "version": "0.1.9",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --open --watch --content-base src/ --mode development",
-    "git": "git rm -rf dist --ignore-unmatch && npm run build && git add *",
+    "git": "git rm -rf dist --ignore-unmatch && npm run prettier && npm run build && git add *",
     "build": "webpack --config webpack.config.js --mode production",
     "prettier": "prettier --write src webpack.config.js README.md index.html tsconfig.json"
   },

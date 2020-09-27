@@ -1,6 +1,4 @@
-import Animation from "../Entities/Animation"
 import { AnimationMinimalOptions, AnimationOptions } from "../../interfaces"
-import p5 from "p5"
 
 export default function explosion(
   options: AnimationMinimalOptions

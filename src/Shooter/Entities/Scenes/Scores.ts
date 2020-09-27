@@ -19,28 +19,32 @@ export default class Scores extends Scene {
 
   constructor(app: App) {
     super(app)
-    this.buttons.push(
-      new Button(
-        this,
-        0,
-        this.p.height * -0.45,
-        this.modes[0],
-        (scores: Scores) => {
-          const max = scores.modes.length - 1
-          scores.mode++
-          if (scores.mode > max) scores.mode = 0
-          scores.buttons[0].text = scores.modes[scores.mode]
-          scores.reset().catch()
-        },
-        this
+
+    if (app.online) {
+      this.buttons.push(
+        new Button(
+          this,
+          0,
+          this.p.height * -0.45,
+          this.modes[0],
+          (scores: Scores) => {
+            const max = scores.modes.length - 1
+            scores.mode++
+            if (scores.mode > max) scores.mode = 0
+            scores.buttons[0].text = scores.modes[scores.mode]
+            scores.reset().catch()
+          },
+          this
+        )
       )
-    )
+    }
+
     this.links.push(
       new Link(this, app.mobile ? 0.5 : 1 / 6, 5 / 6, {
         targetName: "party",
       })
     )
-    if (!app.mobile)
+    if (!app.mobile) {
       this.links.push(
         new Link(this, 0.5, 5 / 6, {
           targetName: "profile",
@@ -50,7 +54,9 @@ export default class Scores extends Scene {
           targetName: "manual",
         })
       )
-    this.reset().catch()
+    }
+
+    if (app.online) this.reset().catch()
   }
 
   async reset() {
@@ -61,7 +67,7 @@ export default class Scores extends Scene {
   }
 
   draw() {
-    this.drawLeaderBoard()
+    if (this.app.online) this.drawLeaderBoard()
     this.drawButtons()
     this.drawAnimations()
   }

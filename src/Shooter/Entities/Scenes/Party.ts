@@ -3,7 +3,7 @@ import Enemy from "../Enemy"
 import Bonus from "../Bonus"
 import Particles from "../Particles"
 import Player from "../Player"
-import { constrain, map, pickBonus, pickEnemy } from "../../../utils"
+import { map, pickBonus, pickEnemy } from "../../../utils"
 import App from "../../App"
 import Rate from "../Rate"
 

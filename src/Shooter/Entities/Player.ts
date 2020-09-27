@@ -32,7 +32,7 @@ export default class Player extends Dirigible {
   public readonly acc = 3
   public readonly desc = 0.7
   public readonly app: App
-  public readonly api: API
+  public readonly api?: API
 
   public life = 5
   public score = 0
@@ -65,14 +65,24 @@ export default class Player extends Dirigible {
     this.getHighScore().catch()
   }
 
-  public getHighScore(): Promise<number> {
-    return this.api.get<number>("highscore").then((score) => {
-      this.highScore = score
-      return this.highScore
-    })
+  public async getHighScore(): Promise<number> {
+    if (this.app.online) {
+      return this.api.get<number>("highscore").then((score) => {
+        this.highScore = score
+        return this.highScore
+      })
+    } else {
+      return this.app.storage.load<number>("highscore", 0)
+    }
   }
-  public savePartyResult(result: PartyResult): Promise<AxiosResponse> {
-    return this.app.api.post("result", result)
+  public savePartyResult(result: PartyResult): void {
+    if (this.app.online) {
+      this.app.api
+        .post("result", result)
+        .catch(() => alert(`Error while saving your score :(`))
+    } else if (result.score > this.highScore) {
+      this.app.storage.save("highscore", this.highScore)
+    }
   }
 
   public get speedMax(): number {
@@ -280,13 +290,14 @@ export default class Player extends Dirigible {
   private async deathStep(): Promise<boolean> {
     if (this.life <= 0) {
       this.killed = true
-      if (this.shotCount > 0)
+      if (this.shotCount > 0) {
         this.savePartyResult({
           score: this.score,
           duration: this.party.time,
           kills: this.kills,
           precision: this.hitCount / this.shotCount,
-        }).catch(() => alert(`Error while saving your score :(`))
+        })
+      }
       this.party.setAnimation(
         explosion({
           value: this.diameter * 1.5,
