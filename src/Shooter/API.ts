@@ -32,14 +32,4 @@ export default class API {
   delete(route: string): Promise<AxiosResponse> {
     return axios.delete(route, this.config)
   }
-
-  save(key: string, value: any): void {
-    const storage = JSON.parse(localStorage.getItem("shooter"))
-    storage[key] = value
-    localStorage.setItem("shooter", JSON.stringify(storage))
-  }
-
-  load<T>(key: string): T {
-    return JSON.parse(localStorage.getItem("shooter"))[key]
-  }
 }

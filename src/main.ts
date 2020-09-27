@@ -27,7 +27,7 @@ import freezeImageURL from "./Shooter/images/freeze.png"
 //@ts-ignore
 import enemyImageURL from "./Shooter/images/enemy.png"
 
-function sketch(p: p5, hexColors: [string, string], apiToken: string) {
+function sketch(p: p5, hexColors: [string, string], apiToken?: string) {
   let app: App = null
   let images: Images = null
   let fonts: Fonts = null
@@ -51,7 +51,14 @@ function sketch(p: p5, hexColors: [string, string], apiToken: string) {
 
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight)
-    app = new App(p, colors, images, fonts, !!mobile, new API(apiToken))
+    app = new App(
+      p,
+      colors,
+      images,
+      fonts,
+      !!mobile,
+      apiToken ? new API(apiToken) : null
+    )
   }
 
   p.draw = async () => {
@@ -130,6 +137,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const submit = getInput("submit")
+  const offline = getInput("offline")
 
   submit.onclick = async (event) => {
     event.preventDefault()
@@ -187,5 +195,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     })
 
     return false
+  }
+
+  offline.onclick = async (event) => {
+    event.preventDefault()
+
+    const hexColors: [string, string] = [
+      getInput("red").value,
+      getInput("blue").value,
+    ]
+
+    document.getElementById("login").remove()
+    document.getElementById("p5").focus()
+    localStorage.setItem(
+      "colors",
+      JSON.stringify({
+        red: hexColors[0],
+        blue: hexColors[1],
+      })
+    )
+    new p5((p) => sketch(p, hexColors), document.getElementById("p5"))
   }
 })

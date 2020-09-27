@@ -15,6 +15,7 @@ import Party from "./Entities/Scenes/Party"
 import Manual from "./Entities/Scenes/Manual"
 import Scene from "./Entities/Scene"
 import API from "./API"
+import Storage from "./Storage"
 import Profile from "./Entities/Scenes/Profile"
 import Scores from "./Entities/Scenes/Scores"
 import Zone from "./Entities/Zone"
@@ -38,6 +39,9 @@ export default class App {
 
   public readonly version = VERSION
   public readonly debugMode = false
+  public readonly online: boolean
+  public readonly keyModes: KeyMode[] = keyModes
+  public readonly storage = new Storage()
 
   private hardcoreVariator: Variation
 
@@ -52,16 +56,17 @@ export default class App {
   public useGamepad = false
   public particles: Particles
   public lightModeTransition: number
-  public keyModes: KeyMode[] = keyModes
 
   constructor(
-    public p: p5,
-    public colors: Palette,
-    public images: Images,
-    public fonts: Fonts,
-    public mobile: boolean,
-    public api: API
+    public readonly p: p5,
+    public readonly colors: Palette,
+    public readonly images: Images,
+    public readonly fonts: Fonts,
+    public readonly mobile: boolean,
+    public readonly api?: API
   ) {
+    this.online = !api
+
     const storage = localStorage.getItem("shooter")
     if (!storage || JSON.parse(storage).version !== this.version)
       localStorage.setItem(
@@ -214,17 +219,17 @@ export default class App {
   }
 
   public get keyModeIndex(): number {
-    return this.api.load("keyModeIndex")
+    return this.storage.load("keyModeIndex")
   }
   public set keyModeIndex(index: number) {
-    this.api.save("keyModeIndex", index)
+    this.storage.save("keyModeIndex", index)
   }
 
   public get lightMode(): boolean {
-    return this.api.load("lightMode")
+    return this.storage.load("lightMode")
   }
   public set lightMode(isActivate: boolean) {
-    this.api.save("lightMode", isActivate)
+    this.storage.save("lightMode", isActivate)
   }
 
   public get black(): number {
