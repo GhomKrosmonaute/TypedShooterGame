@@ -1,11 +1,7 @@
 
 import Bonus from './Shooter/Entities/Bonus';
 import p5 from 'p5';
-import App from "./Shooter/App";
 import Positionable from "./Shooter/Entities/Positionable";
-import createSpyObj = jasmine.createSpyObj;
-import Scene from './Shooter/Entities/Scene';
-import Input from './Shooter/Entities/Input';
 import Animation from './Shooter/Entities/Animation';
 import Color from './Shooter/Entities/Color';
 

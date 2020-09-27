@@ -1,24 +1,10 @@
 {
-  "name": "ghom-shooter-game",
-  "version": "0.1.8",
-  "description": "A Shooter Game make with p5",
-  "main": "index.js",
+  "version": "0.1.9",
   "scripts": {
     "start": "webpack-dev-server --port 9000 --inline --progress --profile --colors --open --watch --content-base src/ --mode development",
     "git": "git rm -rf dist --ignore-unmatch && npm run build && git add *",
-    "build": "webpack --config webpack.config.js --mode production",
-    "build.prod": "webpack --config webpack.config.js -p",
-    "build.esnext": "npm run build:types && npm run build:js",
-    "build:types": "tsc --emitDeclarationOnly",
-    "build:js": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
-    "build.all": "npm run build.prod && npm run build.esnext",
-    "test": "karma start karma.config.js"
+    "build": "webpack --config webpack.config.js --mode production"
   },
-  "keywords": [
-    "webpack",
-    "webpack4",
-    "typescript"
-  ],
   "author": "Ghom",
   "license": "ISC",
   "devDependencies": {
@@ -29,7 +15,6 @@
     "@babel/preset-env": "^7.9.0",
     "@babel/preset-typescript": "^7.9.0",
     "@types/grecaptcha": "^3.0.1",
-    "@types/jasmine": "2.8.7",
     "@types/mobile-detect": "^1.3.4",
     "@types/node": "7.0.0",
     "@types/p5": "^0.9.0",
@@ -38,15 +23,8 @@
     "file-loader": "^5.1.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
-    "jasmine-core": "3.1.0",
-    "karma": "2.0.4",
-    "karma-jasmine": "1.1.2",
-    "karma-phantomjs-launcher": "1.0.4",
-    "karma-webpack": "3.0.0",
     "source-map-loader": "0.2.3",
     "style-loader": "^1.1.3",
-    "tslint": "5.17.0",
-    "tslint-loader": "3.6.0",
     "typescript": "3.5.1",
     "webpack": "^4.42.1",
     "webpack-cli": "3.0.8",
