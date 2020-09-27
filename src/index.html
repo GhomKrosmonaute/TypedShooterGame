@@ -1,26 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <script src="https://www.google.com/recaptcha/api.js?render=6LeSlOEUAAAAAJBZjIPdwz-Y3yAGCVGrsFMBOdVN"></script>
-    <title> Shooter Game </title>
-</head>
-<body>
+    <title>Shooter Game</title>
+  </head>
+  <body>
     <div id="login">
-        <h2 id="alert">Please login or register</h2>
-        <form>
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-            <input type="submit" id="submit" value="Login">
-            <div><h3>Chose two colors</h3>
-                <input type="color" id="blue" value="#ff00b9">
-                <input type="color" id="red" value="#0079ff">
-            </div>
-        </form>
+      <h2 id="alert">Please login or register</h2>
+      <form>
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <input type="submit" id="submit" value="Login" />
+        <div>
+          <h3>Chose two colors</h3>
+          <input type="color" id="blue" value="#ff00b9" />
+          <input type="color" id="red" value="#0079ff" />
+        </div>
+      </form>
     </div>
     <div id="p5"></div>
     <script src="shooter.min.js"></script>
-</body>
+  </body>
 </html>

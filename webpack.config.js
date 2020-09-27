@@ -1,69 +1,67 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require("path")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
 
-const ROOT = path.resolve( __dirname, 'src' );
-const DESTINATION = path.resolve( __dirname, 'dist' );
+const ROOT = path.resolve(__dirname, "src")
+const DESTINATION = path.resolve(__dirname, "dist")
 
 module.exports = {
-    context: ROOT,
+  context: ROOT,
 
-    entry: {
-        'main': './main.ts'
-    },
-    
-    output: {
-        filename: 'shooter.min.js',
-        path: DESTINATION
-    },
+  entry: {
+    main: "./main.ts",
+  },
 
-    plugins: [new HtmlWebpackPlugin({
-        template: "index.html",
-        favicon: "Shooter/images/favicon.png"
-    })],
+  output: {
+    filename: "shooter.min.js",
+    path: DESTINATION,
+  },
 
-    resolve: {
-        extensions: ['.ts', '.js'],
-        modules: [
-            ROOT,
-            'node_modules'
-        ]
-    },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "index.html",
+      favicon: "Shooter/images/favicon.png",
+    }),
+  ],
 
-    module: {
-        rules: [
-            /****************
-            * PRE-LOADERS
-            *****************/
-            {
-                enforce: 'pre',
-                test: /\.js$/,
-                use: 'source-map-loader'
-            },
+  resolve: {
+    extensions: [".ts", ".js"],
+    modules: [ROOT, "node_modules"],
+  },
 
-            /****************
-            * LOADERS
-            *****************/
-            {
-                test: /\.ts$/i,
-                exclude: [ /node_modules/ ],
-                use: 'awesome-typescript-loader'
-            },
-            {
-                test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
-            },
-            {
-                test: /\.(?:png|svg|jpg|ttf|gif)$/i,
-                use: 'file-loader'
-            },
-            {
-                test: /\.html$/i,
-                use: 'html-loader'
-            }
-        ]
-    },
+  module: {
+    rules: [
+      /****************
+       * PRE-LOADERS
+       *****************/
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        use: "source-map-loader",
+      },
 
-    devtool: 'cheap-module-source-map',
-    devServer: {}
-};
+      /****************
+       * LOADERS
+       *****************/
+      {
+        test: /\.ts$/i,
+        exclude: [/node_modules/],
+        use: "awesome-typescript-loader",
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(?:png|svg|jpg|ttf|gif)$/i,
+        use: "file-loader",
+      },
+      {
+        test: /\.html$/i,
+        use: "html-loader",
+      },
+    ],
+  },
 
+  devtool: "cheap-module-source-map",
+  devServer: {},
+}
